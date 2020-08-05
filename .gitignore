@@ -38,6 +38,7 @@ npm-debug.log
 
 # apiDoc folder for documentation
 apidoc
+dist
 
 # general configuration file
 src/config/config.json
