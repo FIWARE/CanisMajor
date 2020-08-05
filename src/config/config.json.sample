@@ -1,0 +1,25 @@
+{
+    "dlt_type": "eth",
+    "version" : 0.1,
+    "eth_configuration": {
+      "provider": "http://localhost:8545",       
+      "default_gas": 0,                      
+      "default_gasPrice": 40,
+      "abi": "",
+      "contract_address": "0x6f99d257e3e55e856e479ca20e834cbc81ce58d3",
+      "contextMapping": {
+        "type": "AgriProductType",
+        "parameters": ["price"],
+        "method": "set"
+      }
+    },
+    "iota_configuration": {
+      "provider": "https://nodes.devnet.iota.org:443",
+      "zmq_provider": "tcp://zmq.devnet.iota.org:5556"
+    },
+    "util_configuration": {
+      "encryption_algorithm": "aes-256-ctr",
+      "encryption_key": "testing"
+    }
+  }
+  
