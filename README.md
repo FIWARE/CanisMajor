@@ -1,6 +1,6 @@
 # CanisMajor - FIWARE Blockchain Adaptor
 
-CanisMajor is a blockchain adaptor which supports various DLT, the adaptor aims to to submit the data to directly DLT from FIWARE Context Broker using subscriptions.
+CanisMajor is a blockchain adaptor that supports various DLT, the adaptor aims to submit the data to directly DLT from FIWARE Context Broker using subscriptions.
 The adaptor will not be recommended to work for public-permissionless blockchains (specially tokens, cryptocurrencies).
 # Architecture
 ![CanisMajor Architecture](https://github.com/FIWARE-Blockchain/CanisMajor/blob/master/CanisMajor.png)
