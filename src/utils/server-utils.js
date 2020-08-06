@@ -1,5 +1,5 @@
 import {v4} from 'uuid';
-import { HEADER , OPERATION_TYPE , OPERATION_TYPE_PREFIX } from '../config/constant';
+import { HEADER , OPERATION_TYPE , OPERATION_TYPE_PREFIX } from './constant';
 
 /**
  * Returns the platform correlator if included in a request

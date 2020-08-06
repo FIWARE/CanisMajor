@@ -1,7 +1,7 @@
 
 import * as crypto from 'crypto';
-import { util_configuration } from '../config/config.json';
-import constant from '../config/constant';
+import { util_configuration } from '../configuration/config/config.json';
+import constant from '../utils/constant';
 
 // resolver to be written correctly
 const  encrypt = (input) => {

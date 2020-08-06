@@ -1,4 +1,4 @@
-import { HEADER } from '../config/constant';
+import { HEADER } from '../utils/constant';
 
 class HeaderValidators {
   /**

@@ -1,0 +1,71 @@
+version: '3.7'
+
+services:
+    # context broker service
+    orion:
+      image: fiware/orion:2.4.0
+      hostname: orion
+      container_name: fiware-orion
+      depends_on:
+        - mongo-db
+      networks:
+        - default
+      expose:
+        - "1026"
+      ports:
+        - "1026:1026" # localhost:1026
+      command: -dbhost mongo-db -logLevel DEBUG
+      entrypoint: ["/usr/bin/contextBroker","-fg", "-multiservice", "-ngsiv1Autocast", "-corsOrigin='__ALL'", "-httpTimeout='1000'" ]
+      healthcheck:
+        test: curl --fail -s http://orion:1026/version || exit 1
+  
+  # Database
+    mongo-db:
+      image: mongo:3.6
+      hostname: mongo-db
+      container_name: db-mongo
+      expose:
+        - "27017"
+      ports:
+        - "27017:27017" # localhost:27017
+      networks:
+        - default
+      command: --bind_ip_all --smallfiles
+      volumes:
+        - mongo-db:/data
+  
+  # canis major service
+    canis-major:
+      build: .
+      container_name: canis-major
+      hostname: canis-major
+      ports:
+        - 3000:3000
+      volumes:
+        - ./configurations/config:/app/src/configuration/config
+        - ./configurations/abi:/app/src/configurations/abi
+      environment:
+        - PORT=3000 # http://localhost:3000
+      networks: 
+        - default
+  
+  # json-rpc client
+    ganache:
+        image: trufflesuite/ganache-cli
+        container_name: ganache
+        hostname: ganache
+        ports:
+          - 8545:8545
+        networks:
+        - default
+        
+#  volumes 
+volumes:
+  mongo-db: ~
+  
+# network
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.19.1.0/24

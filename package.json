@@ -2,13 +2,13 @@
   "name": "canismajor",
   "version": "0.0.1",
   "scripts": {
-    "start": "nodemon --exec babel-node src/bin/www --verbose",
+    "start": "babel-node src/utils/yaml-utils.js && babel-node src/utils/abi-utils.js && nodemon --exec babel-node src/bin/www --verbose",
     "build": "rm -rf dist && babel src --out-dir dist && babel src/bin/www --out-dir dist/ && mv dist/src/bin dist/bin && rm -rf dist/src && mkdir dist/config && cp src/config/config.json dist/config/config.json",
     "serve": "node dist/bin/www.js",
     "test": "NODE_ENV=test ./node_modules/mocha/bin/mocha tests --timeout 15000 --recursive --compilers js:babel-core/register"
   },
   "dependencies": {
-    "app-root-path": "^2.0.1",
+    "app-root-path": "^2.2.1",
     "body-parser": "^1.19.0",
     "cookie-parser": "~1.4.3",
     "cors": "^2.8.4",

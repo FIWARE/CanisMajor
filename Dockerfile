@@ -1,12 +1,10 @@
 # build environment
-FROM node:8
+FROM node:10
 
 WORKDIR /app
 COPY . /app
 
 RUN npm install
-
-RUN mv src/config/config.json.sample src/config/config.json
 
 EXPOSE 3000
 

@@ -2,11 +2,11 @@
     dlt_type: eth
     version: 0.1
     eth_configuration:
-      provider: http://localhost:8545
+      provider: http://ganache:8545
       default_gas: 0
       default_gasPrice: 40
       abi: ''
-      contract_address: '0x6f99d257e3e55e856e479ca20e834cbc81ce58d3'
+      contract_address: '0x78e2bcbf8b501c914ef492e936628965041f08eb'
       contextMapping:
         type: AgriProductType
         parameters:

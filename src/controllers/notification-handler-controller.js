@@ -1,6 +1,6 @@
 import { getContext } from '../utils/server-utils';
-import { DLT_TYPE, HEADER } from '../config/constant';
-import { dlt_type } from '../config/config.json';
+import { DLT_TYPE, HEADER } from '../utils/constant';
+import { dlt_type } from '../configuration/config/config.json';
 import EthTransactionController from './eth-controller';
 import IOTATransactionController from './iota-controller';
 

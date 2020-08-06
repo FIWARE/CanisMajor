@@ -1,9 +1,9 @@
-import { iota_configuration } from '../config/config.json';
+import { iota_configuration } from '../configuration/config/config.json';
 
 class IOTATransactionController {
     // web3 instance
     constructor() {
-        console.log(iota_configuration);
+        // console.log(iota_configuration);
     }
 
     processTransaction(context, authToken) {

@@ -1,5 +1,5 @@
 import { encrypt, decrypt } from '../helpers/crypto-resolve-helpers';
-import { HEADER } from '../config/constant';
+import { HEADER } from '../utils/constant';
 
 /*
 ** Middleware to authenicate headers and validate request

@@ -1,22 +1,25 @@
 import Web3 from 'web3';
+import fs from 'fs';
+import AppRoot from 'app-root-path';
 import { decrypt } from '../helpers/crypto-resolve-helpers';
-import { eth_configuration } from '../config/config.json';
-const contract_schema = require('../config/SimpleStorage.json');
+import { eth_configuration } from '../configuration/config/config.json';
+const contract_schema =  fs.readFileSync(AppRoot + '/src/configuration/abi/abi.json');
 
 class EthTransactionController {
     // web3 instance
     constructor() {
         this.web3 = new Web3();
+        this.contract_schema = JSON.parse(contract_schema);
         this.web3.setProvider(`${eth_configuration.provider}`);
         try {
-            if (!contract_schema.abi || 
-                !contract_schema.contractName ||
-                !contract_schema.networks){
+            if (!this.contract_schema.abi || 
+                !this.contract_schema.contractName ||
+                !this.contract_schema.networks){
                 throw new Error(`The provided contract JSON is missing the 'abi', 
                 'contractName', 'networks' keys.  
                 Are you sure you're using the build artifact produced by truffle compile?`);
             }
-        this.contract = new this.web3.eth.Contract(contract_schema.abi, eth_configuration.contract_address);
+        this.contract = new this.web3.eth.Contract(this.contract_schema.abi, eth_configuration.contract_address);
         } catch (err) {
             this.contract =null;
             console.log(err);

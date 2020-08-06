@@ -2,7 +2,8 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-const serviceRoutes = require( './routes/service-routes');
+import serviceRoutes from './routes/service-routes';
+
 var app = express();
 
 app.use(cors());
