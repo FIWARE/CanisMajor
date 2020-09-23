@@ -13,7 +13,7 @@ router.get('/version',
 
 router.post('/notify',
   tokenValidator.validate,
-  headerValidator.validate,
+  // headerValidator.validate,
   notificationHandlerController.notificationHandler.bind(notificationHandlerController)
 );
 
