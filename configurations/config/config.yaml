@@ -6,7 +6,7 @@
       default_gas: 0
       default_gasPrice: 40
       abi: ''
-      contract_address: '0x2ca60e3cb4d495a8c0607bdaafd02b09481c76c3'
+      contract_address: '0x5b85a350b3399c50830fa89059870ccd0cf1c296'
       contextMapping:
         type: AgriProductType
         parameters:
