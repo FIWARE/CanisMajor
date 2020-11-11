@@ -30,7 +30,7 @@ router.get('/health',
 
 router.post('/v2/notify',
   tokenValidator.validate,
-  // headerValidator.validate,
+  headerValidator.validate,
   notificationHandlerController.notificationHandler.bind(notificationHandlerController)
 );
 
