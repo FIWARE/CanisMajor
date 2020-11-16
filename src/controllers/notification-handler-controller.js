@@ -17,6 +17,7 @@ class NotificationHandlerController {
     request.canismajor = request.canismajor || {};
     request.canismajor.context = getContext(request);
     const authToken = request.headers[HEADER.X_AUTH_TOKEN];
+    console.log('request data'+ JSON.stringify(contextResponses));
     const contextResponses = request.body.data;
     if (contextResponses && Array.isArray(contextResponses)) {
       await this.processNotification(recvTime, authToken, contextResponses, response);

@@ -4,6 +4,8 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import serviceRoutes from './routes/service-routes';
 
+
+
 var app = express();
 
 app.use(cors());
@@ -38,7 +40,7 @@ app.use(function(err, req, res, next) {
   if (err.status == 404) {
     errorMessage = {
       "success": false,
-      "message": "page_not_found"
+      "message": "not_found"
      }
   }
   if (err.status == 401) {

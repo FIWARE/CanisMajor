@@ -1,6 +1,6 @@
-import generalErrors from '../services/error-services/general-errors';
-import objectFactory from '../services/filtering-services/object-factory';
-import paginationOptions from '../services/filtering-services/pagination-options';
+import generalErrors from '../services/errors/general-errors';
+import objectFactory from '../services/filters/object-factory';
+import paginationOptions from '../services/filters/pagination-options';
 
 export default class BaseCRUDController {
   constructor() {
@@ -117,7 +117,7 @@ export default class BaseCRUDController {
       })
       .catch(err => {
         if (err.name === 'SequelizeForeignKeyConstraintError') {
-          err.message = 'has_coach_attached';
+          err.message = 'SequelizeForeignKeyConstraintError';
           err.status = 400;
 
           return next(err);

@@ -9,8 +9,8 @@ class VersionHandlerController {
  */
   getVerionHandler(request, response) {
     let message = {};
-     message.version = getVersion().version;
-     message.name = getName().name;
+    message.name = getName().name;
+    message.version = getVersion().version;
     return response.jsonp(message);
   }
 }
