@@ -10,8 +10,14 @@ const router = express.Router();
 
 
 // service info
+//version
 router.get('/version',
   versionHandlerController.getVerionHandler.bind(versionHandlerController)
+);
+
+// health
+router.get('/health',
+  versionHandlerController.getHealthStatus.bind(versionHandlerController)
 );
 
 
@@ -28,6 +34,7 @@ router.get(
   '/config/:id([0-9]+)',
   configHandlerController.oneSpecifiedEntry.bind(configHandlerController)
 );
+
 
 //create configuration
 router.post(

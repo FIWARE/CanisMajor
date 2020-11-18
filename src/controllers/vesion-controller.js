@@ -13,6 +13,13 @@ class VersionHandlerController {
     message.version = getVersion().version;
     return response.jsonp(message);
   }
+
+  getHealthStatus(request, response) {
+    let message = {};
+    message.name = 'implementation pending';
+    message.version = 'implementation pending';
+    return response.jsonp(message);
+  }
 }
 
 export default new VersionHandlerController();

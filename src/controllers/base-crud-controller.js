@@ -1,3 +1,4 @@
+import { json } from 'body-parser';
 import generalErrors from '../services/errors/general-errors';
 import objectFactory from '../services/filters/object-factory';
 import paginationOptions from '../services/filters/pagination-options';
@@ -80,10 +81,10 @@ export default class BaseCRUDController {
   updateEntry(req, res, next) {
     return this.repository.findOneById(req.params.id)
       .then(entry => {
+        
         if(entry) {
-          return this.repository.update(entry, req.body);
+          return this.repository.update(req.params.id, entry, req.body);
         }
-
         generalErrors.notFound();
       })
       .then(updatedEntry => {
