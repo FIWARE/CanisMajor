@@ -6,6 +6,7 @@ import paginationValidator from '../validators/pagination-validators';
 import versionHandlerController from '../controllers/vesion-controller';
 // import notificationHandlerController from '../controllers/notification-handler-controller';
 import configHandlerController from '../controllers/config-controller';
+import EntityHandlerController from '../controllers/entity-crud-controller';
 const router = express.Router();
 
 
@@ -29,11 +30,19 @@ router.get(
   configHandlerController.allEntries.bind(configHandlerController)
 );
 
+router.get(
+  '/entity',
+  paginationValidator.middleware,
+  EntityHandlerController.allEntries.bind(EntityHandlerController)
+);
+
 //get configuration byId
 router.get(
   '/config/:id([0-9]+)',
   configHandlerController.oneSpecifiedEntry.bind(configHandlerController)
 );
+
+
 
 
 //create configuration
@@ -42,6 +51,10 @@ router.post(
   configHandlerController.createEntry.bind(configHandlerController)
 );
 
+router.post(
+  '/entity',
+  EntityHandlerController.createEntry.bind(EntityHandlerController)
+);
 // update configuration
 router.put(
   '/config/:id([0-9]+)',

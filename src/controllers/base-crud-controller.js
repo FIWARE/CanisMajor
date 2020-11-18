@@ -1,4 +1,3 @@
-import { json } from 'body-parser';
 import generalErrors from '../services/errors/general-errors';
 import objectFactory from '../services/filters/object-factory';
 import paginationOptions from '../services/filters/pagination-options';
