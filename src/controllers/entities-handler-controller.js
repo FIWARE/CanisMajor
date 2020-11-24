@@ -36,9 +36,7 @@ class EntitiesHandlerController{
     EntityCRUDController.createEntry(request, response, next);
 
     //Request Forwarded to Context Broker - {/POST} Create Entity
-
     //Return creation status to user
-
     return fowardRequestToOrion(request, response);
   }
 

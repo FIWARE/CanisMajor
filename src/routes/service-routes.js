@@ -14,9 +14,7 @@ import typesHandlerController from '../controllers/types-handler-controller';
 
 const router = express.Router();
 
-
 //*******META*******
-
 
 //Returns the List of API's available in CanisMajor
 router.get('/v2/',
