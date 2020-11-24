@@ -5,8 +5,8 @@ class EntitiesRepository extends BaseCRUDRepository {
   constructor() {
     super();
     this.model = db.entities;
-    this.createFields = ['entityId'];
-    this.updateFields = ['entityId'];
+    this.createFields = ['entityId', 'txDetails'];
+    this.updateFields = ['entityId', 'txDetails'];
   }
 }
 

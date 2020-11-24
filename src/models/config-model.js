@@ -9,10 +9,22 @@ module.exports = function(sequelize, DataTypes) {
     primaryKey: true,
     allowNull: false
   },
-  data: {
+  contextType: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  dlt_config: {
     type: DataTypes.JSON,
     allowNull: false,
   },
+  contextMapping: {
+    type: DataTypes.JSON,
+    allowNull: false,
+  },
+  meta: {
+    type: DataTypes.JSON,
+    allowNull: true
+  }
 }, {
   tableName: 'configs',
   validate: {

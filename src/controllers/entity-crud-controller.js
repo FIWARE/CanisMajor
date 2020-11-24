@@ -5,6 +5,7 @@ class EntityController extends BaseCRUDController {
   constructor() {
     super();
     this.repository = EntityRepository;
+    this.filters = ['entityId'];
   }
 }
 

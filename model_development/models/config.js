@@ -15,7 +15,10 @@ module.exports = (sequelize, DataTypes) => {
   };
   config.init({
     id: DataTypes.INTEGER,
-    data: DataTypes.JSON
+    contextType: DataTypes.STRING,
+    dlt_config: DataTypes.JSON,
+    contextMapping: DataTypes.JSON,
+    meta: DataTypes.JSON
   }, {
     sequelize,
     modelName: 'config',

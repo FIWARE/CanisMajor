@@ -9,7 +9,8 @@ module.exports = {
         FIWARE_SERVICE_PATH: 'fiware-servicepath',
         FIWARE_TOTAL_COUNT: 'fiware-total-count',
         X_REAL_IP: 'x-real-ip',
-        X_AUTH_TOKEN: 'x-auth-token'
+        X_AUTH_TOKEN: 'x-auth-token',
+        X_ETH_PUBLIC_ADDRESS: 'x-eth-public-address'
     },
     OPERATION_TYPE_PREFIX: 'OPS_CM_',
     OPERATION_TYPE: {
@@ -24,7 +25,6 @@ module.exports = {
         SERVER_STOP: 'OPS_CM_SERVER_STOP'
     },
     DLT_TYPE: {
-        ETH: 'eth',
-        IOTA: 'iota'
+        ETH: 'eth'
     }
 }

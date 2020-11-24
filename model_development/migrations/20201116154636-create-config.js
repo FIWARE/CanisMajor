@@ -8,8 +8,18 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      data: {
+      contextType: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
+      dlt_config: {
         type: Sequelize.JSON
+      },
+      contextMapping: {
+        type: Sequelize.JSON
+      },
+      meta: {
+        type: Sequelize.JSON 
       },
       createdAt: {
         allowNull: false,

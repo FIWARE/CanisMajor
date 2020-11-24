@@ -11,6 +11,9 @@ module.exports = {
       entityId: {
         type: Sequelize.STRING
       },
+      txDetails: {
+        type: Sequelize.JSON
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
