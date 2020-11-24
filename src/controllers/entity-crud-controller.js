@@ -8,4 +8,4 @@ class EntityController extends BaseCRUDController {
   }
 }
 
-export default new EntityController();
+export default new EntityCRUDController();

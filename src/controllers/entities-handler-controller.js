@@ -3,6 +3,8 @@ import { DLT_TYPE, HEADER } from '../utils/constant';
 import { dlt_type } from '../configuration/config/config.json';
 import EthTransactionController from './eth-controller';
 import IOTATransactionController from './iota-controller';
+import EntityCRUDController from '/entity-crud-controller';
+
 
 class EntitiesHandlerController{
   /**
@@ -27,6 +29,39 @@ class EntitiesHandlerController{
       return response.jsonp(err);
     }
 
+  }
+
+  createEntity(request, response, next){
+    //store the entityId, payload
+    EntityCRUDController.createEntry(request, response, next);
+
+    //Request Forwarded to Context Broker - {/POST} Create Entity
+
+    //Return creation status to user
+
+    return fowardRequestToOrion(request, response);
+  }
+
+  fowardRequestToOrion(request, response){
+    const request = require("request");
+
+    const options = {
+        method: "POST",
+        url: "http://localhost:1026/v2/entities/",
+        body: request.body,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+    };
+
+    request.post(options, (err, res, body) => {
+        if (err) {
+            throw new Error(error);
+        }
+        console.log(`Status: ${res.statusCode}`);
+        console.log(body);
+        return res;
+    });
   }
 
 
