@@ -8,8 +8,6 @@ import transactionHandlerController from '../controllers/transaction-handler-con
 import configHandlerController from '../controllers/config-controller';
 import EntityHandlerController from '../controllers/entity-crud-controller';
 const router = express.Router();
-
-
 // service info
 //version
 router.get('/version',
@@ -66,6 +64,7 @@ router.delete(
   '/config/:id([0-9]+)',
   configHandlerController.deleteEntry.bind(configHandlerController)
 );
+
 
 
 router.post('/notify',
