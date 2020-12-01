@@ -10,8 +10,12 @@ module.exports = function(sequelize, DataTypes) {
     allowNull: false
   },
   entityId: {
-    type: DataTypes.JSON,
+    type: DataTypes.STRING,
     allowNull: false,
+  },
+  txDetails: {
+    type: DataTypes.JSON,
+    allowNull: true
   },
 }, {
   tableName: 'entities',

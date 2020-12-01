@@ -5,7 +5,7 @@ class ConfigController extends BaseCRUDController {
   constructor() {
     super();
     this.repository = ConfigRepository;
-    // this.filters = ['id'];
+    this.filters = ['contextType'];
   }
 }
 

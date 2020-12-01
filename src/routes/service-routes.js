@@ -4,6 +4,9 @@ import tokenValidator from '../validators/token-validators';
 import headerValidator from '../validators/header-validators';
 import paginationValidator from '../validators/pagination-validators';
 import versionHandlerController from '../controllers/vesion-controller';
+
+import transactionHandlerController from '../controllers/transaction-handler-controller';
+
 import configHandlerController from '../controllers/config-controller';
 import EntityCRUDController from '../controllers/entity-crud-controller';
 import entitiesHandlerController from '../controllers/entities-handler-controller';
@@ -14,12 +17,14 @@ import typesHandlerController from '../controllers/types-handler-controller';
 
 const router = express.Router();
 
+
 //*******META*******
 
 //Returns the List of API's available in CanisMajor
 router.get('/v2/',
   versionHandlerController.getVerionHandler.bind(versionHandlerController)
 );
+
 
 // service info
 //version
@@ -98,5 +103,11 @@ router.post('/v2/createEntity',
 //   // headerValidator.validate,
 //   subscriptionHandlerController.subscriptionHandler.bind(subscriptionHandlerController)
 // );
+
+router.post('/notify',
+  tokenValidator.validate,
+  headerValidator.validate,
+  transactionHandlerController.transactionResolve.bind(transactionHandlerController)
+);
 
 module.exports = router;

@@ -30,42 +30,42 @@ app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-  if (err.status == 403) {
-    errorMessage = {
-      "success": false,
-      "message": "access_forbidden"
-    }
-  }
+  // if (err.status == 403) {
+  //   errorMessage = {
+  //     "success": false,
+  //     "message": "access_forbidden"
+  //   }
+  // }
 
-  if (err.status == 404) {
-    errorMessage = {
-      "success": false,
-      "message": "not_found"
-     }
-  }
-  if (err.status == 401) {
-    errorMessage = {
-      "success": false,
-      "message": err.message ? err.message : 'Unauthorized'
-     }
-  }
-  if (err.status == 400) {
-    errorMessage = {
-      "success": false,
-      "message": err.message ? err.message : 'bad_request',
-      "processorResponseCode": err.processorResponseCode
-        ? err.processorResponseCode
-        : undefined
-     }
-  }
-  if(err.status == 500) {
-    errorMessage = {
-      "success": false,
-      "message": err.message ? err.message : 'internal_server_error',
-    }
-  }
-  // render the error page
-  res.status(err.status || 500);
+  // if (err.status == 404) {
+  //   errorMessage = {
+  //     "success": false,
+  //     "message": "not_found"
+  //    }
+  // }
+  // if (err.status == 401) {
+  //   errorMessage = {
+  //     "success": false,
+  //     "message": err.message ? err.message : 'Unauthorized'
+  //    }
+  // }
+  // if (err.status == 400) {
+  //   errorMessage = {
+  //     "success": false,
+  //     "message": err.message ? err.message : 'bad_request',
+  //     "processorResponseCode": err.processorResponseCode
+  //       ? err.processorResponseCode
+  //       : undefined
+  //    }
+  // }
+  // if(err.status == 500) {
+  //   errorMessage = {
+  //     "success": false,
+  //     "message": err.message ? err.message : 'internal_server_error',
+  //   }
+  // }
+  // // render the error page
+  // res.status(err.status || 500);
   if (err && !err.status) {
     res.jsonp({success: false});
   } else {
