@@ -32,25 +32,9 @@ class EntitiesHandlerController{
 
   createEntity(request, response, next){
     //store the entityId, payload
-    EntityCRUDController.createEntry(request, response, next);
+    //EntityCRUDController.createEntry(request, response, next);
 
     //Request Forwarded to Context Broker - {/POST} Create Entity
-    redirRequest(request, response);
-
-    //Return creation status to user
-
-    return next(err);
-  }
-
-  redirRequest(req, res) {
-    //redirRequest(req, res, userInfo) {
-    // if (userInfo) {
-    //   log.info('Access-token OK. Redirecting to app...');
-    // } else {
-    //   log.info('Public path. Redirecting to app...');
-    // }
-
-    //const protocol = config.app.ssl ? 'https' : 'http';
     const protocol = 'http';
 
     const options = {
@@ -58,14 +42,19 @@ class EntitiesHandlerController{
       //port: config.app.port,
       //"http://localhost:1026/v2/entities/"      
       host: 'localhost', 
-      port: '1026',
-      path: '/v2/entities/',
-      method: 'POST',
-      headers: proxy.getClientIp(req, req.headers),
+      port: '4000',
+      path: '/version',
+      method: 'GET',
+      //headers: proxy.getClientIp(request, request.headers),
     };
-    proxy.sendData(protocol, options, req.body, res);
 
-  }; 
+    console.log(request.body);
+    
+    proxy.sendData(protocol, options, request.body, response);
+    return response;
+
+  }
+
 
   // fowardRequestToOrion(request, response){
   //   const request = require("request");

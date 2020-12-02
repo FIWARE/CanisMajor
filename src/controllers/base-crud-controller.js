@@ -67,7 +67,6 @@ export default class BaseCRUDController {
     return this.repository.create(req.body)
       .then(entry => {
         res.jsonp(entry);
-
         return null;
       })
       .catch(err => {
