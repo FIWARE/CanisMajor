@@ -35,6 +35,7 @@ router.get('/version',
 // health
 router.get('/health',
   versionHandlerController.getHealthStatus.bind(versionHandlerController)
+);
 
 //*******CONFIG*******
 
@@ -82,11 +83,11 @@ router.delete('/v2/types/:entityType',
 
 router.get( '/entity',
   paginationValidator.middleware,
-  EntityCRUDController.allEntries.bind(EntityHandlerController)
+  EntityCRUDController.allEntries.bind(EntityCRUDController)
 );
 
 router.post( '/entity',
-  EntityCRUDController.createEntry.bind(EntityHandlerController)
+  EntityCRUDController.createEntry.bind(EntityCRUDController)
 );
 
 
