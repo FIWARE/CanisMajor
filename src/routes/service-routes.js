@@ -94,16 +94,10 @@ router.post( '/entity',
 //*******REQUEST*******
 
 router.post('/v2/createEntity',
-  tokenValidator.validateKeyRock,
+  tokenValidator.validate,
   headerValidator.validate,
   entitiesHandlerController.createEntity.bind(entitiesHandlerController)
 );
-
-// router.post('/v2/subscribe',
-//   tokenValidator.validate,
-//   // headerValidator.validate,
-//   subscriptionHandlerController.subscriptionHandler.bind(subscriptionHandlerController)
-// );
 
 router.post('/notify',
   tokenValidator.validate,

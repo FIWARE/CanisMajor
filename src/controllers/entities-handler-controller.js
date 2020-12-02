@@ -38,6 +38,8 @@ class EntitiesHandlerController{
     redirRequest(request, response);
 
     //Return creation status to user
+
+    return next(err);
   }
 
   redirRequest(req, res) {
@@ -57,11 +59,12 @@ class EntitiesHandlerController{
       //"http://localhost:1026/v2/entities/"      
       host: 'localhost', 
       port: '1026',
-      path: req.url,
-      method: req.method,
+      path: '/v2/entities/',
+      method: 'POST',
       headers: proxy.getClientIp(req, req.headers),
     };
     proxy.sendData(protocol, options, req.body, res);
+
   }; 
 
   // fowardRequestToOrion(request, response){
