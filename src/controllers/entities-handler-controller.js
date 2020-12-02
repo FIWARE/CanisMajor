@@ -4,6 +4,7 @@ import { dlt_type } from '../configuration/config/config.json';
 import EthTransactionController from './eth-controller';
 import IOTATransactionController from './iota-controller';
 import EntityCRUDController from '/entity-crud-controller';
+const proxy = require('../utils/HTTPClient.js');
 
 
 class EntitiesHandlerController{
@@ -36,31 +37,56 @@ class EntitiesHandlerController{
     EntityCRUDController.createEntry(request, response, next);
 
     //Request Forwarded to Context Broker - {/POST} Create Entity
+    redirRequest(request, response);
+
     //Return creation status to user
-    return fowardRequestToOrion(request, response);
   }
 
-  fowardRequestToOrion(request, response){
-    const request = require("request");
+  redirRequest(req, res) {
+    //redirRequest(req, res, userInfo) {
+    // if (userInfo) {
+    //   log.info('Access-token OK. Redirecting to app...');
+    // } else {
+    //   log.info('Public path. Redirecting to app...');
+    // }
+
+    //const protocol = config.app.ssl ? 'https' : 'http';
+    const protocol = 'http';
 
     const options = {
-        method: "POST",
-        url: "http://localhost:1026/v2/entities/",
-        body: request.body,
-        headers: {
-          'Content-Type': 'application/json'
-        }
+      //host: config.app.host, 
+      //port: config.app.port,
+      //"http://localhost:1026/v2/entities/"      
+      host: 'localhost', 
+      port: '1026',
+      path: req.url,
+      method: req.method,
+      headers: proxy.getClientIp(req, req.headers),
     };
+    proxy.sendData(protocol, options, req.body, res);
+  }; 
 
-    request.post(options, (err, res, body) => {
-        if (err) {
-            throw new Error(error);
-        }
-        console.log(`Status: ${res.statusCode}`);
-        console.log(body);
-        return res;
-    });
-  }
+  // fowardRequestToOrion(request, response){
+  //   const request = require("request");
+
+  //   const options = {
+  //       method: "POST",
+  //       url: "http://localhost:1026/v2/entities/",
+  //       body: request.body,
+  //       headers: {
+  //         'Content-Type': 'application/json'
+  //       }
+  //   };
+
+  //   request.post(options, (err, res, body) => {
+  //       if (err) {
+  //           throw new Error(error);
+  //       }
+  //       console.log(`Status: ${res.statusCode}`);
+  //       console.log(body);
+  //       return res;
+  //   });
+  // }
 
 
 }
