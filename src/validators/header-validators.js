@@ -1,4 +1,4 @@
-import { HEADER } from '../utils/constant';
+import { CONSTANTS } from '../configuration/config';
 
 class HeaderValidators {
   /**
@@ -9,17 +9,17 @@ class HeaderValidators {
    * @return {*} This function does not return anything of interest
    */
   validate(request, response, next) {
-    if (!request.headers[HEADER.FIWARE_SERVICE]) {
-      var err = new Error();
+    if (!request.headers[CONSTANTS.HEADER.FIWARE_SERVICE]) {
+      const err = new Error();
       err.status = 403;
-      err.message = 'child "' + HEADER.FIWARE_SERVICE + '" fails because [' +
-        HEADER.FIWARE_SERVICE + ' is required]';
+      err.message = 'child "' + CONSTANTS.HEADER.FIWARE_SERVICE + '" fails because [' +
+      CONSTANTS.HEADER.FIWARE_SERVICE + ' is required]';
       return response.jsonp(err);
-    } else if (!request.headers[HEADER.FIWARE_SERVICE_PATH]) {
-      var err = new Error();
+    } else if (!request.headers[CONSTANTS.HEADER.FIWARE_SERVICE_PATH]) {
+      const err = new Error();
       err.status = 403;
-      err.message = 'child "' + HEADER.FIWARE_SERVICE_PATH + '" fails because [' +
-        HEADER.FIWARE_SERVICE_PATH + ' is required]';
+      err.message = 'child "' + CONSTANTS.HEADER.FIWARE_SERVICE_PATH + '" fails because [' +
+      CONSTANTS.HEADER.FIWARE_SERVICE_PATH + ' is required]';
       return response.jsonp(err);
     }
     return next();

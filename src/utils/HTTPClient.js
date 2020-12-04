@@ -1,30 +1,23 @@
-const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
-
+import {XMLHttpRequest } from 'xmlhttprequest';
 //const log = require('./logger').logger.getLogger("HTTP-Client");
 
-exports.getClientIp = function(req, headers) {
-  const ipAddress = req.connection.remoteAddress;
+const getClientIp = (req, headers) => {
+    const ipAddress = req.connection.remoteAddress;
+    let forwardedIpsStr = req.header('x-forwarded-for');
+    if (forwardedIpsStr) {
+      // 'x-forwarded-for' header may return multiple IP addresses in
+      // the format: "client IP, proxy 1 IP, proxy 2 IP" so take the
+      // the first one
+      forwardedIpsStr += "," + ipAddress;
+    } else {
+      forwardedIpsStr = String(ipAddress);
+    }
+    headers['x-forwarded-for'] = forwardedIpsStr;
+    return headers;
+}
 
-  let forwardedIpsStr = req.header('x-forwarded-for');
-
-  if (forwardedIpsStr) {
-    // 'x-forwarded-for' header may return multiple IP addresses in
-    // the format: "client IP, proxy 1 IP, proxy 2 IP" so take the
-    // the first one
-    forwardedIpsStr += "," + ipAddress;
-  } else {
-    forwardedIpsStr = String(ipAddress);
-  }
-
-  headers['x-forwarded-for'] = forwardedIpsStr;
-
-  return headers;
-};
-
-
-exports.sendData = function(protocol, options, data, res, callBackOK, callbackError) {
+const sendData = (protocol, options, data, res, callBackOK, callbackError) => {
     options.headers = options.headers || {};
-
     callbackError = callbackError || function(status, resp) {
         //log.error("Error: ", status, resp);
         res.statusCode = status;
@@ -39,7 +32,6 @@ exports.sendData = function(protocol, options, data, res, callBackOK, callbackEr
         //log.debug(" Body: ", resp);
         res.send(resp);
     };
-
     const url = protocol + "://" + options.host + ":" + options.port + options.path;
     const xhr = new XMLHttpRequest();
     xhr.open(options.method, url, true);
@@ -55,9 +47,10 @@ exports.sendData = function(protocol, options, data, res, callBackOK, callbackEr
                  break;
             case "referer":
                  break;
-//            case "accept-encoding":
-//            case "accept-charset":
-//            case "cookie":
+            case "accept-encoding":
+            case "accept-charset":
+            case "cookie":
+            case "content-length":
             case "content-type":
                  break;
             case "origin":
@@ -114,4 +107,9 @@ exports.sendData = function(protocol, options, data, res, callBackOK, callbackEr
             
         }
     }
+}
+
+export {
+    getClientIp,
+    sendData
 }

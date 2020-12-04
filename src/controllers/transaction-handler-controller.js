@@ -1,6 +1,7 @@
-import { HEADER, DLT_TYPE } from '../utils/constant';
+import { CONSTANTS } from '../configuration/config';
 import EthTransactionController from './eth-controller';
 import ConfigRepository from '../repositories/config-repository';
+import EntityRepository from '../repositories/entity-repository';
 
 class TransactionHandlerController {
   /**
@@ -9,21 +10,32 @@ class TransactionHandlerController {
    * @param {Object}   response The response
    * @param {Object}   next The next
    */
-  async transactionResolve(request, response, next ) {
-    const authToken = request.headers[HEADER.X_ETH_PUBLIC_ADDRESS];
-    const contextResponses = request.body;
+  async transactionResolve(request, response, next) {
+    const authToken = request.headers[CONSTANTS.HEADER.X_ETH_PUBLIC_ADDRESS];
+    const contextResponses = Buffer.isBuffer(request.body) ? JSON.parse(request.body.toString()): request.body;
+    console.log(authToken);
+    console.log(JSON.stringify(contextResponses));
     if (!contextResponses || contextResponses == null) {
       let err = new Error();
       err.status = 403;
       err.message = 'request body missing';
       return response.json(err);
     }
-    // find all config with type
-    ConfigRepository.fintAllCountAllByContextType(contextResponses.type).then((result) => {
+
+
+    EntityRepository.create({entityId : contextResponses.id}).then((result) => {
+      return result;
+    }).then(() => {
+      // find all config with type
+      return  ConfigRepository.fintAllCountAllByContextType(contextResponses.type);
+    }).then((result) => {
       // console.log(JSON.stringify(result, 4));
       result.rows.forEach(async data => {
         await this.transactionProcess(data, contextResponses, authToken, response);
       });
+    }).catch((err) => {
+      // update the entity in error
+      // EntityRepository.
     })
   }
 
@@ -38,11 +50,7 @@ class TransactionHandlerController {
       err.status = 403;
       err.message = error;
       return response.json(err);
-    }); 
-  }
-
-  storeEntity() {
-
+    });
   }
 
   async confirmRequestStatusCB() {
@@ -54,13 +62,13 @@ class TransactionHandlerController {
   }
 
   async dltConfigResolver(data) {
-    if (data.dlt_config.dlt_type == DLT_TYPE.ETH) {
+    if (data.dlt_config.dlt_type == CONSTANTS.DLT_TYPE.ETH) {
       delete data.dlt_config["dlt_type"];
       return data.dlt_config;
     } else {
       var err = new Error();
       err.status = 403;
-      err.message = `DLT Type should be ${DLT_TYPE.ETH}`;
+      err.message = `DLT Type should be ${CONSTANTS.DLT_TYPE.ETH}`;
       return response.json(err);
     }
   }
@@ -75,7 +83,7 @@ class TransactionHandlerController {
             values.push(data[params].value);
           }
         });
-        obj.push({method: key, value: values});
+        obj.push({ method: key, value: values });
       })
     });
     return obj;

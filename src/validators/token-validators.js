@@ -1,5 +1,4 @@
-// import { encrypt, decrypt } from '../helpers/crypto-resolve-helpers';
-import { HEADER } from '../utils/constant';
+import { CONSTANTS } from '../configuration/config';
 
 /*
 ** Middleware to authenicate headers and validate request
@@ -8,19 +7,19 @@ import { HEADER } from '../utils/constant';
 class TokenValidators {
   validate(request, response, next) {
     // fetch auth token
-    const publicAddress = request.headers[HEADER.X_ETH_PUBLIC_ADDRESS];
+    const publicAddress = request.headers[CONSTANTS.HEADER.X_ETH_PUBLIC_ADDRESS];
     if (!publicAddress) {
-      var err = new Error();
+      const err = new Error();
       err.status = 403;
-      err.message = 'child "' + HEADER.X_ETH_PUBLIC_ADDRESS + '" fails because [' +
-      HEADER.X_ETH_PUBLIC_ADDRESS + ' is required]';
+      err.message = 'child "' + CONSTANTS.HEADER.X_ETH_PUBLIC_ADDRESS + '" fails because [' +
+      CONSTANTS.HEADER.X_ETH_PUBLIC_ADDRESS + ' is required]';
       return next(err);
     }
     if (typeof publicAddress == undefined || publicAddress == null || publicAddress == '') {
-      var err = new Error();
+      const err = new Error();
       err.status = 403;
-      err.message = 'child "' + HEADER.X_ETH_PUBLIC_ADDRESS + '" fails because [' +
-      HEADER.X_ETH_PUBLIC_ADDRESS + ' is required]';
+      err.message = 'child "' + CONSTANTS.HEADER.X_ETH_PUBLIC_ADDRESS + '" fails because [' +
+      CONSTANTS.HEADER.X_ETH_PUBLIC_ADDRESS + ' is required]';
       return response.jsonp(err);
     }
     return next();

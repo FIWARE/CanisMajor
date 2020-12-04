@@ -1,78 +1,51 @@
 import express from 'express';
-import cookieParser from 'cookie-parser';
-import bodyParser from 'body-parser';
-import cors from 'cors';
+import { proxy } from './routes/proxy';
 import serviceRoutes from './routes/service-routes';
 
+const app = express();
+
+app.use((req, res, next) => {
+  const bodyChunks = [];
+  req.on('data', function (chunk) {
+    bodyChunks.push(chunk);
+  });
+  req.on('end', function () {
+    if (bodyChunks.length > 0) {
+      req.body = Buffer.concat(bodyChunks);
+    }
+    next();
+  });
+});
+
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'HEAD, POST, PUT, GET, OPTIONS, DELETE');
+  res.header('Access-Control-Allow-Headers', 'origin, content-type, X-Auth-Token, Tenant-ID, Authorization, Fiware-Service, Fiware-ServicePath, x-eth-public-address');
+  if (req.method === 'OPTIONS') {
+    res.statusCode = 200;
+    res.header('Content-Length', '0');
+    res.send();
+    res.end();
+  } else {
+    next();
+  }
+});
 
 
-var app = express();
+app.use('/cm', serviceRoutes);
 
-app.use(cors());
-app.options('*', cors());
+app.use((req, res, next) => {
+  if (req.path != '@(?=cm)') {
+    proxy(req, res, next);
+  }
+})
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-
-app.use('/', serviceRoutes);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
 
-// error handler
-app.use(function(err, req, res, next) {
-  let errorMessage = err;
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-  // if (err.status == 403) {
-  //   errorMessage = {
-  //     "success": false,
-  //     "message": "access_forbidden"
-  //   }
-  // }
-
-  // if (err.status == 404) {
-  //   errorMessage = {
-  //     "success": false,
-  //     "message": "not_found"
-  //    }
-  // }
-  // if (err.status == 401) {
-  //   errorMessage = {
-  //     "success": false,
-  //     "message": err.message ? err.message : 'Unauthorized'
-  //    }
-  // }
-  // if (err.status == 400) {
-  //   errorMessage = {
-  //     "success": false,
-  //     "message": err.message ? err.message : 'bad_request',
-  //     "processorResponseCode": err.processorResponseCode
-  //       ? err.processorResponseCode
-  //       : undefined
-  //    }
-  // }
-  // if(err.status == 500) {
-  //   errorMessage = {
-  //     "success": false,
-  //     "message": err.message ? err.message : 'internal_server_error',
-  //   }
-  // }
-  // // render the error page
-  // res.status(err.status || 500);
-  if (err && !err.status) {
-    res.jsonp({success: false});
-  } else {
-    if(!isNaN(errorMessage.status)) {
-      delete errorMessage.status;
-    }
-    res.jsonp(errorMessage);
-  }
-});
 module.exports = app;
