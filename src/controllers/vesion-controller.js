@@ -14,6 +14,15 @@ class VersionHandlerController {
     return response.jsonp(message);
   }
 
+  //Returns the List of API's available in CanisMajor
+  getAPI(request, response) {
+    let message = {};
+    message.name = 'implementation pending';
+    message.version = 'implementation pending';
+    return response.jsonp(message);
+  }
+
+
   getHealthStatus(request, response) {
     let message = {};
     message.name = 'implementation pending';

@@ -9,7 +9,7 @@ class TransactionHandlerController {
    * @param {Object}   response The response
    * @param {Object}   next The next
    */
-  async transactionResolve(request, response, next) {
+  async transactionResolve(request, response, next ) {
     const authToken = request.headers[HEADER.X_ETH_PUBLIC_ADDRESS];
     const contextResponses = request.body;
     if (!contextResponses || contextResponses == null) {
