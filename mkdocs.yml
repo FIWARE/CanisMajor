@@ -1,0 +1,18 @@
+site_name: CanisMajor
+site_url: canismajor.readthedocs.io
+repo_url: https://github.com/FIWARE-Blockchain/CanisMajor/docs
+site_description: CanisMajor Documentation
+docs_dir: doc 
+site_dir: html
+edit_uri: edit/master/doc/
+markdown_extensions: [toc,fenced_code]
+use_directory_urls: false
+theme: readthedocs
+extra_css: ["https://www.fiware.org/style/fiware_readthedocs.css", "https://www.fiware.org/style/fiware_readthedocs_core.css"]
+google_analytics: ['', '']
+pages:
+    - Home: index.md
+    - 'Architecture': architecture.md
+    - 'Installation' : installation.md
+    - 'Usage': usage.md
+    - 'APIs': apis.md
