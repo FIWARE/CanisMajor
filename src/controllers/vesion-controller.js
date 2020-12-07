@@ -9,8 +9,24 @@ class VersionHandlerController {
  */
   getVerionHandler(request, response) {
     let message = {};
-     message.version = getVersion().version;
-     message.name = getName().name;
+    message.name = getName().name;
+    message.version = getVersion().version;
+    return response.jsonp(message);
+  }
+
+  //Returns the List of API's available in CanisMajor
+  getAPI(request, response) {
+    let message = {};
+    message.name = 'implementation pending';
+    message.version = 'implementation pending';
+    return response.jsonp(message);
+  }
+
+
+  getHealthStatus(request, response) {
+    let message = {};
+    message.name = 'implementation pending';
+    message.version = 'implementation pending';
     return response.jsonp(message);
   }
 }
