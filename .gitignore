@@ -40,7 +40,5 @@ npm-debug.log
 apidoc
 dist
 
-#lock file
-package-lock.json
 # general configuration file
 src/config/config.json
