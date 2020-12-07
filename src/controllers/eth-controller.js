@@ -100,6 +100,7 @@ class EthTransactionController {
             err.message = 'address in not defined or missing';
             return err;
         }
+        // multiple transaction queue
         // data.forEach((elements) => {
         //     let tx = this.write(elements.method, submitterAddress, elements.value);
         //     response.push(tx);
