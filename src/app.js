@@ -32,8 +32,10 @@ app.use((req, res, next) => {
 });
 
 
+// route prefix
 app.use('/cm', serviceRoutes);
 
+// routes without prefix (request forward to to proxy host)
 app.use((req, res, next) => {
   if (req.path != '@(?=cm)') {
     proxy(req, res, next);

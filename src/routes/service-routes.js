@@ -7,14 +7,13 @@ import paginationValidator from '../validators/pagination-validators';
 
 // CRUD Routes
 import versionHandlerController from '../controllers/vesion-controller';
-// import configHandlerController from '../controllers/config-controller';
+import configHandlerController from '../controllers/config-controller';
 // import EntityCRUDController from '../controllers/entity-crud-controller';
 
 // // transaction processor
 // import transactionHandlerController from '../controllers/transaction-handler-controller';
 
 const router = express.Router();
-
 
 //*******META*******
 //version
@@ -27,27 +26,27 @@ router.get('/health',
 );
 
 //*******CONFIG*******
-//create configuration
-// router.post( '/create',
-//   configHandlerController.createEntry.bind(configHandlerController)
-// );
-// //get all configuration
-// router.get('/config',
-//   paginationValidator.middleware,
-//   configHandlerController.allEntries.bind(configHandlerController)
-// );
-// //get configuration byId
-// router.get( '/config/:id([0-9]+)',
-//   configHandlerController.oneSpecifiedEntry.bind(configHandlerController)
-// );
-// // update configuration
-// router.put( '/config/:id([0-9]+)',
-//   configHandlerController.updateEntry.bind(configHandlerController)
-// );
-// // delete configuration
-// router.delete( '/config/:id([0-9]+)',
-//   configHandlerController.deleteEntry.bind(configHandlerController)
-// );
+// create configuration
+router.post( '/create',
+  configHandlerController.createEntry.bind(configHandlerController)
+);
+//get all configuration
+router.get('/config',
+  paginationValidator.middleware,
+  configHandlerController.allEntries.bind(configHandlerController)
+);
+//get configuration byId
+router.get( '/config/:id([0-9]+)',
+  configHandlerController.oneSpecifiedEntry.bind(configHandlerController)
+);
+// update configuration
+router.put( '/config/:id([0-9]+)',
+  configHandlerController.updateEntry.bind(configHandlerController)
+);
+// delete configuration
+router.delete( '/config/:id([0-9]+)',
+  configHandlerController.deleteEntry.bind(configHandlerController)
+);
 
 
 //*******QUERIES*******
