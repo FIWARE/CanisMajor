@@ -11,6 +11,7 @@ class EthTransactionController {
         this.web3 = new Web3();
         this.contract_schema = this.abi;
         this.web3.setProvider(`${this.endpoint}`);
+        console.log(configuration.abi);
         try {
             if (!this.contract_schema.abi || 
                 !this.contract_schema.contractName ||
@@ -101,11 +102,11 @@ class EthTransactionController {
             return err;
         }
         // multiple transaction queue
-        // data.forEach((elements) => {
-        //     let tx = this.write(elements.method, submitterAddress, elements.value);
-        //     response.push(tx);
-        // });
-        return this.write(data[0].method, submitterAddress, data[0].value);
+        data.forEach((elements) => {
+            let tx = this.write(elements.method, submitterAddress, elements.value);
+            response.push(tx);
+        });
+        // return this.write(data[0].method, submitterAddress, data[0].value);
         
     }
 }
