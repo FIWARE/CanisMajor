@@ -1,11 +1,11 @@
 import { CONSTANTS, CM_PROXY_APP_HOST, CM_PROXY_APP_PORT, CM_PROXY_HTTPS_ENABLED } from '../configuration/config';
-import EthTransactionController from './eth-controller';
-import ConfigRepository from '../repositories/config-repository';
-import EntityRepository from '../repositories/entity-repository';
+import EthereumService from '../service/eth-service';
+import ConfigRepository from '../repository/config-repository';
+import EntityRepository from '../repository/entity-repository';
 import * as fetch from 'node-fetch';
 import { StatusCodes } from 'http-status-codes';
 
-class TransactionHandlerController {
+class EthTransactionProcessor {
   /**
    * Handler of notification sent by the Context Broker
    * @param {Object}   request The request
@@ -14,7 +14,6 @@ class TransactionHandlerController {
    */
   async transactionResolve(request, response, next) {
 
-    const authToken = request.headers[CONSTANTS.HEADER.X_ETH_PUBLIC_ADDRESS];
     const contextResponses = Buffer.isBuffer(request.body) ? JSON.parse(request.body.toString()) : request.body;
     const proxyRequest = request.path.includes('/transaction') ? false : true;
 
@@ -25,6 +24,7 @@ class TransactionHandlerController {
       return response.status(StatusCodes.FORBIDDEN).jsonp(err);
     }
 
+    let ethPublicAddress;
     let entityModel;
     let configurations;
     let dltConfigs;
@@ -48,8 +48,12 @@ class TransactionHandlerController {
         }
         // for now supporting only single transaction
         configurations = configs.rows[0];
+        return this.vaildateIdentity(request);
+      })
+      .then((ethAddress) => {
+        ethPublicAddress = ethAddress;
+        console.log(ethAddress);
         return this.dltConfigResolver(configurations);
-        // return this.transactionProcess(configs.rows, contextResponses, authToken);
       })
       .then((dltconfig) => {
         dltConfigs = dltconfig;
@@ -60,25 +64,35 @@ class TransactionHandlerController {
         return this.ABIValidator(dltConfigs.abi, contextMappingParams);
       })
       .then(() => {
-        return this.transactionProcess(dltConfigs, contextMappingParams, authToken);
+        return this.transactionProcess(dltConfigs, contextMappingParams, ethPublicAddress);
       })
       .then((txRecipt) => {
         let recipt = {
           dltConfig: dltConfigs,
           contextMapping: configurations.contextMapping,
-          response: txRecipt
+          recipt: txRecipt
         };
-        // return this.storeTransactionRecipt(entityModel, recipt);
+        return this.storeTransactionRecipt(entityModel, recipt);
+      })
+      .then((json) => {
+        console.log(json.txDetails.recipt);
         if (!proxyRequest) {
-          return response.status(StatusCodes.CREATED).jsonp(recipt);
+          return response.status(StatusCodes.CREATED).jsonp(json);
         }
       })
       .catch((err) => {
-        console.log(err);
+        this.storeErrors(entityModel, err);
         if (!proxyRequest) {
           return response.status(StatusCodes.FORBIDDEN).jsonp(err);
         }
       })
+  }
+
+  // future implementation
+  async vaildateIdentity(request) {
+    // in the current implementation validate only ETH public address
+    const ethPublicAddress = request.headers[CONSTANTS.HEADER.X_ETH_PUBLIC_ADDRESS];
+    return Promise.resolve(ethPublicAddress);
   }
 
   // store entityId in a DB
@@ -127,13 +141,8 @@ class TransactionHandlerController {
   }
 
   // future implementation
-  async vaildateIdentity() {
-    // to do
-  }
-
-  // future implementation
   async signingTransaction() {
-  // to do
+    // to do
   }
 
   // DLT Type resolver
@@ -203,12 +212,12 @@ class TransactionHandlerController {
   }
 
   // process the transaction
-  async transactionProcess(dlt_config, contextMappingParams, auth) {
+  async transactionProcess(dlt_config, contextMappingParams, ethPublicAddress) {
     return new Promise((resolve, reject) => {
       // initiate transaction
-      let ethTransactionController = new EthTransactionController(dlt_config);
+      let ethService = new EthereumService(dlt_config);
       // process transaction
-      ethTransactionController.processTransaction(contextMappingParams, auth).then((result) => {
+      ethService.processTransaction(contextMappingParams, ethPublicAddress).then((result) => {
         resolve(result);
       }).catch((error) => {
         reject(error);
@@ -218,7 +227,7 @@ class TransactionHandlerController {
 
   // not working (TO BE DONE in future)
   // process the transaction
-  async batchTransactionProcess(configs, contextResponses, auth) {
+  async batchTransactionProcess(configs, contextResponses, ethPublicAddress) {
     let promises = [];
     configs.forEach(async data => {
       let promise = new Promise((resolve, reject) => {
@@ -229,7 +238,7 @@ class TransactionHandlerController {
         // initiate transaction
         let ethTransactionController = new EthTransactionController(dlt_config);
         // process transaction
-        ethTransactionController.processTransaction(parameters, auth).then((result) => {
+        ethTransactionController.processTransaction(parameters, ethPublicAddress).then((result) => {
 
           let response = {
             entityId: contextResponses.id,
@@ -258,26 +267,30 @@ class TransactionHandlerController {
   }
 
   // store the transaction recipts
-  async storeTransactionRecipt(entity, recipt ) {
+  async storeTransactionRecipt(entity, recipt) {
     return new Promise((resolve, reject) => {
       let newEntity = entity;
-      console.log(JSON.stringify(entity));
       newEntity.txDetails = recipt;
-      console.log(JSON.stringify(newEntity));
       EntityRepository.update(entity, newEntity).then((result) => {
-        console.log(JSON.stringify(result));
         resolve(result);
       }).catch((err) => {
-        console.log(JSON.stringify(err.errors));
         reject(err.errors);
       });
     });
   }
 
   // store errors if any
-  async storeErrors(entityId, err) {
-
+  async storeErrors(entity, error) {
+    if (typeof entity != 'undefined') {
+      let newEntity = entity;
+      newEntity.txDetails = error;
+      EntityRepository.update(entity, newEntity).then((result) => {
+        console.log(JSON.stringify(result));
+      }).catch((err) => {
+        console.log(JSON.stringify(err.errors));
+      });
+    }
   }
 }
 
-export default new TransactionHandlerController();
+export default new EthTransactionProcessor();

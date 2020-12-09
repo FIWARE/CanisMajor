@@ -1,17 +1,17 @@
 import express from 'express';
 
 // validators
-import tokenValidator from '../validators/token-validators';
-import headerValidator from '../validators/header-validators';
-import paginationValidator from '../validators/pagination-validators';
+import tokenValidator from '../validator/token-validator';
+import headerValidator from '../validator/header-validator';
+import paginationValidator from '../validator/pagination-validator';
 
 // CRUD Routes
-import versionHandlerController from '../controllers/vesion-controller';
-import configHandlerController from '../controllers/config-controller';
+import versionHandlerController from '../controller/vesion-controller';
+import configHandlerController from '../controller/config-controller';
 // import EntityCRUDController from '../controllers/entity-crud-controller';
 
 // // transaction processor
-import transactionHandlerController from '../controllers/transaction-handler-controller';
+import EthTransactionProcessor from '../processor/eth-transation-processor';
 
 const router = express.Router();
 
@@ -78,7 +78,7 @@ router.delete( '/config/:id([0-9]+)',
 router.post('/transaction',
   tokenValidator.validate,
   headerValidator.validate,
-  transactionHandlerController.transactionResolve.bind(transactionHandlerController)
+  EthTransactionProcessor.transactionResolve.bind(EthTransactionProcessor)
 );
 
 module.exports = router;

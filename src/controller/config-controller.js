@@ -1,5 +1,5 @@
 import BaseCRUDController from './base-crud-controller';
-import ConfigRepository from '../repositories/config-repository';
+import ConfigRepository from '../repository/config-repository';
 import { StatusCodes } from 'http-status-codes';
 
 class ConfigController extends BaseCRUDController {

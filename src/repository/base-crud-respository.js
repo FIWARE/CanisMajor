@@ -1,4 +1,4 @@
-import generalFactories from '../utils/factory/general-factory';
+import generalFactories from '../util/factory/general-factory';
 
 export default class BaseCRUDRepository {
   constructor() {
@@ -37,7 +37,7 @@ export default class BaseCRUDRepository {
       updateObject[key] = generalFactories
         .changeIfHasProperty(entry, updateEntry, key);
     }
-
-    return entry.updateAttributes(updateObject);
+  
+    return entry.update(updateObject);
   }
 }

@@ -1,6 +1,6 @@
 import Web3 from 'web3';
 
-class EthTransactionController {
+class EthereumService {
     // web3 instance
     constructor(configuration) {
         this.abi = configuration.abi;
@@ -91,4 +91,4 @@ class EthTransactionController {
     }
 }
 
-export default EthTransactionController;
+export default EthereumService;

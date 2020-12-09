@@ -1,6 +1,6 @@
-import generalErrors from '../utils/factory/general-errors';
-import objectFactory from '../utils/factory/object-factory';
-import paginationOptions from '../utils/factory/pagination-factory';
+import generalErrors from '../util/factory/general-errors';
+import objectFactory from '../util/factory/object-factory';
+import paginationOptions from '../util/factory/pagination-factory';
 
 export default class BaseCRUDController {
   constructor() {
