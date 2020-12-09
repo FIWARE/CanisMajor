@@ -1,6 +1,6 @@
 import { CM_PROXY_APP_HOST, CM_PROXY_APP_PORT, CM_PROXY_HTTPS_ENABLED, CONSTANTS, TRANSCTION_TIMEOUT } from '../configuration/config';
 import transactionHandlerController from '../controllers/transaction-handler-controller';
-import { sendData, getClientIp } from '../utils/HTTPClient';
+import { sendData, getClientIp } from '../utils/http-client-utils';
 
 const proxy = (request, response, next) => {
     const ethToken = request.headers[CONSTANTS.HEADER.X_ETH_PUBLIC_ADDRESS];

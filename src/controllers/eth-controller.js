@@ -12,17 +12,14 @@ class EthTransactionController {
         this.contract_schema = this.abi;
         this.web3.setProvider(`${this.endpoint}`);
         try {
-            if (!this.contract_schema.abi || 
-                !this.contract_schema.contractName ||
-                !this.contract_schema.networks){
-                throw new Error(`The provided contract JSON is missing the 'abi', 
-                'contractName', 'networks' keys.  
+            if (!this.contract_schema){
+                throw new Error(`The provided contract JSON is missing the 'abi'.  
                 Are you sure you're using the build artifact produced by truffle compile?`);
             }
-        this.contract = new this.web3.eth.Contract(this.contract_schema.abi, this.contract_address);
+        this.contract = new this.web3.eth.Contract(this.contract_schema, this.contract_address);
         } catch (err) {
             this.contract =null;
-            console.log(err);
+            throw new Error(err);    
         }
     }
     /**
@@ -82,24 +79,8 @@ class EthTransactionController {
     }
 
 
-  async  processTransaction(data, auth) {
+  async  processTransaction(data, submitterAddress) {
         let response = [];
-        // contract parameter resolution
-        if(data === null || data === '') {
-            let err = new Error();
-            err.status = 403;
-            err.message = 'context parameters not mapped';
-            return err;
-        }
-
-        //address resolver
-        let submitterAddress = auth;
-        if(submitterAddress === null || submitterAddress === '') {
-            let err = new Error();
-            err.status = 403;
-            err.message = 'address in not defined or missing';
-            return err;
-        }
         // multiple transaction queue
         // data.forEach((elements) => {
         //     let tx = this.write(elements.method, submitterAddress, elements.value);

@@ -1,36 +1,15 @@
 import express from 'express';
 import { proxy } from './routes/proxy';
 import serviceRoutes from './routes/service-routes';
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import EthTransactionController from './controllers/eth-controller';
 
 const app = express();
-
-app.use((req, res, next) => {
-  const bodyChunks = [];
-  req.on('data', function (chunk) {
-    bodyChunks.push(chunk);
-  });
-  req.on('end', function () {
-    if (bodyChunks.length > 0) {
-      req.body = Buffer.concat(bodyChunks);
-    }
-    next();
-  });
-});
-
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'HEAD, POST, PUT, GET, OPTIONS, DELETE');
-  res.header('Access-Control-Allow-Headers', 'origin, content-type, X-Auth-Token, Tenant-ID, Authorization, Fiware-Service, Fiware-ServicePath, x-eth-public-address');
-  if (req.method === 'OPTIONS') {
-    res.statusCode = 200;
-    res.header('Content-Length', '0');
-    res.send();
-    res.end();
-  } else {
-    next();
-  }
-});
-
+app.use(cors());
+app.options('*', cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use('/cm', serviceRoutes);
 
@@ -40,12 +19,42 @@ app.use((req, res, next) => {
   }
 })
 
-
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
+
+// let config = {
+//   "abi": [
+//       {
+//           "name": "set",
+//           "type": "function",
+//           "inputs": [
+//               {
+//                   "name": "x",
+//                   "type": "uint256"
+//               }
+//           ],
+//           "outputs": [],
+//           "payable": false,
+//           "constant": false,
+//           "stateMutability": "nonpayable"
+//       }
+//   ],
+//   "dlt_type": "eth",
+//   "endpoint": "http://127.0.0.1:8545",
+//   "default_gas": 0,
+//   "contract_address": "0xed34bea23f2cde2d0608d61fb4dfb6377aca3dcf",
+//   "default_gasPrice": 0
+// };
+// const eth = new EthTransactionController(config);
+// let param = [ { method: 'set', value: [ 10 ] } ];
+// eth.processTransaction(param, '0xa99aa66cc990Cbd2C1d31087430A9A42C8ea28cC').then((res) => {
+//   console.log(res);
+// }).catch((err) => {
+//   console.log(err);
+// })
 
 module.exports = app;

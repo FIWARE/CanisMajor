@@ -16,7 +16,8 @@ module.exports = function(sequelize, DataTypes) {
   },
   txDetails: {
     type: DataTypes.JSON,
-    allowNull: true
+    allowNull: true,
+    defaultValue: null
   },
 }, {
   tableName: 'entities',
