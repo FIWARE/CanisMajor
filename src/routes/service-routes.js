@@ -94,8 +94,8 @@ router.post( '/entity',
 //*******REQUEST*******
 
 router.post('/v2/createEntity',
-  //tokenValidator.validate,
-  //headerValidator.validate,
+  tokenValidator.validate,
+  headerValidator.validate,
   entitiesHandlerController.createEntity.bind(entitiesHandlerController)
 );
 
