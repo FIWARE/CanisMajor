@@ -1,5 +1,5 @@
 var db = require("../models/index");
-import BaseCRUDRepository from './base-crud-repository';
+import { BaseCRUDRepository } from 'base_crud_lib';
 
 class EntitiesRepository extends BaseCRUDRepository {
   constructor() {

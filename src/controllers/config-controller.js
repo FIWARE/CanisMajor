@@ -1,4 +1,4 @@
-import BaseCRUDController from './base-crud-controller';
+import { BaseCRUDController } from 'base_crud_lib';
 import ConfigRepository from '../repositories/config-repository';
 
 class ConfigController extends BaseCRUDController {

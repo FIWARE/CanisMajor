@@ -9,7 +9,8 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       entityId: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique: true
       },
       txDetails: {
         type: Sequelize.JSON
