@@ -1,6 +1,7 @@
 import Web3 from 'web3';
 
 class EthereumService {
+
     // web3 instance
     constructor(configuration) {
         this.abi = configuration.abi;
@@ -22,6 +23,7 @@ class EthereumService {
             throw new Error(err);    
         }
     }
+
     /**
      * @function
      * @private
@@ -40,21 +42,23 @@ class EthereumService {
         }
         return sender;
     }
-    /**
-     * @function
-     * @param {String} method_name - name of the method to be called
-     * @param {Hex} from - from address
-     * @param {Array} params - params needed to call the contract... in same order as defined!!!
-     * @description
-     * calls the smart contract's method, and on successful transaction, will call the callback with a receipt
-     * @returns {Promise}
-     * */
+
+    // /**
+    //  * @function
+    //  * @param {String} method_name - name of the method to be called
+    //  * @param {Hex} from - from address
+    //  * @param {Array} params - params needed to call the contract... in same order as defined!!!
+    //  * @description
+    //  * calls the smart contract's method, and on successful transaction, will call the callback with a receipt
+    //  * @returns {Promise}
+    //  * */
     write(method_name, from, params) {
         "use strict";
         return this.contract.methods[method_name.toLowerCase()]
             .apply(this, params)
             .send(this.createCall(from))
     }
+
     // /**
     //  * @function
     //  * @param {String} method_name - name of the method to be called
@@ -65,22 +69,24 @@ class EthereumService {
     //  * calls the smart contract's method, and on successful transaction, will call the callback with a receipt
     //  * @returns {Promise}
     //  * */
-    read(method_name, from, read_params) {
-        // return this.contract.methods[method_name]
-        //     .apply(this, read_params)
-        //     .call({ from }, (err, result) => {
-        //         if (err) {
-        //             console.log(`failed to execute ${method_name}... ${err}`);
-        //             throw new Error(`failed to execute ${method_name}... ${err}`);
-        //         } else {
-        //             console.log(`result ${result}`);
-        //         }
-        //     });
-    }
+    // read(method_name, from, read_params, callback=()=>{}){
+    //     return this.contract.methods[method_name]
+    //         .apply(this, read_params)
+    //         .call({from}, (err, result) => {
+    //             if(err){
+    //                 this._handleError(err, method_name);
+    //             }else {
+    //                 callback(result);
+    //             }
+    //         });
+    // }
 
-
-  async  processTransaction(data, submitterAddress) {
-        let response = [];
+    // /**
+    //  * @function 
+    //  * @description
+    //  * */
+    processTransaction(data, submitterAddress) {
+        // let response = [];
         // multiple transaction queue
         // data.forEach((elements) => {
         //     let tx = this.write(elements.method, submitterAddress, elements.value);
