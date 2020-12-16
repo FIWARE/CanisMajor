@@ -12,6 +12,7 @@ class EthereumService {
         this.web3 = new Web3();
         this.contract_schema = this.abi;
         this.web3.setProvider(`${this.endpoint}`);
+        console.log(configuration.abi);
         try {
             if (!this.contract_schema){
                 throw new Error(`The provided contract JSON is missing the 'abi'.  
@@ -88,11 +89,11 @@ class EthereumService {
     processTransaction(data, submitterAddress) {
         // let response = [];
         // multiple transaction queue
-        // data.forEach((elements) => {
-        //     let tx = this.write(elements.method, submitterAddress, elements.value);
-        //     response.push(tx);
-        // });
-        return this.write(data[0].method, submitterAddress, data[0].value);
+        data.forEach((elements) => {
+            let tx = this.write(elements.method, submitterAddress, elements.value);
+            response.push(tx);
+        });
+        // return this.write(data[0].method, submitterAddress, data[0].value);
         
     }
 }

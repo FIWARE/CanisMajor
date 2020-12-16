@@ -9,9 +9,8 @@ import paginationValidator from '../validators/pagination-validators';
 import versionHandlerController from '../controllers/vesion-controller';
 import configHandlerController from '../controllers/config-controller';
 // import EntityCRUDController from '../controllers/entity-crud-controller';
-
 // // transaction processor
-// import transactionHandlerController from '../controllers/transaction-handler-controller';
+import transactionHandlerController from '../controllers/transaction-handler-controller';
 
 const router = express.Router();
 
@@ -27,7 +26,7 @@ router.get('/health',
 
 //*******CONFIG*******
 // create configuration
-router.post( '/create',
+router.post( '/config',
   configHandlerController.createEntry.bind(configHandlerController)
 );
 //get all configuration
@@ -74,7 +73,7 @@ router.delete( '/config/:id([0-9]+)',
 
 
 //*******REQUEST*******
-router.post('/notify',
+router.post('/transaction',
   tokenValidator.validate,
   headerValidator.validate,
   transactionHandlerController.transactionResolve.bind(transactionHandlerController)
