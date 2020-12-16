@@ -28,27 +28,6 @@ export default class BaseCRUDController {
       });
   }
 
-  allEntries(req, res, next) {
-    const options = objectFactory.queryOptions(
-      req.query,
-      this.filters
-    );
-
-    return this.repository
-      .findAndCountAllByFilter(options)
-      .then((entries) => {
-        res.jsonp(paginationOptions.findAllResponseObject(
-          entries,
-          req.query
-        ));
-      })
-      .catch((err) => {
-        generalErrors.addErrStatus(err, 422);
-
-        return next(err);
-      });
-  }
-
   oneSpecifiedEntry(req, res, next) {
     return this.repository
       .findOneById(req.params.id)

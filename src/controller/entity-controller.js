@@ -18,16 +18,16 @@ class EntityCRUDController extends BaseCRUDController {
 
   getEntityById(request, response) {
   	const query = request.query;
-  	const params = req.params;
+  	const params = request.params;
   	const header = request.header;
 
-  	let message = "Method in implementation!";
+  	let message = repository.findOneById(request.params.entityId);
   	return response.jsonp(message);
   }
 
   getEntityByIdAndAttrs(request, response) {
   	const query = request.query;
-  	const params = req.params;
+  	const params = request.params;
   	const header = request.header;
 
   	let message = "Method in implementation!";
@@ -36,7 +36,7 @@ class EntityCRUDController extends BaseCRUDController {
 
   getEntityByIdAndAttrsOnlyValues(request, response) {
   	const query = request.query;
-  	const params = req.params;
+  	const params = request.params;
   	const header = request.header;
   		
   	let message = "Method in implementation!";
@@ -45,7 +45,7 @@ class EntityCRUDController extends BaseCRUDController {
 
   getEntityByIdOnlyValues(request, response) {
   	const query = request.query;
-  	const params = req.params;
+  	const params = request.params;
   	const header = request.header;
   		
   	let message = "Method in implementation!";
@@ -54,7 +54,7 @@ class EntityCRUDController extends BaseCRUDController {
 
   getEntitiesByType(request, response) {
   	const query = request.query;
-  	const params = req.params;
+  	const params = request.params;
   	const header = request.header; 
   		
   	let message = "Method in implementation!";
@@ -63,7 +63,7 @@ class EntityCRUDController extends BaseCRUDController {
 
   getEntitiesByTypeOnlyValue(request, response) {
   	const query = request.query;
-  	const params = req.params;
+  	const params = request.params;
   	const header = request.header;
   		
   	let message = "Method in implementation!";
@@ -72,7 +72,7 @@ class EntityCRUDController extends BaseCRUDController {
 
   getEntitiesByTypeAndAttrs(request, response) {
   	const query = request.query;
-  	const params = req.params;
+  	const params = request.params;
   	const header = request.header;
   		
   	let message = "Method in implementation!";
@@ -81,7 +81,7 @@ class EntityCRUDController extends BaseCRUDController {
 
   getEntitiesByTypeAndAttrsOnlyValues(request, response) {
   	const query = request.query;
-  	const params = req.params;
+  	const params = request.params;
   	const header = request.header;
   		
   	let message = "Method in implementation!";
@@ -90,7 +90,7 @@ class EntityCRUDController extends BaseCRUDController {
 
   getEntitiesByAttrs(request, response) {
   	const query = request.query;
-  	const params = req.params;
+  	const params = request.params;
   	const header = request.header;
   		
   	let message = "Method in implementation!";
@@ -99,7 +99,7 @@ class EntityCRUDController extends BaseCRUDController {
 
   getEntitiesByAttrsOnlyValues(request, response) {
   	const query = request.query;
-  	const params = req.params;
+  	const params = request.params;
   	const header = request.header;
   		
   	let message = "Method in implementation!";

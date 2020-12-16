@@ -56,13 +56,13 @@ router.delete( '/config/:id([0-9]+)',
 
 router.get( '/entities',
   paginationValidator.middleware,
-  EntityCRUDController.getAllEntities.bind(EntityCRUDController)
+  EntityCRUDController.getAll.bind(EntityCRUDController)
 );
 
 
 router.get('/v2/entities/:entityId([0-9]+)',
   //tokenValidator.validate,
-  // headerValidator.validate,
+  //headerValidator.validate,
   EntityCRUDController.getEntityById.bind(EntityCRUDController)
 );
 
