@@ -27,8 +27,6 @@ class TransactionHandlerController {
       return entityId;
     }).then((id) => {
       // if request from /transaction route
-      console.log(request.path.toString());
-      console.log(request.path.toString().includes('/transaction'));
       if (request.path.toString().includes('/transaction')) {
         return entityId;
       }
@@ -67,11 +65,9 @@ class TransactionHandlerController {
 
   async transactionProcess(data, contextResponses, auth, response) {
     let dlt_config = await this.dltConfigResolver(data);
-    console.log(dlt_config);
     let parameters = await this.contextMappingResolver(data.contextMapping, contextResponses);
     let ethTransactionController = new EthTransactionController(dlt_config);
     ethTransactionController.processTransaction(parameters, auth).then((result) => {
-      console.log(result);
       return response.jsonp(result);
     }).catch((error) => {
       console.log(error);

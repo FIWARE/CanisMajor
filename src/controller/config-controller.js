@@ -12,7 +12,6 @@ class ConfigController extends BaseCRUDController {
   createConfig(request, response, next) {
     const contextType = request.body.contextType;
     const contextMapping  = request.body.contextMapping;
-    console.log(JSON.stringify(contextType));
     return configRepository.findAllCountAllByContextType(contextType)
     .then((configs) => {
       // if empty create

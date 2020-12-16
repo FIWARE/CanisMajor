@@ -12,16 +12,15 @@ class EthereumService {
         this.web3 = new Web3();
         this.contract_schema = this.abi;
         this.web3.setProvider(`${this.endpoint}`);
-        console.log(configuration.abi);
         try {
-            if (!this.contract_schema){
+            if (!this.contract_schema) {
                 throw new Error(`The provided contract JSON is missing the 'abi'.  
                 Are you sure you're using the build artifact produced by truffle compile?`);
             }
-        this.contract = new this.web3.eth.Contract(this.contract_schema, this.contract_address);
+            this.contract = new this.web3.eth.Contract(this.contract_schema, this.contract_address);
         } catch (err) {
-            this.contract =null;
-            throw new Error(err);    
+            this.contract = null;
+            throw new Error(err);
         }
     }
 
@@ -81,20 +80,18 @@ class EthereumService {
     //             }
     //         });
     // }
-
     // /**
     //  * @function 
     //  * @description
     //  * */
-    processTransaction(data, submitterAddress) {
-        // let response = [];
-        // multiple transaction queue
-        data.forEach((elements) => {
-            let tx = this.write(elements.method, submitterAddress, elements.value);
+    async processTransaction(data, submitterAddress) {
+        let response = [];
+        // transaction as per config
+        await Promise.all(data.map(async (element) => {
+            let tx = await this.write(element.method, submitterAddress, element.value);
             response.push(tx);
-        });
-        // return this.write(data[0].method, submitterAddress, data[0].value);
-        
+        }));
+        return response;
     }
 }
 

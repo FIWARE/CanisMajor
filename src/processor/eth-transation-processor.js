@@ -52,7 +52,6 @@ class EthTransactionProcessor {
       })
       .then((ethAddress) => {
         ethPublicAddress = ethAddress;
-        console.log(ethAddress);
         return this.dltConfigResolver(configurations);
       })
       .then((dltconfig) => {
@@ -67,15 +66,22 @@ class EthTransactionProcessor {
         return this.transactionProcess(dltConfigs, contextMappingParams, ethPublicAddress);
       })
       .then((txRecipt) => {
-        let recipt = {
-          dltConfig: dltConfigs,
-          contextMapping: configurations.contextMapping,
-          recipt: txRecipt
-        };
-        return this.storeTransactionRecipt(entityModel, recipt);
+        if(txRecipt === undefined || txRecipt.length === 0) {
+          let err = new Error();
+          err.message = "smart contract configuration is incorrect";
+          return this.storeErrors(entityModel, err);
+        } else {
+          //indivisual recipt mapping to be done in future
+          let recipt = {
+            dltConfig: dltConfigs,
+            contextMapping: configurations.contextMapping,
+            recipt: txRecipt
+          };
+          return this.storeTransactionRecipt(entityModel, recipt);
+        }
       })
       .then((json) => {
-        console.log(json.txDetails.recipt);
+        // console.log(json.txDetails.recipt);
         if (!proxyRequest) {
           return response.status(StatusCodes.CREATED).jsonp(json);
         }
@@ -151,7 +157,6 @@ class EthTransactionProcessor {
       // only ETH clients are supported now
       if (data.dlt_config.dlt_type == CONSTANTS.DLT_TYPE.ETH) {
         delete data.dlt_config["dlt_type"];
-        console.log(JSON.stringify(data.dlt_config));
         resolve(data.dlt_config);
       } else {
         reject(null);
@@ -227,51 +232,51 @@ class EthTransactionProcessor {
 
   // not working (TO BE DONE in future)
   // process the transaction
-  async batchTransactionProcess(configs, contextResponses, ethPublicAddress) {
-    let promises = [];
-    configs.forEach(async data => {
-      let promise = new Promise((resolve, reject) => {
-        // resolve DLT Configuration
-        let dlt_config = this.dltConfigResolver(data);
-        // Context Mapping
-        let parameters = this.contextMappingResolver(data.contextMapping, contextResponses);
-        // initiate transaction
-        let ethTransactionController = new EthTransactionController(dlt_config);
-        // process transaction
-        ethTransactionController.processTransaction(parameters, ethPublicAddress).then((result) => {
+  // async batchTransactionProcess(configs, contextResponses, ethPublicAddress) {
+  //   let promises = [];
+  //   configs.forEach(async data => {
+  //     let promise = new Promise((resolve, reject) => {
+  //       // resolve DLT Configuration
+  //       let dlt_config = this.dltConfigResolver(data);
+  //       // Context Mapping
+  //       let parameters = this.contextMappingResolver(data.contextMapping, contextResponses);
+  //       // initiate transaction
+  //       let ethTransactionController = new EthTransactionController(dlt_config);
+  //       // process transaction
+  //       ethTransactionController.processTransaction(parameters, ethPublicAddress).then((result) => {
 
-          let response = {
-            entityId: contextResponses.id,
-            dlt_config: dlt_config,
-            contextMapping: data.contextMapping,
-            response: result
-          };
+  //         let response = {
+  //           entityId: contextResponses.id,
+  //           dlt_config: dlt_config,
+  //           contextMapping: data.contextMapping,
+  //           response: result
+  //         };
 
-          resolve(response);
-        }).catch((error) => {
+  //         resolve(response);
+  //       }).catch((error) => {
 
-          let response = {
-            entityId: contextResponses.id,
-            dlt_config: dlt_config,
-            contextMapping: data.contextMapping,
-            error: error
-          };
+  //         let response = {
+  //           entityId: contextResponses.id,
+  //           dlt_config: dlt_config,
+  //           contextMapping: data.contextMapping,
+  //           error: error
+  //         };
 
-          reject(response);
-        });
-      });
-      promises.push(promise);
-    });
-    // complete all transaction in queue
-    return Promise.all(promises);
-  }
+  //         reject(response);
+  //       });
+  //     });
+  //     promises.push(promise);
+  //   });
+  //   // complete all transaction in queue
+  //   return Promise.all(promises);
+  // }
 
   // store the transaction recipts
   async storeTransactionRecipt(entity, recipt) {
     return new Promise((resolve, reject) => {
       let newEntity = entity;
       newEntity.txDetails = recipt;
-      EntityRepository.update(entity, newEntity).then((result) => {
+      EntityRepository.update(entity.id,entity, newEntity).then((result) => {
         resolve(result);
       }).catch((err) => {
         reject(err.errors);
@@ -284,7 +289,7 @@ class EthTransactionProcessor {
     if (typeof entity != 'undefined') {
       let newEntity = entity;
       newEntity.txDetails = error;
-      EntityRepository.update(entity, newEntity).then((result) => {
+      EntityRepository.update(entity.id, entity, newEntity).then((result) => {
         console.log(JSON.stringify(result));
       }).catch((err) => {
         console.log(JSON.stringify(err.errors));
