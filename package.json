@@ -11,12 +11,12 @@
   },
   "dependencies": {
     "app-root-path": "^2.2.1",
-    "base_crud_lib": "0.0.1",
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.4",
     "express": "^4.17.1",
     "gulp": "^4.0.2",
+    "http-status-codes": "^2.1.4",
     "moment": "^2.29.1",
     "mysql2": "^2.2.5",
     "node-fetch": "^2.6.1",

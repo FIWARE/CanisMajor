@@ -1,4 +1,4 @@
-import { getVersion , getName } from '../utils/common-utils';
+import { getVersion , getName } from '../util/common-utils';
 
 class VersionHandlerController {
 
