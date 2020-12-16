@@ -1,4 +1,4 @@
-import { BaseCRUDController } from 'base_crud_lib';
+import BaseCRUDController from './base-crud-controller';
 import EntityRepository from '../repositories/entity-repository.js';
 
 class EntityCRUDController extends BaseCRUDController {

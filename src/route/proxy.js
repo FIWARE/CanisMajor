@@ -1,6 +1,6 @@
 import { CM_PROXY_APP_HOST, CM_PROXY_APP_PORT, CM_PROXY_HTTPS_ENABLED, CONSTANTS, TRANSCTION_TIMEOUT } from '../configuration/config';
-import transactionHandlerController from '../controllers/transaction-handler-controller';
-import { sendData, getClientIp } from '../utils/HTTPClient';
+import EthTransactionProcessor from '../processor/eth-transation-processor';
+import { sendData, getClientIp } from '../util/http-client-utils';
 
 const proxy = (request, response, next) => {
     const ethToken = request.headers[CONSTANTS.HEADER.X_ETH_PUBLIC_ADDRESS];
@@ -24,7 +24,7 @@ const proxy = (request, response, next) => {
 
     // create or update entry in blockchain
     if (request.method === 'POST' || request.method === 'PATCH') {
-        const exec = () => Promise.all([new transactionHandlerController
+        const exec = () => Promise.all([new EthTransactionProcessor
                 .transactionResolve(request, response, next)]);
                 setTimeout(exec, TRANSCTION_TIMEOUT);
     }

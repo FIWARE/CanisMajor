@@ -1,5 +1,5 @@
-var db = require("../models/index");
-import { BaseCRUDRepository } from 'base_crud_lib';
+var db = require("../model/index");
+import BaseCRUDRepository from './base-crud-respository';
 
 class ConfigRepository extends BaseCRUDRepository {
   constructor() {
@@ -9,8 +9,8 @@ class ConfigRepository extends BaseCRUDRepository {
     this.updateFields = ['contextType', 'dlt_config', 'contextMapping', 'meta'];
   }
 
-  fintAllCountAllByContextType(contextType) {
-    return db.configs.findAndCountAll({
+  findAllCountAllByContextType(contextType) {
+    return this.model.findAndCountAll({
       where:{
         contextType: contextType,
       },
