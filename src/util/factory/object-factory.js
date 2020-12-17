@@ -4,8 +4,8 @@ import filter from './filters';
 class ObjectFactory {
   addPaginationOptions(queryString) {
     return {
-      limit: queryString.perPage,
-      offset: queryString.perPage * queryString.page
+      limit: queryString.limit,
+      offset: queryString.limit * queryString.offset
     };
   }
 

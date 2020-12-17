@@ -1,9 +1,8 @@
 'use strict';
-import appRoot from 'app-root-path';
 import fs from 'fs-extra';
 import path from 'path';
 import Sequelize from 'sequelize';
-const sequelize = require(appRoot + '/src/sequelize');
+const sequelize = require('../sequelize');
 
 var db = {};
 // Load each model file

@@ -3,9 +3,9 @@
   "version": "0.0.1",
   "scripts": {
     "start": "nodemon --exec babel-node src/bin/www --verbose",
-    "build": "rm -rf dist && babel src --out-dir dist && babel src/bin/www --out-dir dist/ && mv dist/src/bin dist/bin && rm -rf dist/src && mkdir dist/config && cp src/config/config.json dist/config/config.json",
+    "build": "rm -rf dist && babel src --out-dir dist && babel src/bin/www --out-dir dist/ && mv dist/src/bin dist/bin && rm -rf dist/src",
     "serve": "node dist/bin/www.js",
-    "test": "NODE_ENV=test ./node_modules/mocha/bin/mocha tests --timeout 15000 --recursive --compilers js:babel-core/register",
+    "test": "mocha --require babel-core/register --require babel-polyfill --recursive",
     "migrate": "./node_modules/.bin/sequelize db:migrate",
     "seed": "./node_modules/.bin/sequelize db:seed:all"
   },
@@ -29,7 +29,11 @@
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.5.2",
     "babel-preset-es2015": "^6.24.1",
-    "babel-preset-env": "^1.5.2"
+    "mocha": "^8.2.1",
+    "chai": "^4.2.0"
   }
 }

@@ -31,13 +31,12 @@ export default class BaseCRUDRepository {
     return this.model.create(createObject);
   }
 
-  update(entry, updateEntry) {
+  update(id, entry, updateEntry) {
     const updateObject = {};
     for (const key of this.updateFields) {
       updateObject[key] = generalFactories
         .changeIfHasProperty(entry, updateEntry, key);
     }
-  
-    return entry.update(updateObject);
+    return entry.update(updateEntry);
   }
 }
