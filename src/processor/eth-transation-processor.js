@@ -230,6 +230,33 @@ class EthTransactionProcessor {
     });
   }
 
+  // store the transaction recipts
+  async storeTransactionRecipt(entity, recipt) {
+    return new Promise((resolve, reject) => {
+      let newEntity = entity;
+      newEntity.txDetails = recipt;
+      EntityRepository.update(entity.id,entity, newEntity).then((result) => {
+        resolve(result);
+      }).catch((err) => {
+        reject(err.errors);
+      });
+    });
+  }
+
+  // store errors if any
+  async storeErrors(entity, error) {
+    if (typeof entity != 'undefined') {
+      let newEntity = entity;
+      newEntity.txDetails = error;
+      EntityRepository.update(entity.id, entity, newEntity).then((result) => {
+        console.log(JSON.stringify(result));
+      }).catch((err) => {
+        console.log(JSON.stringify(err.errors));
+      });
+    }
+  }
+
+  
   // not working (TO BE DONE in future)
   // process the transaction
   // async batchTransactionProcess(configs, contextResponses, ethPublicAddress) {
@@ -270,32 +297,6 @@ class EthTransactionProcessor {
   //   // complete all transaction in queue
   //   return Promise.all(promises);
   // }
-
-  // store the transaction recipts
-  async storeTransactionRecipt(entity, recipt) {
-    return new Promise((resolve, reject) => {
-      let newEntity = entity;
-      newEntity.txDetails = recipt;
-      EntityRepository.update(entity.id,entity, newEntity).then((result) => {
-        resolve(result);
-      }).catch((err) => {
-        reject(err.errors);
-      });
-    });
-  }
-
-  // store errors if any
-  async storeErrors(entity, error) {
-    if (typeof entity != 'undefined') {
-      let newEntity = entity;
-      newEntity.txDetails = error;
-      EntityRepository.update(entity.id, entity, newEntity).then((result) => {
-        console.log(JSON.stringify(result));
-      }).catch((err) => {
-        console.log(JSON.stringify(err.errors));
-      });
-    }
-  }
 }
 
 export default new EthTransactionProcessor();
