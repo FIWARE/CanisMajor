@@ -1,9 +1,9 @@
 class PaginationFactory {
     findAllResponseObject(response, queryParams) {
       return {
-        pageNumber: queryParams.page,
-        pageSize: queryParams.perPage,
-        totalRecordCount: response.count,
+        offset: queryParams.offset,
+        limit: queryParams.limit,
+        count: response.count,
         records: response.rows
       };
     }

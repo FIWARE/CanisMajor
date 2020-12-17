@@ -1,8 +1,7 @@
-import { CONSTANTS, CM_PROXY_APP_HOST, CM_PROXY_APP_PORT, CM_PROXY_HTTPS_ENABLED } from '../configuration/config';
+import { ABIValidator, dltConfigResolver, contextMappingResolver, vaildateIdentity, contextBrokerEntityCheck } from '../util/resolver-utils';
 import EthereumService from '../service/eth-service';
 import ConfigRepository from '../repository/config-repository';
 import EntityRepository from '../repository/entity-repository';
-import * as fetch from 'node-fetch';
 import { StatusCodes } from 'http-status-codes';
 
 class EthTransactionProcessor {
@@ -15,8 +14,7 @@ class EthTransactionProcessor {
   async transactionResolve(request, response, next) {
 
     const contextResponses = Buffer.isBuffer(request.body) ? JSON.parse(request.body.toString()) : request.body;
-    const proxyRequest = request.path.includes('/transaction') ? false : true;
-
+    const debugMode = (request.query.debug) ? request.query.debug : false;
     if (Object.keys(contextResponses).length === 0) {
       let err = new Error();
       err.status = StatusCodes.FORBIDDEN;
@@ -33,7 +31,10 @@ class EthTransactionProcessor {
     await this.storeEntityId(contextResponses)
       .then((entity) => {
         entityModel = entity;
-        return this.contextBrokerEntityCheck(proxyRequest, entity.entityId);
+        if (debugMode) {
+          return entityModel;
+        } 
+        return contextBrokerEntityCheck(entity.entityId);
       })
       .then(() => {
         return this.retrieveConfigs(contextResponses);
@@ -48,25 +49,25 @@ class EthTransactionProcessor {
         }
         // for now supporting only single transaction
         configurations = configs.rows[0];
-        return this.vaildateIdentity(request);
+        return vaildateIdentity(request);
       })
       .then((ethAddress) => {
         ethPublicAddress = ethAddress;
-        return this.dltConfigResolver(configurations);
+        return dltConfigResolver(configurations);
       })
       .then((dltconfig) => {
         dltConfigs = dltconfig;
-        return this.contextMappingResolver(configurations.contextMapping, contextResponses);
+        return contextMappingResolver(configurations.contextMapping, contextResponses);
       })
       .then((params) => {
         contextMappingParams = params;
-        return this.ABIValidator(dltConfigs.abi, contextMappingParams);
+        return ABIValidator(dltConfigs.abi, contextMappingParams);
       })
       .then(() => {
         return this.transactionProcess(dltConfigs, contextMappingParams, ethPublicAddress);
       })
       .then((txRecipt) => {
-        if(txRecipt === undefined || txRecipt.length === 0) {
+        if (txRecipt === undefined || txRecipt.length === 0) {
           let err = new Error();
           err.message = "smart contract configuration is incorrect";
           return this.storeErrors(entityModel, err);
@@ -81,24 +82,17 @@ class EthTransactionProcessor {
         }
       })
       .then((json) => {
-        // console.log(json.txDetails.recipt);
-        if (!proxyRequest) {
+        if (debugMode) {
           return response.status(StatusCodes.CREATED).jsonp(json);
         }
       })
       .catch((err) => {
+        console.log(err);
         this.storeErrors(entityModel, err);
-        if (!proxyRequest) {
+        if (debugMode) {
           return response.status(StatusCodes.FORBIDDEN).jsonp(err);
         }
       })
-  }
-
-  // future implementation
-  async vaildateIdentity(request) {
-    // in the current implementation validate only ETH public address
-    const ethPublicAddress = request.headers[CONSTANTS.HEADER.X_ETH_PUBLIC_ADDRESS];
-    return Promise.resolve(ethPublicAddress);
   }
 
   // store entityId in a DB
@@ -112,30 +106,6 @@ class EthTransactionProcessor {
     });
   }
 
-  // check the entity Exist in Context Broker
-  async contextBrokerEntityCheck(proxyRequest, entityId) {
-    return new Promise((resolve, reject) => {
-      // check if the request comming from transaction route (ignored if proxy)
-      if (proxyRequest) {
-        // support only v2 now ld implementation and resolver to be added
-        let protocol = CM_PROXY_HTTPS_ENABLED ? 'https' : 'http';
-        let url = `${protocol}://${CM_PROXY_APP_HOST}:${CM_PROXY_APP_PORT}/v2/entities/${entityId}`;
-        // fetch the data from the ContextBroker
-        fetch(url).then((response) => {
-          if (response.status == StatusCodes.OK) {
-            resolve(resolve.json());
-          }
-        }).catch(() => {
-          let err = new Error();
-          err.status = StatusCodes.NOT_FOUND;
-          err.message = 'entity doesnt exists';
-          reject(err);
-        })
-      }
-      resolve(entityId);
-    });
-  }
-
   async retrieveConfigs(contextResponses) {
     return new Promise((resolve, reject) => {
       ConfigRepository.findAllCountAllByContextType(contextResponses.type).then((result) => {
@@ -143,76 +113,6 @@ class EthTransactionProcessor {
       }).catch((err) => {
         reject(err.errors);
       });
-    });
-  }
-
-  // future implementation
-  async signingTransaction() {
-    // to do
-  }
-
-  // DLT Type resolver
-  dltConfigResolver(data) {
-    return new Promise((resolve, reject) => {
-      // only ETH clients are supported now
-      if (data.dlt_config.dlt_type == CONSTANTS.DLT_TYPE.ETH) {
-        delete data.dlt_config["dlt_type"];
-        resolve(data.dlt_config);
-      } else {
-        reject(null);
-      }
-    })
-  }
-
-  // context mapping with the configuration and payload
-  contextMappingResolver(contextMapping, data) {
-    return new Promise((resolve, reject) => {
-      const obj = [];
-      //context mapping from payload to contract method, vars
-      contextMapping.forEach((items) => {
-        Object.keys(items).forEach((key) => {
-          const values = [];
-          items[key].forEach((params) => {
-            // maps for ID and TYPE from NGSI payload
-            if (data.hasOwnProperty(params)) {
-              if (params == 'id') {
-                values.push(data[params]);
-              } else if (params == 'type') {
-                values.push(data[params]);
-              } else {
-                // else values
-                values.push(data[params].value);
-              }
-            }
-          });
-          obj.push({ method: key, value: values });
-        })
-      });
-      resolve(obj);
-    });
-  }
-
-  // ABI validate with contextMapping
-  async ABIValidator(abi, mapping) {
-    return new Promise((resolve, reject) => {
-      abi.forEach((element) => {
-        // function validation (in future: events, constants, constr)
-        if (element.type === "function") {
-          mapping.forEach((maps) => {
-            // method validation
-            if (maps.method != element.name) {
-              reject(`Smart Contract ABI doesnt have "${element.name}" method, please fix config`);
-            }
-            // variable validation
-            if (element.inputs.length != maps.value.length) {
-              reject(`Smart Contract method "${element.name}" takes ${element.inputs.length} inputs, please fix config`);
-            }
-            // variable type validation
-            // TO DO
-          });
-        }
-      })
-      resolve();
     });
   }
 
@@ -235,7 +135,7 @@ class EthTransactionProcessor {
     return new Promise((resolve, reject) => {
       let newEntity = entity;
       newEntity.txDetails = recipt;
-      EntityRepository.update(entity.id,entity, newEntity).then((result) => {
+      EntityRepository.update(entity.id, entity, newEntity).then((result) => {
         resolve(result);
       }).catch((err) => {
         reject(err.errors);
@@ -256,7 +156,7 @@ class EthTransactionProcessor {
     }
   }
 
-  
+
   // not working (TO BE DONE in future)
   // process the transaction
   // async batchTransactionProcess(configs, contextResponses, ethPublicAddress) {

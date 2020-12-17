@@ -13,32 +13,32 @@ class PaginationValidator {
     }
   
     _addDefaultPagination(req) {
-      if(!req.query.page) {
-        req.query.page = 0;
+      if(!req.query.offset) {
+        req.query.offset = 0;
       }
-      if(!req.query.perPage) {
-          req.query.perPage = 25;
+      if(!req.query.limit) {
+          req.query.limit = 25;
       }
     }
   
-    _validatePage(req) {
-      if ((this._isInt(req.query.page)) && (parseFloat(req.query.page) >= 0)) {
-        req.query.page = parseFloat(req.query.page);
+    _validateOffset(req) {
+      if ((this._isInt(req.query.offset)) && (parseFloat(req.query.offset) >= 0)) {
+        req.query.offset = parseFloat(req.query.offset);
       } else {
         var err = new Error();
-        err.message = ('page_query_invalid');
+        err.message = ('offset_query_invalid');
         err.status = 422;
   
         throw err;
       }
     }
   
-    _validatePerPage(req) {
-      if ((this._isInt(req.query.perPage)) && (parseFloat(req.query.perPage)>=0) && (parseFloat(req.query.perPage) <= 100)) {
-        req.query.perPage = parseFloat(req.query.perPage);
+    _validateLimit(req) {
+      if ((this._isInt(req.query.limit)) && (parseFloat(req.query.limit)>=0) && (parseFloat(req.query.limit) <= 100)) {
+        req.query.limit = parseFloat(req.query.limit);
       } else {
         var err = new Error();
-        err.message = ('perPage_query_invalid');
+        err.message = ('limit_query_invalid');
         err.status = 422;
   
         throw err;
@@ -49,8 +49,8 @@ class PaginationValidator {
       this._addDefaultPagination(req);
   
       try {
-        this._validatePage(req);
-        this._validatePerPage(req);
+        this._validateOffset(req);
+        this._validateLimit(req);
       }
       catch (err) {
         return next(err);

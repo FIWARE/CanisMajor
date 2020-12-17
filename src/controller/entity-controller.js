@@ -1,5 +1,5 @@
 import BaseCRUDController from './base-crud-controller';
-import EntityRepository from '../repositories/entity-repository.js';
+import EntityRepository from '../repository/entity-repository';
 
 class EntityCRUDController extends BaseCRUDController {
   constructor() {

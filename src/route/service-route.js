@@ -2,16 +2,18 @@ import express from 'express';
 
 // validators
 import tokenValidator from '../validator/token-validator';
-import headerValidator from '../validator/header-validator';
 import paginationValidator from '../validator/pagination-validator';
 
 // CRUD Routes
 import versionHandlerController from '../controller/vesion-controller';
 import configHandlerController from '../controller/config-controller';
-// import EntityCRUDController from '../controllers/entity-crud-controller';
+import entityCRUDController from '../controller/entity-controller';
 
-// // transaction processor
-import EthTransactionProcessor from '../processor/eth-transation-processor';
+// transaction processor
+import ethTransactionController from '../controller/eth-transaction-controller';
+
+import ethTransactionProcessor from '../processor/eth-transation-processor';
+
 
 const router = express.Router();
 
@@ -37,48 +39,58 @@ router.get('/config',
   configHandlerController.allEntries.bind(configHandlerController)
 );
 //get configuration byId
-router.get( '/config/:id([0-9]+)',
+router.get('/config/:id([0-9]+)',
   configHandlerController.oneSpecifiedEntry.bind(configHandlerController)
 );
 // update configuration
-router.put( '/config/:id([0-9]+)',
+router.put('/config/:id([0-9]+)',
   configHandlerController.updateEntry.bind(configHandlerController)
 );
 // delete configuration
-router.delete( '/config/:id([0-9]+)',
+router.delete('/config/:id([0-9]+)',
   configHandlerController.deleteEntry.bind(configHandlerController)
 );
 
 
 //*******QUERIES*******
+router.get('/entity',
+  paginationValidator.middleware,
+  entityCRUDController.allEntries.bind(entityCRUDController)
+);
+//get entity byId
+router.get('/entity/:id([0-9]+)',
+  entityCRUDController.oneSpecifiedEntry.bind(entityCRUDController)
+);
+// update entity
+router.put('/entity/:id([0-9]+)',
+  entityCRUDController.updateEntry.bind(entityCRUDController)
+);
+// delete entity
+router.delete('/entity/:id([0-9]+)',
+  entityCRUDController.deleteEntry.bind(entityCRUDController)
+);
 
-// router.delete('/v2/entities/:entityId',
+
+//*******ETH Transaction*******
+// router.post('/eth/transaction/create',
 //   tokenValidator.validate,
-//   // headerValidator.validate,
-//   entitiesHandlerController.deleteEntityHandler.bind(entitiesHandlerController)
+//   ethTransactionController.createATrasaction.bind(ethTransactionController)
 // );
 
-// router.delete('/v2/types/:entityType',
+// router.post('/eth/transaction/read',
 //   tokenValidator.validate,
-//   // headerValidator.validate,
-//   typesHandlerController.deleteTypeHandler.bind(typesHandlerController)
+//   ethTransactionController.readTransactionData.bind(ethTransactionController)
 // );
 
-// router.get( '/entity',
-//   paginationValidator.middleware,
-//   EntityCRUDController.allEntries.bind(EntityCRUDController)
+// router.post('/eth/transaction/retry',
+//   tokenValidator.validate,
+//   ethTransactionController.retryTransaction.bind(ethTransactionController)
 // );
 
-// router.post( '/entity',
-//   EntityCRUDController.createEntry.bind(EntityCRUDController)
-// );
-
-
-//*******REQUEST*******
-router.post('/transaction',
+//*******PROXY debug*******
+router.post('/proxy',
   tokenValidator.validate,
-  headerValidator.validate,
-  EthTransactionProcessor.transactionResolve.bind(EthTransactionProcessor)
+  ethTransactionProcessor.transactionResolve.bind(ethTransactionProcessor)
 );
 
 module.exports = router;
