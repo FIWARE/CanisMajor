@@ -70,6 +70,92 @@ router.delete('/entity/:id([0-9]+)',
   entityCRUDController.deleteEntry.bind(entityCRUDController)
 );
 
+//*******QUERIES*******
+
+//ENTITY OPERATIONS:
+
+router.get( '/entities',
+  paginationValidator.middleware,
+  EntityCRUDController.allEntries.bind(EntityCRUDController)
+);
+
+
+router.get('/v2/entities/:entityId([0-9]+)',
+  //tokenValidator.validate,
+  //headerValidator.validate,
+  EntityCRUDController.getEntityById.bind(EntityCRUDController)
+);
+
+router.get('/v2/entities/:entityId([0-9]+)/attrs/:attrName()',
+  //tokenValidator.validate,
+  // headerValidator.validate,
+  EntityCRUDController.getEntityByIdAndAttrs.bind(EntityCRUDController)
+);
+
+router.get('/v2/entities/:entityId([0-9]+)/attrs/:attrName()/value',
+  //tokenValidator.validate,
+  // headerValidator.validate,
+  EntityCRUDController.getEntityByIdAndAttrsOnlyValues.bind(EntityCRUDController)
+);
+
+router.get('/v2/entities/:entityId([0-9]+)/value',
+  //tokenValidator.validate,
+  // headerValidator.validate,
+  EntityCRUDController.getEntityByIdOnlyValues.bind(EntityCRUDController)
+);
+
+//TYPES OPERATIONS:
+
+router.get('/v2/types/:entityType',
+  //tokenValidator.validate,
+  // headerValidator.validate,
+  EntityCRUDController.getEntitiesByType.bind(EntityCRUDController)
+);
+
+router.get('/v2/types/:entityType/value',
+  //tokenValidator.validate,
+  // headerValidator.validate,
+  EntityCRUDController.getEntitiesByTypeOnlyValue.bind(EntityCRUDController)
+);
+
+router.get('/v2/types/:entityType/attrs/:attrsName',
+  //tokenValidator.validate,
+  // headerValidator.validate,
+  EntityCRUDController.getEntitiesByTypeAndAttrs.bind(EntityCRUDController)
+);
+
+router.get('/v2/types/:entityType/attrs/:attrsName/value',
+  //tokenValidator.validate,
+  // headerValidator.validate,
+  EntityCRUDController.getEntitiesByTypeAndAttrsOnlyValues.bind(EntityCRUDController)
+);
+
+//ATTRIBUTES OPERATIONS:
+
+router.get('/v2/attrs/:attrsName',
+  //tokenValidator.validate,
+  // headerValidator.validate,
+  EntityCRUDController.getEntitiesByAttrs.bind(EntityCRUDController)
+);
+
+router.get('/v2/attrs/:attrsName/value',
+  //tokenValidator.validate,
+  // headerValidator.validate,
+  EntityCRUDController.getEntitiesByAttrsOnlyValues.bind(EntityCRUDController)
+);
+
+router.get('/v2/attrs/',
+  //tokenValidator.validate,
+  // headerValidator.validate,
+  EntityCRUDController.getEntitiesByAttrs.bind(EntityCRUDController)
+);
+
+router.get('/v2/attrs/value',
+  //tokenValidator.validate,
+  // headerValidator.validate,
+  EntityCRUDController.getEntitiesByAttrsOnlyValues.bind(EntityCRUDController)
+);
+
 
 //*******ETH Transaction*******
 // router.post('/eth/transaction/create',

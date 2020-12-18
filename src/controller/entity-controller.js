@@ -8,30 +8,39 @@ class EntityCRUDController extends BaseCRUDController {
     this.filters = ['entityId'];
   }
 
-  getAllEntities(request, response) {
-  	const query = request.query;
-  	const header = request.header;
-
-  	let message = "Method in implementation!";
-  	return response.jsonp(message);
-  }
-
   getEntityById(request, response) {
   	const query = request.query;
   	const params = request.params;
   	const header = request.header;
 
-  	let message = repository.findOneById(request.params.entityId);
-  	return response.jsonp(message);
+  	return this.repository.findOneById(request.params.entityId)
+    .catch((err) => {
+        generalErrors.addErrStatus(err, 404);
+
+        return next(err);
+    });
   }
 
-  getEntityByIdAndAttrs(request, response) {
-  	const query = request.query;
-  	const params = request.params;
-  	const header = request.header;
+  getEntityByIdAndAttrs(request, response, next) {
 
-  	let message = "Method in implementation!";
-  	return response.jsonp(message);
+    const options = objectFactory.queryOptions(
+      request.query,
+      this.filters
+    );
+
+    return this.repository
+      .findOneByIdAndAttributes(request.params.entityId, request.params.attrName,options)
+      .then((entries) => {
+        res.jsonp(paginationOptions.findAllResponseObject(
+          entries,
+          request.query
+        ));
+      })
+      .catch((err) => {
+        generalErrors.addErrStatus(err, 404);
+
+        return next(err);
+      });
   }
 
   getEntityByIdAndAttrsOnlyValues(request, response) {
@@ -53,12 +62,24 @@ class EntityCRUDController extends BaseCRUDController {
   }
 
   getEntitiesByType(request, response) {
-  	const query = request.query;
-  	const params = request.params;
-  	const header = request.header; 
-  		
-  	let message = "Method in implementation!";
-  	return response.jsonp(message);
+    const options = objectFactory.queryOptions(
+      request.query,
+      this.filters
+    );
+
+    return this.repository
+      .findAllByType(request.params.entityType,options)
+      .then((entries) => {
+        res.jsonp(paginationOptions.findAllResponseObject(
+          entries,
+          request.query
+        ));
+      })
+      .catch((err) => {
+        generalErrors.addErrStatus(err, 404);
+
+        return next(err);
+      });
   }
 
   getEntitiesByTypeOnlyValue(request, response) {
@@ -71,12 +92,25 @@ class EntityCRUDController extends BaseCRUDController {
   }
 
   getEntitiesByTypeAndAttrs(request, response) {
-  	const query = request.query;
-  	const params = request.params;
-  	const header = request.header;
-  		
-  	let message = "Method in implementation!";
-  	return response.jsonp(message);
+      const options = objectFactory.queryOptions(
+      request.query,
+      this.filters
+    );
+
+    return this.repository
+      .findAllByTypeAndAttributes(request.params.entityType, request.params.attrsName, options)
+      .then((entries) => {
+        res.jsonp(paginationOptions.findAllResponseObject(
+          entries,
+          request.query
+        ));
+      })
+      .catch((err) => {
+        generalErrors.addErrStatus(err, 404);
+
+        return next(err);
+      });
+
   }
 
   getEntitiesByTypeAndAttrsOnlyValues(request, response) {
@@ -89,12 +123,24 @@ class EntityCRUDController extends BaseCRUDController {
   }
 
   getEntitiesByAttrs(request, response) {
-  	const query = request.query;
-  	const params = request.params;
-  	const header = request.header;
-  		
-  	let message = "Method in implementation!";
-  	return response.jsonp(message);
+      const options = objectFactory.queryOptions(
+      request.query,
+      this.filters
+    );
+
+    return this.repository
+      .findAllByTypeAndAttributes(request.params.attrsName,options)
+      .then((entries) => {
+        res.jsonp(paginationOptions.findAllResponseObject(
+          entries,
+          request.query
+        ));
+      })
+      .catch((err) => {
+        generalErrors.addErrStatus(err, 404);
+
+        return next(err);
+      });
   }
 
   getEntitiesByAttrsOnlyValues(request, response) {

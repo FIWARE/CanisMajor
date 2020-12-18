@@ -13,6 +13,54 @@ export default class BaseCRUDRepository {
     });
   }
 
+  findOneByIdAndAttributes (id, attributes, options) {
+    return this.model.findAndCountAll({
+      where: {
+        id: id,
+        attrName: attributes
+      },
+      order: options.sorting,
+      offset: options.pagination.offset,
+      limit: options.pagination.limit
+    });
+  }
+
+
+  findAllByAttributes (attributes, options) {
+    return this.model.findAndCountAll({
+      where: {
+        attrName: attributes
+      },
+      order: options.sorting,
+      offset: options.pagination.offset,
+      limit: options.pagination.limit
+    });
+  }
+
+
+  findAllByTypeAndAttributes (type, attributes, options) {
+    return this.model.findAndCountAll({
+      where: {
+        entityType: type,
+        attrName: attributes
+      },
+      order: options.sorting,
+      offset: options.pagination.offset,
+      limit: options.pagination.limit
+    });
+  }
+
+  findAllByType (type, options) {
+    return this.model.findAndCountAll({
+      where: {
+        type: type
+      },
+      order: options.sorting,
+      offset: options.pagination.offset,
+      limit: options.pagination.limit
+    });
+  }
+
   findAndCountAllByFilter (options) {
     return this.model.findAndCountAll({
       where: options.filters,
