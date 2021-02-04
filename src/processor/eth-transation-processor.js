@@ -87,7 +87,6 @@ class EthTransactionProcessor {
         }
       })
       .catch((err) => {
-        console.log(err);
         this.storeErrors(entityModel, err);
         if (debugMode) {
           return response.status(StatusCodes.FORBIDDEN).jsonp(err);

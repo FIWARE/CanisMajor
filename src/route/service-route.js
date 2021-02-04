@@ -12,6 +12,7 @@ import entityCRUDController from '../controller/entity-controller';
 // transaction processor
 import ethTransactionController from '../controller/eth-transaction-controller';
 
+// eth processor (for proxy test only)
 import ethTransactionProcessor from '../processor/eth-transation-processor';
 
 
@@ -72,20 +73,20 @@ router.delete('/entity/:id([0-9]+)',
 
 
 //*******ETH Transaction*******
-// router.post('/eth/transaction/create',
-//   tokenValidator.validate,
-//   ethTransactionController.createATrasaction.bind(ethTransactionController)
-// );
+router.post('/eth/transaction/create',
+  tokenValidator.validate,
+  ethTransactionController.createATrasaction.bind(ethTransactionController)
+);
 
-// router.post('/eth/transaction/read',
-//   tokenValidator.validate,
-//   ethTransactionController.readTransactionData.bind(ethTransactionController)
-// );
+router.post('/eth/transaction/read',
+  tokenValidator.validate,
+  ethTransactionController.readTransactionData.bind(ethTransactionController)
+);
 
-// router.post('/eth/transaction/retry',
-//   tokenValidator.validate,
-//   ethTransactionController.retryTransaction.bind(ethTransactionController)
-// );
+router.post('/eth/transaction/retry',
+  tokenValidator.validate,
+  ethTransactionController.retryTransaction.bind(ethTransactionController)
+);
 
 //*******PROXY debug*******
 router.post('/proxy',
