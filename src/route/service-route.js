@@ -81,15 +81,17 @@ router.post('/transaction/eth/create',
   ethTransactionController.createATrasaction.bind(ethTransactionController)
 );
 
-router.post('/transaction/eth/retry/:id([0-9]+)',
-  tokenValidator.validate,
-  ethTransactionController.retryTransaction.bind(ethTransactionController)
-);
+// // pending
+// router.post('/transaction/eth/retry/:id([0-9]+)',
+//   tokenValidator.validate,
+//   ethTransactionController.retryTransaction.bind(ethTransactionController)
+// );
 
-//*******PROXY debug*******
-router.post('/notification',
-  tokenValidator.validate,
-  ethTransactionProcessor.transactionResolve.bind(ethTransactionProcessor)
-);
+// //pending
+// //*******PROXY debug*******
+// router.post('/notification',
+//   tokenValidator.validate,
+//   ethTransactionProcessor.transactionResolve.bind(ethTransactionProcessor)
+// );
 
 module.exports = router;

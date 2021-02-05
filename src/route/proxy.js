@@ -22,8 +22,8 @@ const proxy = (request, response, next) => {
         headers: getClientIp(request, request.headers),
     };
 
-    // create or update entry in blockchain
-    if (request.method === 'POST' || request.method === 'PATCH') {
+    // only create entry in blockchain support yet
+    if (request.method === 'POST') {
         const exec = () => Promise.all([new EthTransactionProcessor
                 .transactionResolve(request, response, next)]);
                 setTimeout(exec, TRANSCTION_TIMEOUT);
