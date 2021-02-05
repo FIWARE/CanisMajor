@@ -1,14 +1,16 @@
 import Web3 from 'web3';
+import { CONSTANTS } from '../configuration/config';
+import Tx from 'ethereumjs-tx';
 
 class EthereumService {
 
     // web3 instance
     constructor(configuration) {
-        this.abi = configuration.abi;
-        this.endpoint = configuration.endpoint;
-        this.default_gas = configuration.default_gas;
-        this.default_gasPrice = configuration.default_gasPrice;
-        this.contract_address = configuration.contract_address;
+        this.abi = configuration.metadata.abi;
+        this.endpoint = CONSTANTS.DLT_CONFIG.endpoint;
+        this.default_gas = CONSTANTS.DLT_CONFIG.default_gas;
+        this.default_gasPrice = CONSTANTS.DLT_CONFIG.default_gasPrice;
+        this.contract_address = configuration.metadata.contractAddress;
         this.web3 = new Web3();
         this.contract_schema = this.abi;
         this.web3.setProvider(`${this.endpoint}`);
@@ -56,7 +58,17 @@ class EthereumService {
         "use strict";
         return this.contract.methods[method_name.toLowerCase()]
             .apply(this, params)
-            .send(this.createCall(from))
+            .send(this.createCall(from));
+    }
+
+    // pending
+    rawTransaction() {
+
+    }
+
+    // pending
+    sendSignedTransaction() {
+
     }
 
     // /**
@@ -69,26 +81,20 @@ class EthereumService {
     //  * calls the smart contract's method, and on successful transaction, will call the callback with a receipt
     //  * @returns {Promise}
     //  * */
-    // read(method_name, from, read_params, callback=()=>{}){
-    //     return this.contract.methods[method_name]
-    //         .apply(this, read_params)
-    //         .call({from}, (err, result) => {
-    //             if(err){
-    //                 this._handleError(err, method_name);
-    //             }else {
-    //                 callback(result);
-    //             }
-    //         });
-    // }
+    read(method_name, from, read_params){
+        return this.contract.methods[method_name]
+            .apply(this, read_params)
+            .call(this.createCall(from));
+    }
     // /**
     //  * @function 
     //  * @description
     //  * */
-    async processTransaction(data, submitterAddress) {
+    async processTransaction(data, address, privateKey) {
         let response = [];
         // transaction as per config
         await Promise.all(data.map(async (element) => {
-            let tx = await this.write(element.method, submitterAddress, element.value);
+            let tx = await this.write(element.method, address, element.value);
             response.push(tx);
         }));
         return response;

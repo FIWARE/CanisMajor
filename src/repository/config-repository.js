@@ -5,8 +5,8 @@ class ConfigRepository extends BaseCRUDRepository {
   constructor() {
     super();
     this.model = db.configs;
-    this.createFields = ['contextType', 'dlt_config', 'contextMapping', 'meta'];
-    this.updateFields = ['contextType', 'dlt_config', 'contextMapping', 'meta'];
+    this.createFields = ['contextType', 'contextMapping', 'metadata'];
+    this.updateFields = ['contextType', 'contextMapping', 'metadata'];
   }
 
   findAllCountAllByContextType(contextType) {

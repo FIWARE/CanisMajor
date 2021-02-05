@@ -1,4 +1,4 @@
-import { ABIValidator, dltConfigResolver, contextMappingResolver, vaildateIdentity, contextBrokerEntityCheck } from '../util/resolver-utils';
+import { ABIValidator, contextMappingResolver, vaildateIdentity, contextBrokerEntityCheck } from '../util/resolver-utils';
 import EthereumService from '../service/eth-service';
 import ConfigRepository from '../repository/config-repository';
 import EntityRepository from '../repository/entity-repository';
@@ -14,7 +14,8 @@ class EthTransactionProcessor {
   async transactionResolve(request, response, next) {
 
     const contextResponses = Buffer.isBuffer(request.body) ? JSON.parse(request.body.toString()) : request.body;
-    const debugMode = (request.query.debug) ? request.query.debug : false;
+    // const debugMode = (request.query.debug) ? request.query.debug : false;
+    const debugMode = true;
     if (Object.keys(contextResponses).length === 0) {
       let err = new Error();
       err.status = StatusCodes.FORBIDDEN;
@@ -23,11 +24,10 @@ class EthTransactionProcessor {
     }
 
     let ethPublicAddress;
+    let ethPrivateKey;
     let entityModel;
     let configurations;
-    let dltConfigs;
     let contextMappingParams;
-
     await this.storeEntityId(contextResponses)
       .then((entity) => {
         entityModel = entity;
@@ -39,7 +39,7 @@ class EthTransactionProcessor {
       .then(() => {
         return this.retrieveConfigs(contextResponses);
       })
-      .then((configs) => {
+      this.retrieveConfigs(contextResponses).then((configs) => {
         // if config exists
         if (configs.count === 0) {
           let err = new Error();
@@ -51,12 +51,10 @@ class EthTransactionProcessor {
         configurations = configs.rows[0];
         return vaildateIdentity(request);
       })
-      .then((ethAddress) => {
-        ethPublicAddress = ethAddress;
-        return dltConfigResolver(configurations);
-      })
-      .then((dltconfig) => {
-        dltConfigs = dltconfig;
+      .then((data) => {
+        console.log(data);
+        ethPublicAddress = data.address;
+        ethPrivateKey = data.privateKey;
         return contextMappingResolver(configurations.contextMapping, contextResponses);
       })
       .then((params) => {
@@ -87,6 +85,7 @@ class EthTransactionProcessor {
         }
       })
       .catch((err) => {
+        console.log(err);
         this.storeErrors(entityModel, err);
         if (debugMode) {
           return response.status(StatusCodes.FORBIDDEN).jsonp(err);

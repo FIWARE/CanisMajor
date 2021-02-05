@@ -9,6 +9,9 @@ import versionHandlerController from '../controller/vesion-controller';
 import configHandlerController from '../controller/config-controller';
 import entityCRUDController from '../controller/entity-controller';
 
+//TOKEN Routes
+import jwtHandlerController from '../controller/jwt-controller';
+
 // transaction processor
 import ethTransactionController from '../controller/eth-transaction-controller';
 
@@ -29,6 +32,10 @@ router.get('/health',
   versionHandlerController.getHealthStatus.bind(versionHandlerController)
 );
 
+//**** JWT TOKEN */
+router.post('/token',
+  jwtHandlerController.generateJWT.bind(jwtHandlerController)
+);
 //*******CONFIG*******
 // create configuration
 router.post('/config',
@@ -45,7 +52,7 @@ router.get('/config/:id([0-9]+)',
 );
 // update configuration
 router.put('/config/:id([0-9]+)',
-  configHandlerController.updateEntry.bind(configHandlerController)
+  configHandlerController.updateConfig.bind(configHandlerController)
 );
 // delete configuration
 router.delete('/config/:id([0-9]+)',
@@ -62,10 +69,6 @@ router.get('/entity',
 router.get('/entity/:id([0-9]+)',
   entityCRUDController.oneSpecifiedEntry.bind(entityCRUDController)
 );
-// update entity
-router.put('/entity/:id([0-9]+)',
-  entityCRUDController.updateEntry.bind(entityCRUDController)
-);
 // delete entity
 router.delete('/entity/:id([0-9]+)',
   entityCRUDController.deleteEntry.bind(entityCRUDController)
@@ -73,23 +76,18 @@ router.delete('/entity/:id([0-9]+)',
 
 
 //*******ETH Transaction*******
-router.post('/eth/transaction/create',
+router.post('/transaction/eth/create',
   tokenValidator.validate,
   ethTransactionController.createATrasaction.bind(ethTransactionController)
 );
 
-router.post('/eth/transaction/read',
-  tokenValidator.validate,
-  ethTransactionController.readTransactionData.bind(ethTransactionController)
-);
-
-router.post('/eth/transaction/retry',
+router.post('/transaction/eth/retry/:id([0-9]+)',
   tokenValidator.validate,
   ethTransactionController.retryTransaction.bind(ethTransactionController)
 );
 
 //*******PROXY debug*******
-router.post('/proxy',
+router.post('/notification',
   tokenValidator.validate,
   ethTransactionProcessor.transactionResolve.bind(ethTransactionProcessor)
 );

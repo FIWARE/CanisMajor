@@ -8,26 +8,6 @@ export default class BaseCRUDController {
     this.filters = [];
   }
 
-  getAll(req, res, next) {
-    const options = objectFactory.queryOptions(
-      req.query,
-      this.filters
-    );
-
-    return this.repository
-      .findAndCountAll(options)
-      .then((entries) => {
-        res.jsonp(paginationOptions.findAllResponseObject(
-          entries,
-          req.query
-        ));
-      })
-      .catch((err) => {
-        generalErrors.addErrStatus(err, 422);
-        return next(err);
-      });
-  }
-
   allEntries(req, res, next) {
     const options = objectFactory.queryOptions(
       req.query,
@@ -37,15 +17,13 @@ export default class BaseCRUDController {
     return this.repository
       .findAndCountAllByFilter(options)
       .then((entries) => {
-        res.jsonp(paginationOptions.findAllResponseObject(
+        res.status(200).jsonp(paginationOptions.findAllResponseObject(
           entries,
           req.query
         ));
       })
       .catch((err) => {
-        generalErrors.addErrStatus(err, 422);
-
-        return next(err);
+        res.status(422).jsonp(generalErrors.addErrStatus(err, 422));
       });
   }
 
@@ -55,30 +33,24 @@ export default class BaseCRUDController {
       // eslint-disable-next-line consistent-return
       .then((entry) => {
         if (entry) {
-          res.jsonp(entry);
-
-          return null;
+          res.status(200).jsonp(entry);
+        } else {
+          res.status(404).jsonp(generalErrors.notFound());
         }
-
-        generalErrors.notFound();
       })
       .catch((err) => {
-        generalErrors.addErrStatus(err, 400);
+        res.status(400).jsonp(generalErrors.addErrStatus(err, 400));
 
-        return next(err);
       });
   }
 
   createEntry(req, res, next) {
     return this.repository.create(req.body)
       .then((entry) => {
-        res.jsonp(entry);
-        return null;
+        res.status(201).jsonp(entry);
       })
       .catch((err) => {
-        generalErrors.addErrStatus(err, 422);
-
-        return next(err);
+        res.status(422).jsonp(generalErrors.addErrStatus(err, 422));
       });
   }
 
@@ -88,18 +60,15 @@ export default class BaseCRUDController {
       .then((entry) => {
         if (entry) {
           return this.repository.update(req.params.id, entry, req.body);
+        } else {
+          res.status(404).jsonp(generalErrors.notFound());
         }
-        generalErrors.notFound();
       })
       .then((updatedEntry) => {
-        res.jsonp(updatedEntry);
-
-        return null;
+        res.status(200).jsonp(updatedEntry);
       })
       .catch((err) => {
-        generalErrors.addErrStatus(err, 422);
-
-        return next(err);
+        res.status(422).jsonp(generalErrors.addErrStatus(err, 422));
       });
   }
 
@@ -109,28 +78,25 @@ export default class BaseCRUDController {
       .then((entry) => {
         if (entry) {
           return entry.destroy();
+        } else {
+          res.status(404).jsonp(generalErrors.notFound());
         }
-
-        generalErrors.notFound();
+      }).then(() => {
+        res.status(200).jsonp(
+          {
+            success: true,
+            message: 'deleted_successfully'
+          }
+        );
       })
-      .then(() => res.jsonp(
-        {
-          success: true,
-          message: 'deleted_successfully'
-        }
-      ))
       .catch((err) => {
         if (err.name === 'SequelizeForeignKeyConstraintError') {
           // eslint-disable-next-line no-param-reassign
           err.message = 'SequelizeForeignKeyConstraintError';
           // eslint-disable-next-line no-param-reassign
           err.status = 400;
-
-          return next(err);
         }
-        generalErrors.addErrStatus(err, 400);
-
-        return next(err);
+        res.status(400).jsonp(generalErrors.addErrStatus(err, 400));
       });
   }
 }

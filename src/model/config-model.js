@@ -13,15 +13,11 @@ module.exports = function(sequelize, DataTypes) {
     type: DataTypes.STRING,
     allowNull: false
   },
-  dlt_config: {
-    type: DataTypes.JSON,
-    allowNull: false,
-  },
   contextMapping: {
     type: DataTypes.JSON,
     allowNull: false,
   },
-  meta: {
+  metadata: {
     type: DataTypes.JSON,
     allowNull: true
   }

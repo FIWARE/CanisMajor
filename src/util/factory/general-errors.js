@@ -6,7 +6,7 @@ class GeneralErrorServices {
       err.status = statusCode;
     }
 
-    return;
+    return err;
   }
 
   unprocessableEntity(message) {
@@ -14,7 +14,7 @@ class GeneralErrorServices {
     err.status = 422;
     err.message = message;
 
-    throw err;
+    return err;
   }
 
   unprocessableEntityWrongFields(missingFields, message) {
@@ -30,7 +30,7 @@ class GeneralErrorServices {
       );
     });
 
-    throw err;
+    return err;
   }
 
   notFound() {
@@ -38,14 +38,14 @@ class GeneralErrorServices {
     err.status = 404;
     err.message = 'not_found';
 
-    throw err;
+    return err;
   }
 
   forbidden() {
     const err = new Error();
     err.status = 403;
 
-    throw err;
+    return err;
   }
 
   badRequest(message) {
@@ -55,7 +55,7 @@ class GeneralErrorServices {
       err.message = message;
     }
 
-    throw err;
+    return err;
   }
 }
 
