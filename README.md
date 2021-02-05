@@ -5,8 +5,10 @@ CanisMajor is a blockchain adaptor that supports various DLT, the adaptor aims t
 The adaptor will not be recommended to work for public-permissionless blockchains (specially tokens, cryptocurrencies).
 
 # Architecture
+## CanisMajor as Proxy Architecture
 ![CanisMajor as Proxy Architecture](https://github.com/FIWARE-Blockchain/CanisMajor/blob/master/docs/images/architecture_1.png)
 
+## CanisMajor Publish/Notify Architecture
 ![CanisMajor Publish/Notify Architecture](https://github.com/FIWARE-Blockchain/CanisMajor/blob/master/docs/images/architecture_2.png)
 
 ## Supported DLT Clients
