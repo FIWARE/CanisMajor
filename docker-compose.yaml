@@ -94,4 +94,4 @@ volumes:
 
 secrets:
   my_secret_data:
-    file: ./secrets.txt
+    file: ./env/secrets.txt

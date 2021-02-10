@@ -76,32 +76,32 @@ router.delete('/entity/:id([0-9]+)',
 
 router.get( '/entities',
   paginationValidator.middleware,
-  EntityCRUDController.allEntries.bind(EntityCRUDController)
+  entityCRUDController.allEntries.bind(entityCRUDController)
 );
 
 
 router.get('/v2/entities/:entityId([0-9]+)',
   //tokenValidator.validate,
   //headerValidator.validate,
-  EntityCRUDController.getEntityById.bind(EntityCRUDController)
+  entityCRUDController.getEntityById.bind(entityCRUDController)
 );
 
 router.get('/v2/entities/:entityId([0-9]+)/attrs/:attrName()',
   //tokenValidator.validate,
   // headerValidator.validate,
-  EntityCRUDController.getEntityByIdAndAttrs.bind(EntityCRUDController)
+  entityCRUDController.getEntityByIdAndAttrs.bind(entityCRUDController)
 );
 
 router.get('/v2/entities/:entityId([0-9]+)/attrs/:attrName()/value',
   //tokenValidator.validate,
   // headerValidator.validate,
-  EntityCRUDController.getEntityByIdAndAttrsOnlyValues.bind(EntityCRUDController)
+  entityCRUDController.getEntityByIdAndAttrsOnlyValues.bind(entityCRUDController)
 );
 
 router.get('/v2/entities/:entityId([0-9]+)/value',
   //tokenValidator.validate,
   // headerValidator.validate,
-  EntityCRUDController.getEntityByIdOnlyValues.bind(EntityCRUDController)
+  entityCRUDController.getEntityByIdOnlyValues.bind(entityCRUDController)
 );
 
 //TYPES OPERATIONS:
@@ -109,25 +109,25 @@ router.get('/v2/entities/:entityId([0-9]+)/value',
 router.get('/v2/types/:entityType',
   //tokenValidator.validate,
   // headerValidator.validate,
-  EntityCRUDController.getEntitiesByType.bind(EntityCRUDController)
+  entityCRUDController.getEntitiesByType.bind(entityCRUDController)
 );
 
 router.get('/v2/types/:entityType/value',
   //tokenValidator.validate,
   // headerValidator.validate,
-  EntityCRUDController.getEntitiesByTypeOnlyValue.bind(EntityCRUDController)
+  entityCRUDController.getEntitiesByTypeOnlyValue.bind(entityCRUDController)
 );
 
 router.get('/v2/types/:entityType/attrs/:attrsName',
   //tokenValidator.validate,
   // headerValidator.validate,
-  EntityCRUDController.getEntitiesByTypeAndAttrs.bind(EntityCRUDController)
+  entityCRUDController.getEntitiesByTypeAndAttrs.bind(entityCRUDController)
 );
 
 router.get('/v2/types/:entityType/attrs/:attrsName/value',
   //tokenValidator.validate,
   // headerValidator.validate,
-  EntityCRUDController.getEntitiesByTypeAndAttrsOnlyValues.bind(EntityCRUDController)
+  entityCRUDController.getEntitiesByTypeAndAttrsOnlyValues.bind(entityCRUDController)
 );
 
 //ATTRIBUTES OPERATIONS:
@@ -135,25 +135,25 @@ router.get('/v2/types/:entityType/attrs/:attrsName/value',
 router.get('/v2/attrs/:attrsName',
   //tokenValidator.validate,
   // headerValidator.validate,
-  EntityCRUDController.getEntitiesByAttrs.bind(EntityCRUDController)
+  entityCRUDController.getEntitiesByAttrs.bind(entityCRUDController)
 );
 
 router.get('/v2/attrs/:attrsName/value',
   //tokenValidator.validate,
   // headerValidator.validate,
-  EntityCRUDController.getEntitiesByAttrsOnlyValues.bind(EntityCRUDController)
+  entityCRUDController.getEntitiesByAttrsOnlyValues.bind(entityCRUDController)
 );
 
 router.get('/v2/attrs/',
   //tokenValidator.validate,
   // headerValidator.validate,
-  EntityCRUDController.getEntitiesByAttrs.bind(EntityCRUDController)
+  entityCRUDController.getEntitiesByAttrs.bind(entityCRUDController)
 );
 
 router.get('/v2/attrs/value',
   //tokenValidator.validate,
   // headerValidator.validate,
-  EntityCRUDController.getEntitiesByAttrsOnlyValues.bind(EntityCRUDController)
+  entityCRUDController.getEntitiesByAttrsOnlyValues.bind(entityCRUDController)
 );
 
 

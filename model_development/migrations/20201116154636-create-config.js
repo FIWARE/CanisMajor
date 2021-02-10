@@ -17,7 +17,7 @@ module.exports = {
       },
       contextMapping: {
         type: Sequelize.JSON,
-        unique: true
+        //unique: true
       },
       meta: {
         type: Sequelize.JSON 
