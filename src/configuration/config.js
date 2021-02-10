@@ -1,6 +1,6 @@
 const ENV = process.env;
 
-const DB_NAME = ENV.DB_NAME || 'canis_major';
+const DB_NAME = ENV.DB_NAME || 'cm';
 const DB_HOST = ENV.DB_HOST || 'localhost';
 const DB_PORT = ENV.DB_PORT || '3306';
 const DB_DILECT = ENV.DB_DILECT || 'mysql';
@@ -15,9 +15,9 @@ const TRANSCTION_TIMEOUT = ENV.TRANSCTION_TIMEOUT || 1000;
 
 
 const CONSTANTS = {
-    ENCRYPTION_ALGORITHMS: {
-        SHA256: 'sha256',
-        AES_256_CTR: 'aes-256-ctr'
+    JWT_ALGORITHMS: {
+        RS256: 'RS256',
+        SECRET: '123456'
     },
     HEADER: {
         CORRELATOR: 'fiware-correlator',
@@ -25,11 +25,13 @@ const CONSTANTS = {
         FIWARE_SERVICE_PATH: 'fiware-servicepath',
         FIWARE_TOTAL_COUNT: 'fiware-total-count',
         X_REAL_IP: 'x-real-ip',
-        X_AUTH_TOKEN: 'x-auth-token',
-        X_ETH_PUBLIC_ADDRESS: 'x-eth-public-address'
+        X_AUTH_TOKEN: 'x-auth-token'
     },
-    DLT_TYPE: {
-        ETH: 'eth'
+    DLT_CONFIG: {
+        type: 'eth',
+        endpoint: 'http://127.0.0.1:8545',
+        default_gas: 0,
+        default_gasPrice: 0
     }
 };
 

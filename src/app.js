@@ -3,7 +3,6 @@ import { proxy } from './route/proxy';
 import serviceRoutes from './route/service-route';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import EthTransationProcessor from './processor/eth-transation-processor';
 
 const app = express();
 app.use(cors());
@@ -19,15 +18,12 @@ app.use((req, res, next) => {
   if (req.path != '@(?=cm)') {
     proxy(req, res, next);
   }
-})
-
-// catch 404 and forward to error handler
-app.use(function (req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
 });
 
+module.exports = app;
+
+// example:
+// import EthTransationProcessor from './processor/eth-transation-processor';
 // let config = {
 //   "abi": [
 //       {
@@ -58,5 +54,3 @@ app.use(function (req, res, next) {
 // }).catch((err) => {
 //   console.log(err);
 // })
-
-module.exports = app;

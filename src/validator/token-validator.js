@@ -1,5 +1,7 @@
 import { CONSTANTS } from '../configuration/config';
-
+import JWTTokenController from '../controller/jwt-controller';
+import Web3 from 'web3';
+const web3 = new Web3();
 /*
 ** Middleware to authenicate headers and validate request
 */
@@ -7,23 +9,20 @@ import { CONSTANTS } from '../configuration/config';
 class TokenValidators {
   validate(request, response, next) {
     // fetch auth token
-    const publicAddress = request.headers[CONSTANTS.HEADER.X_ETH_PUBLIC_ADDRESS];
-    if (!publicAddress) {
+    const X_AUTH_TOKEN = request.headers[CONSTANTS.HEADER.X_AUTH_TOKEN];
+    if (typeof X_AUTH_TOKEN == undefined || X_AUTH_TOKEN == null || X_AUTH_TOKEN == '') {
       const err = new Error();
       err.status = 403;
-      err.message = 'child "' + CONSTANTS.HEADER.X_ETH_PUBLIC_ADDRESS + '" fails because [' +
-      CONSTANTS.HEADER.X_ETH_PUBLIC_ADDRESS + ' is required]';
-      return next(err);
+      err.message = CONSTANTS.HEADER.X_AUTH_TOKEN + ' is missing';
+      return response.status(403).jsonp(err);
     }
-    if (typeof publicAddress == undefined || publicAddress == null || publicAddress == '') {
-      const err = new Error();
-      err.status = 403;
-      err.message = 'child "' + CONSTANTS.HEADER.X_ETH_PUBLIC_ADDRESS + '" fails because [' +
-      CONSTANTS.HEADER.X_ETH_PUBLIC_ADDRESS + ' is required]';
-      return response.jsonp(err);
-    }
-    return next();
-  };
+
+    JWTTokenController.verifyJWT(X_AUTH_TOKEN).then(() => {
+      return next();
+    }).catch((err) => {
+      return response.status(403).jsonp(err);
+    })
+  }
 }
 
 export default new TokenValidators();

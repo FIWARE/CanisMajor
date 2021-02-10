@@ -1,67 +1,60 @@
 import { CONSTANTS, CM_PROXY_APP_HOST, CM_PROXY_APP_PORT, CM_PROXY_HTTPS_ENABLED } from '../configuration/config';
 import * as fetch from 'node-fetch';
-
-// DLT Type resolver
-const dltConfigResolver = (data) => {
-    return new Promise((resolve, reject) => {
-        // only ETH clients are supported now
-        if (data.dlt_config.dlt_type == CONSTANTS.DLT_TYPE.ETH) {
-            delete data.dlt_config["dlt_type"];
-            resolve(data.dlt_config);
-        } else {
-            reject(null);
-        }
-    })
-}
+import JWTController from '../controller/jwt-controller';
 
 // context mapping with the configuration and payload
-const contextMappingResolver = (contextMapping, data) => {
+const contextMappingResolver = (configuration, data) => {
+    // let contextMapping = configuration.contextMapping;
     return new Promise((resolve, reject) => {
         const obj = [];
         //context mapping from payload to contract method, vars
-        contextMapping.forEach((items) => {
-            Object.keys(items).forEach((key) => {
-                const values = [];
-                items[key].forEach((params) => {
-                    // maps for ID and TYPE from NGSI payload
-                    if (data.hasOwnProperty(params)) {
-                        if (params == 'id') {
-                            values.push(data[params]);
-                        } else if (params == 'type') {
-                            values.push(data[params]);
-                        } else {
-                            // else values
-                            values.push(data[params].value);
+        configuration.forEach((mapping) => {
+            mapping.contextMapping.forEach((items) => {
+                Object.keys(items).forEach((key) => {
+                    const values = [];
+                    items[key].forEach((params) => {
+                        // maps for ID and TYPE from NGSI payload
+                        if (data.hasOwnProperty(params)) {
+                            if (params == 'id') {
+                                values.push(data[params]);
+                            } else if (params == 'type') {
+                                values.push(data[params]);
+                            } else {
+                                // else values
+                                values.push(data[params].value);
+                            }
                         }
-                    }
-                });
-                obj.push({ method: key, value: values });
-            })
-        });
+                    });
+                    obj.push({ method: key, value: values });
+                })
+            });
+        })
         resolve(obj);
     });
 }
 
 // ABI validate with contextMapping
-const ABIValidator = (abi, mapping) => {
+const ABIValidator = (configuration, mapping) => {
     return new Promise((resolve, reject) => {
-        abi.forEach((element) => {
-            // function validation (in future: events, constants, constr)
-            if (element.type === "function") {
-                mapping.forEach((maps) => {
-                    // method validation
-                    if (maps.method != element.name) {
-                        reject(`Smart Contract ABI doesnt have "${element.name}" method, please fix config`);
-                    }
-                    // variable validation
-                    if (element.inputs.length != maps.value.length) {
-                        reject(`Smart Contract method "${element.name}" takes ${element.inputs.length} inputs, please fix config`);
-                    }
-                    // variable type validation
-                    // TO DO
-                });
-            }
-        })
+        configuration.forEach((config) => {
+            config.metadata.abi.forEach((element) => {
+                // function validation (in future: events, constants, constr)
+                if (element.type === "function") {
+                    mapping.forEach((maps) => {
+                        // method validation
+                        if (maps.method != element.name) {
+                            reject(`Smart Contract ABI doesnt have "${element.name}" method, please fix config`);
+                        }
+                        // variable validation
+                        if (element.inputs.length != maps.value.length) {
+                            reject(`Smart Contract method "${element.name}" takes ${element.inputs.length} inputs, please fix config`);
+                        }
+                        // variable type validation
+                        // TO DO
+                    });
+                }
+            })
+        });       
         resolve();
     });
 }
@@ -69,8 +62,8 @@ const ABIValidator = (abi, mapping) => {
 // future implementation
 const vaildateIdentity = (request) => {
     // in the current implementation validate only ETH public address
-    const ethPublicAddress = request.headers[CONSTANTS.HEADER.X_ETH_PUBLIC_ADDRESS];
-    return Promise.resolve(ethPublicAddress);
+    const token = request.headers[CONSTANTS.HEADER.X_AUTH_TOKEN];
+    return JWTController.verifyJWT(token);
 }
 
 // check the entity Exist in Context Broker
@@ -101,7 +94,6 @@ const contextBrokerEntityCheck = (entityId) => {
 export {
     ABIValidator,
     contextMappingResolver,
-    dltConfigResolver,
     vaildateIdentity,
     contextBrokerEntityCheck,
 }

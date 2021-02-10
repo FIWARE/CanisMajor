@@ -1,35 +1,26 @@
+import EthTransactionProcessor from '../processor/eth-transation-processor';
+import { ABIValidator, contextMappingResolver, vaildateIdentity } from '../util/resolver-utils';
 import { StatusCodes } from 'http-status-codes';
-import { ABIValidator, dltConfigResolver, contextMappingResolver, vaildateIdentity } from '../util/resolver-utils';
+import EthereumService from '../service/eth-service';
+import EntityRepository from '../repository/entity-repository';
 
 class EthTransactionHandlerController {
 
     async createATrasaction(request, response, next) {
-        const contextResponses = request.body;
+        let configurations;
+        let address;
+        let privateKey;
+        let contextMappingParams;
 
+        const contextResponses = Buffer.isBuffer(request.body) ? JSON.parse(request.body.toString()) : request.body;
         if (Object.keys(contextResponses).length === 0) {
             let err = new Error();
             err.status = StatusCodes.FORBIDDEN;
             err.message = 'request body missing';
             return response.status(StatusCodes.FORBIDDEN).jsonp(err);
         }
-
-        let ethPublicAddress;
-        let entityModel;
-        let configurations;
-        let dltConfigs;
-        let contextMappingParams;
-
-        // await this.storeEntityId(contextResponses)
-        //     .then((entity) => {
-        //         entityModel = entity;
-        //         return this.contextBrokerEntityCheck(entity.entityId);
-        //     })
-        //     .then(() => {
-        //         return this.retrieveConfigs(contextResponses);
-        //     })
-        this.retrieveConfigs(contextResponses)
-        .then((configs) => {
-                // if config exists
+        EthTransactionProcessor.retrieveConfigs(contextResponses)
+            .then((configs) => {
                 if (configs.count === 0) {
                     let err = new Error();
                     err.status = StatusCodes.NOT_FOUND;
@@ -37,52 +28,55 @@ class EthTransactionHandlerController {
                     return response.status(StatusCodes.NOT_FOUND).jsonp(err);
                 }
                 // for now supporting only single transaction
-                configurations = configs.rows[0];
+                configurations = configs.rows;
                 return vaildateIdentity(request);
             })
-            .then((ethAddress) => {
-                ethPublicAddress = ethAddress;
-                return dltConfigResolver(configurations);
-            })
-            .then((dltconfig) => {
-                dltConfigs = dltconfig;
-                return contextMappingResolver(configurations.contextMapping, contextResponses);
+            .then((identity) => {
+                address = identity.address;
+                privateKey = identity.privateKey;
+                return contextMappingResolver(configurations, contextResponses);
             })
             .then((params) => {
                 contextMappingParams = params;
-                return ABIValidator(dltConfigs.abi, contextMappingParams);
+                return ABIValidator(configurations, contextMappingParams);
             })
             .then(() => {
-                return this.transactionProcess(dltConfigs, contextMappingParams, ethPublicAddress);
+                return this.processTransaction(configurations, contextMappingParams, address, privateKey);
+            })
+            .then((recipts) => {
+                return this.storeRecipts(contextResponses, configurations, recipts);
             })
             .then((txRecipt) => {
-                if (txRecipt === undefined || txRecipt.length === 0) {
-                    let err = new Error();
-                    err.message = "smart contract configuration is incorrect";
-                    return this.storeErrors(entityModel, err);
-                } else {
-                    //indivisual recipt mapping to be done in future
-                    let recipt = {
-                        dltConfig: dltConfigs,
-                        contextMapping: configurations.contextMapping,
-                        recipt: txRecipt
-                    };
-                    return this.storeTransactionRecipt(entityModel, recipt);
-                }
+                return response.status(StatusCodes.OK).jsonp(txRecipt);
             })
-            .then((json) => {
-                // console.log(json.txDetails.recipt);
-                if (!proxyRequest) {
-                    return response.status(StatusCodes.CREATED).jsonp(json);
-                }
-            })
-            .catch((err) => {
-                this.storeErrors(entityModel, err);
-                if (!proxyRequest) {
-                    return response.status(StatusCodes.FORBIDDEN).jsonp(err);
-                }
+            .catch((error) => {
+                return response.status(StatusCodes.FORBIDDEN).jsonp(error);
             })
 
+    }
+
+    processTransaction(configuration, params, address, privateKey) {
+        return new Promise((resolve, reject) => {
+            configuration.forEach((config) => {
+                let ethService = new EthereumService(config);
+                // process transaction
+                ethService.processTransaction(params, address, privateKey).then((result) => {
+                    resolve(result);
+                }).catch((error) => {
+                    reject(error);
+                });
+            });           
+        });
+    }
+
+    storeRecipts(context, configuration, recipts) {
+        let txObject = [];
+        configuration.forEach((element) => {
+            recipts.forEach((recipt) => {
+                txObject.push({configId: element.id, txRecipt: recipt});
+            })
+        })
+       return EntityRepository.create({entityId: context.id, txDetails: txObject});
     }
 
     async readTransactionData() {

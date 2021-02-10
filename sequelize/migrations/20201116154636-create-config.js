@@ -12,14 +12,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
-      dlt_config: {
+      contextMapping: {
         type: Sequelize.JSON
       },
-      contextMapping: {
-        type: Sequelize.JSON,
-        //unique: true
-      },
-      meta: {
+      metadata: {
         type: Sequelize.JSON 
       },
       createdAt: {
