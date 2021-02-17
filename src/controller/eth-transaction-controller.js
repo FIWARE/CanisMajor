@@ -1,4 +1,3 @@
-import EthTransactionProcessor from '../processor/eth-transation-processor';
 import { ABIValidator, contextMappingResolver, vaildateIdentity } from '../util/resolver-utils';
 import { StatusCodes } from 'http-status-codes';
 import EthereumService from '../service/eth-service';
@@ -38,7 +37,6 @@ class EthTransactionHandlerController {
                     err.message = 'config doesnt exists';
                     return response.status(StatusCodes.NOT_FOUND).jsonp(err);
                 }
-                // for now supporting only single transaction
                 configurations = configs.rows;
                 return vaildateIdentity();
             })
