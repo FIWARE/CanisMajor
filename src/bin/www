@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 import http from 'http';
 import app from '../app';
-import { CM_PROXY_PORT } from '../configuration/config';
+import { CM_PORT } from '../configuration/config';
 var debug = require('debug')('canismajor:server');
 // Get port from environment and store in Express.
-app.set('port', CM_PROXY_PORT);
+app.set('port', CM_PORT);
 // Create HTTP server.
 var server = http.createServer(app);
 // Listen on provided port, on all network interfaces.
-server.listen(CM_PROXY_PORT);
+server.listen(CM_PORT);
 server.on('error', onError);
 server.on('listening', onListening);
 // Event listener for HTTP server "error" event.

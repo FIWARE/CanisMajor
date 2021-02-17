@@ -2,12 +2,13 @@
   "name": "canismajor",
   "version": "0.0.1",
   "scripts": {
-    "start": "nodemon --exec babel-node src/bin/www --verbose",
+    "dev": "nodemon --exec babel-node src/bin/www --verbose",
+    "healthcheck": "node ./bin/healthcheck.js",
     "build": "rm -rf dist && babel src --out-dir dist && babel src/bin/www --out-dir dist/ && mv dist/src/bin dist/bin && rm -rf dist/src",
-    "serve": "node dist/bin/www.js",
+    "start": "node dist/bin/www.js",
     "test": "mocha --require babel-core/register --require babel-polyfill --recursive --exit",
-    "migrate": "./node_modules/.bin/sequelize db:migrate",
-    "seed": "./node_modules/.bin/sequelize db:seed:all"
+    "migrate": "cd sequelize  && ../node_modules/.bin/sequelize db:migrate",
+    "seed": "cd sequelize  && ../node_modules/.bin/sequelize db:seed:all"
   },
   "dependencies": {
     "app-root-path": "^2.2.1",

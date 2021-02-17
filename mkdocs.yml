@@ -3,7 +3,7 @@ site_url: https://canismajor.readthedocs.io
 repo_url: https://github.com/FIWARE-Blockchain/CanisMajor/docs
 site_description: CanisMajor Documentation
 docs_dir: docs
-site_dir: doc_gen
+site_dir: html
 edit_uri: edit/master/docs/
 markdown_extensions: [toc,fenced_code]
 use_directory_urls: false

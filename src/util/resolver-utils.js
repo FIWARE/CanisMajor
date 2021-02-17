@@ -1,6 +1,6 @@
 import { CONSTANTS, CM_PROXY_APP_HOST, CM_PROXY_APP_PORT, CM_PROXY_HTTPS_ENABLED } from '../configuration/config';
 import * as fetch from 'node-fetch';
-import JWTController from '../controller/jwt-controller';
+// import JWTController from '../controller/jwt-controller';
 
 // context mapping with the configuration and payload
 const contextMappingResolver = (configuration, data) => {
@@ -65,8 +65,8 @@ const vaildateIdentity = () => {
     // const token = request.headers[CONSTANTS.HEADER.X_AUTH_TOKEN];
     // return JWTController.verifyJWT(token);
     let account = {
-        address : CONSTANTS.DLT_CONFIG.account,
-        privateKey: CONSTANTS.DLT_CONFIG.privateKey
+        address : CONSTANTS.ETHEREUM_CONFIG.account,
+        privateKey: CONSTANTS.ETHEREUM_CONFIG.privateKey
     }
     return account;
 }

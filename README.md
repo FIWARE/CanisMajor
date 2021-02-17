@@ -1,13 +1,9 @@
 # CanisMajor - FIWARE Blockchain Adaptor
 
 CanisMajor is a blockchain adaptor that supports various DLT, the adaptor aims to submit the data to DLT in Powered By FIWARE Architecture.
-
 The adaptor will not be recommended to work for public-permissionless blockchains (specially tokens, cryptocurrencies).
 
 # Architecture
-## CanisMajor as Proxy Architecture
-![CanisMajor as Proxy Architecture](https://github.com/FIWARE-Blockchain/CanisMajor/blob/master/docs/images/architecture_1.png)
-
 ## CanisMajor Publish/Notify Architecture
 ![CanisMajor Publish/Notify Architecture](https://github.com/FIWARE-Blockchain/CanisMajor/blob/master/docs/images/architecture_2.png)
 
@@ -18,7 +14,7 @@ The adaptor will not be recommended to work for public-permissionless blockchain
 
 ### Dependencies
 _This project uses:_
- - nodeJS (v-10)
+ - nodeJS (v-12)
 
 ### Installation guide
 
@@ -27,4 +23,9 @@ _This project uses:_
 
 ### Configuration
 
-FIWARE Foundation e.V @ 2021
+
+## License
+
+CanisMajor is licensed under the [MIT](LICENSE) License.
+
+© 2021 FIWARE Foundation e.V.

@@ -7,9 +7,9 @@ class EthereumService {
     // web3 instance
     constructor(configuration) {
         this.abi = configuration.metadata.abi;
-        this.endpoint = CONSTANTS.DLT_CONFIG.endpoint;
-        this.default_gas = CONSTANTS.DLT_CONFIG.default_gas;
-        this.default_gasPrice = CONSTANTS.DLT_CONFIG.default_gasPrice;
+        this.endpoint = CONSTANTS.ETHEREUM_CONFIG.endpoint;
+        this.default_gas = CONSTANTS.ETHEREUM_CONFIG.default_gas;
+        this.default_gasPrice = CONSTANTS.ETHEREUM_CONFIG.default_gasPrice;
         this.contract_address = configuration.metadata.contractAddress;
         this.web3 = new Web3();
         this.contract_schema = this.abi;
