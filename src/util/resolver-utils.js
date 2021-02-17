@@ -60,10 +60,15 @@ const ABIValidator = (configuration, mapping) => {
 }
 
 // future implementation
-const vaildateIdentity = (request) => {
+const vaildateIdentity = () => {
     // in the current implementation validate only ETH public address
-    const token = request.headers[CONSTANTS.HEADER.X_AUTH_TOKEN];
-    return JWTController.verifyJWT(token);
+    // const token = request.headers[CONSTANTS.HEADER.X_AUTH_TOKEN];
+    // return JWTController.verifyJWT(token);
+    let account = {
+        address : CONSTANTS.DLT_CONFIG.account,
+        privateKey: CONSTANTS.DLT_CONFIG.privateKey
+    }
+    return account;
 }
 
 // check the entity Exist in Context Broker

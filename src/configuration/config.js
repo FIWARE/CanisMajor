@@ -31,7 +31,9 @@ const CONSTANTS = {
         type: 'eth',
         endpoint: 'http://127.0.0.1:8545',
         default_gas: 0,
-        default_gasPrice: 0
+        default_gasPrice: 0,
+        account: '0xfd572Dccb853eD7651B5988D8aC18c2B632b1b67',
+        privateKey: '0x45ce62c1dbcdc0f7aa3fae1e5e462608651164317553392d21d71c27d3900536'
     }
 };
 

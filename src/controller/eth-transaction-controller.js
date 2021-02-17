@@ -3,6 +3,7 @@ import { ABIValidator, contextMappingResolver, vaildateIdentity } from '../util/
 import { StatusCodes } from 'http-status-codes';
 import EthereumService from '../service/eth-service';
 import EntityRepository from '../repository/entity-repository';
+import ConfigRepository from '../repository/config-repository';
 
 class EthTransactionHandlerController {
 
@@ -11,6 +12,7 @@ class EthTransactionHandlerController {
         let address;
         let privateKey;
         let contextMappingParams;
+        let contextType;
 
         const contextResponses = Buffer.isBuffer(request.body) ? JSON.parse(request.body.toString()) : request.body;
         if (Object.keys(contextResponses).length === 0) {
@@ -19,7 +21,16 @@ class EthTransactionHandlerController {
             err.message = 'request body missing';
             return response.status(StatusCodes.FORBIDDEN).jsonp(err);
         }
-        EthTransactionProcessor.retrieveConfigs(contextResponses)
+
+        contextType = contextResponses.type;
+        if(contextType == null || contextType == '') {
+            let err = new Error();
+            err.status = StatusCodes.FORBIDDEN;
+            err.message = 'contextType is missing';
+            return response.status(StatusCodes.FORBIDDEN).jsonp(err);
+        }
+
+        ConfigRepository.findAllCountAllByContextType(contextType)
             .then((configs) => {
                 if (configs.count === 0) {
                     let err = new Error();
@@ -29,7 +40,7 @@ class EthTransactionHandlerController {
                 }
                 // for now supporting only single transaction
                 configurations = configs.rows;
-                return vaildateIdentity(request);
+                return vaildateIdentity();
             })
             .then((identity) => {
                 address = identity.address;
