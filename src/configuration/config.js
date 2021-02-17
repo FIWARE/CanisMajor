@@ -35,8 +35,8 @@ const CONSTANTS = {
         privateKey: ENV.COINBASE_ACCOUNT_PRIVATEKEY || ''
     },
     IOTA_CONFIG: {
-        provider : ENV_IOTA_ENDPOINT || 'https://nodes.devnet.thetangle.org:443',
-        zmq_provide: process.env.IOTA_ZMQ_ENDPOINT || 'tcp://zmq.devnet.iota.org:5556'
+        provider : ENV.IOTA_ENDPOINT || 'https://nodes.devnet.thetangle.org:443',
+        zmq_provide: ENV.IOTA_ZMQ_ENDPOINT || 'tcp://zmq.devnet.iota.org:5556'
     }
 };
 
