@@ -11,14 +11,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // route prefix
-app.use('/cm', serviceRoutes);
+app.use('/', serviceRoutes);
 
 // routes without prefix (request forward to to proxy host)
-app.use((req, res, next) => {
-  if (req.path != '@(?=cm)') {
-    proxy(req, res, next);
-  }
-});
+// app.use((req, res, next) => {
+//   if (req.path != '@(?=cm)') {
+//     proxy(req, res, next);
+//   }
+// });
 
 module.exports = app;
 

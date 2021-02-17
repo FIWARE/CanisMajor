@@ -1,5 +1,6 @@
 import { ABIValidator, contextMappingResolver, vaildateIdentity } from '../util/resolver-utils';
 import { StatusCodes } from 'http-status-codes';
+import loadash from 'lodash';
 import EthereumService from '../service/eth-service';
 import EntityRepository from '../repository/entity-repository';
 import ConfigRepository from '../repository/config-repository';
@@ -12,8 +13,17 @@ class EthTransactionHandlerController {
         let privateKey;
         let contextMappingParams;
         let contextType;
+        let contextResponses;
 
-        const contextResponses = Buffer.isBuffer(request.body) ? JSON.parse(request.body.toString()) : request.body;
+        if("data" in request.body) {
+            loadash.forEach(request.body.data, item => {
+                contextResponses = item;
+            });
+        } else {
+            contextResponses = request.body;
+        }
+       
+        contextResponses = Buffer.isBuffer(contextResponses) ? JSON.parse(request.body.toString()) : contextResponses;
         if (Object.keys(contextResponses).length === 0) {
             let err = new Error();
             err.status = StatusCodes.FORBIDDEN;
