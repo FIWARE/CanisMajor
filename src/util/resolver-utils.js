@@ -60,13 +60,14 @@ const ABIValidator = (configuration, mapping) => {
 }
 
 // future implementation
-const vaildateIdentity = () => {
+const vaildateIdentity = (request) => {
     // in the current implementation validate only ETH public address
-    // const token = request.headers[CONSTANTS.HEADER.X_AUTH_TOKEN];
-    // return JWTController.verifyJWT(token);
+    const token = request.headers[CONSTANTS.HEADER.DLT_TOKEN];
+    let keys = Buffer.from(token, 'base64').toString();
+    keys = keys.split(':');
     let account = {
-        address : CONSTANTS.ETHEREUM_CONFIG.account,
-        privateKey: CONSTANTS.ETHEREUM_CONFIG.privateKey
+        address : keys[0],
+        privateKey: keys[1]
     }
     return account;
 }

@@ -8,6 +8,7 @@ class HeaderValidators {
    * @param next The header validation next() function
    * @return {*} This function does not return anything of interest
    */
+  // NOT IN USE
   validate(request, response, next) {
     if (!request.headers[CONSTANTS.HEADER.FIWARE_SERVICE]) {
       const err = new Error();

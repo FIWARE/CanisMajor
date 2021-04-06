@@ -48,7 +48,7 @@ class EthTransactionHandlerController {
                     return response.status(StatusCodes.NOT_FOUND).jsonp(err);
                 }
                 configurations = configs.rows;
-                return vaildateIdentity();
+                return vaildateIdentity(request);
             })
             .then((identity) => {
                 address = identity.address;

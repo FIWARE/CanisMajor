@@ -15,29 +15,55 @@ const TRANSCTION_TIMEOUT = ENV.TRANSCTION_TIMEOUT || 1000;
 
 
 const CONSTANTS = {
-    // JWT_ALGORITHMS: {
-    //     RS256: 'RS256',
-    //     SECRET: '123456'
-    // },
     HEADER: {
         CORRELATOR: 'fiware-correlator',
         FIWARE_SERVICE: 'fiware-service',
         FIWARE_SERVICE_PATH: 'fiware-servicepath',
         FIWARE_TOTAL_COUNT: 'fiware-total-count',
         X_REAL_IP: 'x-real-ip',
-        X_AUTH_TOKEN: 'x-auth-token'
+        X_AUTH_TOKEN: 'x-auth-token',
+        DLT_TOKEN: 'dlt-token'
     },
     ETHEREUM_CONFIG: {
         endpoint: ENV.RPC_ENDPOINT ||  'http://127.0.0.1:8545',
-        default_gas: ENV.DEFAULT_GAS || 0,
+        default_gas: ENV.DEFAULT_GAS || 3000000,
         default_gasPrice: ENV.DEFAULT_GAS_PRICE || 0,
-        account: ENV.COINBASE_ACCOUNT ||  '',
-        privateKey: ENV.COINBASE_ACCOUNT_PRIVATEKEY || ''
-    },
-    IOTA_CONFIG: {
-        provider : ENV.IOTA_ENDPOINT || 'https://nodes.devnet.thetangle.org:443',
-        zmq_provide: ENV.IOTA_ZMQ_ENDPOINT || 'tcp://zmq.devnet.iota.org:5556'
+        aei_contract_mode: ENV.AEI_CONTRACT_MODE || true,
+        contractAddress: ENV.AEI_CONTRACT_ADDRESS || '0x6D8a94Aa1098bc9feB9BC3083f5074013369540b',
+        storage_type: ENV.STORAGE_TYPE || 'iota', //supported type: merkletree, ipfs, iota,
+        encrpytionMode: false,
+        txSignMode: false,
+        encyptionConfig: {
+            algorithm: 'aes-256-ctr',
+            secret: '1234'
+        },
+        ipfsConfig: {
+            host: 'ipfs.infura.io',
+            port: 5001,
+            protocol: 'https',
+            headers: {
+                authorization: ''
+            },
+            dagOptions: {
+                format: 'dag-cbor',
+                hashAlg: 'sha2-256'
+            },
+        },
+        IOTAMaMConfig: {
+            host: 'https://nodes.devnet.iota.org',
+            mode: 'public'
+        }
     }
+};
+
+//supported storage
+var storageType = {
+    IPFS: 'ipfs',
+    MERKLETREE: 'merkletree',
+    IOTA: 'iota',
+    //In Future
+    //DCB (decentralized context broker)
+    //storj
 };
 
 module.exports = {
@@ -53,4 +79,5 @@ module.exports = {
     CM_PROXY_HTTPS_ENABLED,
     CM_PORT,
     TRANSCTION_TIMEOUT,
+    storageType
 }

@@ -10,7 +10,6 @@ module.exports = {
       },
       entityId: {
         type: Sequelize.STRING,
-        unique: true
       },
       txDetails: {
         type: Sequelize.JSON

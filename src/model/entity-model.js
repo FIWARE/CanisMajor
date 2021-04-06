@@ -12,7 +12,6 @@ module.exports = function(sequelize, DataTypes) {
   entityId: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true
   },
   txDetails: {
     type: DataTypes.JSON,
