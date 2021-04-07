@@ -22,13 +22,14 @@ class DLTKeyValidators {
         err.message = 'Invalid account address';
         return response.status(403).jsonp(err);
     }
-    let wallet = web3.eth.accounts.privateKeyToAccount(keys[1]);
-    if(wallet.address != keys[0]) {
-        const err = new Error();
-        err.status = 403;
-        err.message = 'Invalid account details please check DLT-Token Header';
-        return response.status(403).jsonp(err);
-    }
+    // will be enabled on privatekey signed tx
+    // let wallet = web3.eth.accounts.privateKeyToAccount(keys[1]);
+    // if(wallet.address != keys[0]) {
+    //     const err = new Error();
+    //     err.status = 403;
+    //     err.message = 'Invalid account details please check DLT-Token Header';
+    //     return response.status(403).jsonp(err);
+    // }
     return next();
   }
 }
