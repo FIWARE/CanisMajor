@@ -22,15 +22,16 @@ const CONSTANTS = {
         FIWARE_TOTAL_COUNT: 'fiware-total-count',
         X_REAL_IP: 'x-real-ip',
         X_AUTH_TOKEN: 'x-auth-token',
-        DLT_TOKEN: 'dlt-token'
+        DLT_TOKEN: 'dlt-token',
+        CONTEXT_MAPPING_KEYS: 'ctx_map'
     },
     ETHEREUM_CONFIG: {
         endpoint: ENV.RPC_ENDPOINT ||  'http://127.0.0.1:8545',
         default_gas: ENV.DEFAULT_GAS || 3000000,
         default_gasPrice: ENV.DEFAULT_GAS_PRICE || 0,
         aei_contract_mode: ENV.AEI_CONTRACT_MODE || true,
-        contractAddress: ENV.AEI_CONTRACT_ADDRESS || '0x776aEB66768D09bEAfc703787a74afBC21863162',
-        storage_type: ENV.STORAGE_TYPE || 'iota', //supported type: merkletree, ipfs, iota,
+        contractAddress: ENV.AEI_CONTRACT_ADDRESS || '0x5fc63Ebb59fca11962bC06b11E7164d425950Bdf',
+        storage_type: ENV.STORAGE_TYPE || 'merkletree', //supported type: merkletree, ipfs, iota,
         encrpytionMode: false,
         txSignMode: false,
         encyptionConfig: {

@@ -27,6 +27,8 @@ export default class BaseCRUDRepository {
     for (const key of this.createFields) {
       createObject[key] = entry[key];
     }
+    console.log(entry);
+    console.log(createObject);
 
     return this.model.create(createObject);
   }

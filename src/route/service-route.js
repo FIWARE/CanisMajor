@@ -87,4 +87,77 @@ router.post('/ngsi-ld/v1/entities/:id/attrs',
   : ethTransactionController.createATrasaction.bind(ethTransactionController)
 );
 
+// http://{{orion}}/ngsi-ld/v1/entities/urn:ngsi-ld:Device:water001/attrs/off
+
+// create new entity (POST)
+// http://{{orion}}/ngsi-ld/v1/entities/
+// {
+//   "id": "urn:ngsi-ld:TemperatureSensor:001",
+//   "type": "TemperatureSensor",
+//   "category": {
+//         "type": "Property",
+//         "value": "sensor"
+//   },
+//   "temperature": {
+//         "type": "Property",
+//         "value": 25,
+//         "unitCode": "CEL"
+//   }
+// }
+
+// Create new Attribute (POST)
+// http://{{orion}}/ngsi-ld/v1/entities/urn:ngsi-ld:TemperatureSensor:001/attrs
+// {
+//   "batteryLevel": {
+//        "type": "Property",
+//        "value": 0.8,
+//        "unitCode": "C62"
+//  },
+//  "controlledAsset": {
+//        "type": "Relationship",
+//        "object": "urn:ngsi-ld:Building:barn002"
+//  }
+// }
+
+// Update Attribute Value (PATCH)
+// http://{{orion}}/ngsi-ld/v1/entities/urn:ngsi-ld:TemperatureSensor:001/attrs/category
+// {
+//   "value": ["sensor", "actuator"],
+//   "type": "Property"
+// }
+
+// update multiple value (PATCH)
+// http://{{orion}}/ngsi-ld/v1/entities/urn:ngsi-ld:TemperatureSensor:001/attrs
+
+// {
+//   "category": {
+//         "value": [
+//               "sensor",
+//               "actuator"
+//         ],
+//         "type": "Property"
+//   },
+//   "controlledAsset": {
+//         "type": "Relationship",
+//         "object": "urn:ngsi-ld:Building:barn001"
+//   }
+// }
+
+// Delete an entity (DELETE)
+// http://{{orion}}/ngsi-ld/v1/entities/urn:ngsi-ld:TemperatureSensor:004
+// http://{{orion}}/ngsi-ld/v1/entities/urn:ngsi-ld:TemperatureSensor:001/attrs/batteryLevel
+
+
+
+//batch operation
+// create (POST)
+// http://{{orion}}/ngsi-ld/v1/entityOperations/create
+// http://{{orion}}/ngsi-ld/v1/entityOperations/upsert
+// update (POST)
+// http://{{orion}}/ngsi-ld/v1/entityOperations/upsert?options=update
+// http://{{orion}}/ngsi-ld/v1/entityOperations/update?options=replace
+// DELETE (POST)
+// http://{{orion}}/ngsi-ld/v1/entityOperations/delete
+// DELETE (PATCH)
+// http://{{orion}}/ngsi-ld/v1/entities/urn:ngsi-ld:TemperatureSensor:001/attrs
 module.exports = router;

@@ -4,21 +4,26 @@ import md5 from 'md5';
 
 const getMerkelRoot = (payload) => {
     return new Promise((resolve, reject) => {
-        let keys = [];
-        let ObjMd5 = [];
-        for (var key in payload) {
-            ObjMd5.push(md5(JSON.stringify(payload[key])));
-            keys.push(key);
+        try {
+            let keys = [];
+            let ObjMd5 = [];
+            for (var key in payload) {
+                ObjMd5.push(md5(JSON.stringify(payload[key])));
+                keys.push(key);
+            }
+            const leaves = ObjMd5.map(x => SHA256(x));
+            const tree = new MerkleTree(leaves, SHA256);
+            const root = tree.getRoot().toString('hex');
+            let Obj = {
+                MerkleRoot: root,
+                depth: tree.getDepth(),
+                keys: keys
+            }
+            resolve(Obj.MerkleRoot);
         }
-        const leaves = ObjMd5.map(x => SHA256(x));
-        const tree = new MerkleTree(leaves, SHA256);
-        const root = tree.getRoot().toString('hex');
-        let Obj = {
-            MerkleRoot: root,
-            depth: tree.getDepth(),
-            keys: keys
+        catch (exception_var) {
+            reject(exception_var);
         }
-        resolve(Obj);
     })
 };
 

@@ -8,17 +8,19 @@ Contract.setProvider(CONSTANTS.ETHEREUM_CONFIG.endpoint);
 const contract = new Contract(AssetArtifact.abi, CONSTANTS.ETHEREUM_CONFIG.contractAddress);
 
 const createAsset = async (uuid, hash, address) => {
-    return new Promise((resolve, rejecct) => {
+    return new Promise((resolve, reject) => {
         let uuidToByte32 = Web3.utils.fromAscii(uuid);
         contract.methods.createAsset(uuidToByte32, hash).send({
             from: address,
             gas: CONSTANTS.ETHEREUM_CONFIG.default_gas
         })
             .on('receipt', (receipt) => {
+                console.log('receipt:' + receipt);
                 resolve(receipt);
             })
             .on('error', (err, receipt) => { // If the transaction was rejected by the network with a receipt, the second parameter will be the receipt.
-                rejecct(err);
+                console.log('err:' + err);
+                reject(err);
             });
     });
 };
@@ -68,7 +70,7 @@ const getAsset = (uuid, callback) => {
 // };
 
 const addMetaData = (uuid, hash, address) => {
-    return new Promise((resolve, rejecct) => {
+    return new Promise((resolve, reject) => {
         let uuidToByte32 = Web3.utils.fromAscii(uuid);
         contract.methods.addMetadata(uuidToByte32, hash).send({
             from: address,
@@ -78,7 +80,7 @@ const addMetaData = (uuid, hash, address) => {
                 resolve(receipt);
             })
             .on('error', (err, receipt) => { // If the transaction was rejected by the network with a receipt, the second parameter will be the receipt.
-                rejecct(err);
+                reject(err);
             });
     });
 };

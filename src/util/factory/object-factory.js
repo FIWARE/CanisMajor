@@ -2,6 +2,7 @@ import _ from 'lodash';
 import filter from './filters';
 
 class ObjectFactory {
+
   addPaginationOptions(queryString) {
     return {
       limit: queryString.limit,

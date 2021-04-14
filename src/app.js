@@ -1,14 +1,13 @@
 import express from 'express';
 import { proxy } from './route/proxy';
 import serviceRoutes from './route/service-route';
-import bodyParser from 'body-parser';
 import cors from 'cors';
 
 const app = express();
 app.use(cors());
 app.options('*', cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 // route prefix
 app.use('/', serviceRoutes);
