@@ -1,5 +1,5 @@
 import { composeAPI } from '@iota/core';
-import { asciiToTrytes } from '@iota/converter';
+import { asciiToTrytes, trytesToAscii } from '@iota/converter';
 import { CONSTANTS, DLT_TYPE } from '../configuration/config';
 import { StatusCodes } from 'http-status-codes';
 import { vaildateIdentity } from '../util/resolver-utils';
@@ -34,7 +34,6 @@ class IOTATransactionHandlerController {
         for (let key in payload) {
             keys.push(key);
         }
-
         let data = Buffer.from(JSON.stringify(payload), 'utf-8').toString('base64');
         const trytes = asciiToTrytes(data);
 

@@ -2,7 +2,7 @@ import { getFromIPFS } from '../util/helper/ipfs';
 import { getFromIOTA } from '../util/helper/iota';
 import { verify } from '../util/helper/merkle';
 import { StatusCodes } from 'http-status-codes';
-import { extractJson } from '@iota/extract-json';
+import { trytesToAscii} from '@iota/converter';
 import { composeAPI } from '@iota/core';
 import { CONSTANTS } from '../configuration/config';
 
@@ -51,12 +51,11 @@ class HelperController {
             err.message = 'hash missing in param';
             return response.status(StatusCodes.FORBIDDEN).jsonp(err);
         }
-        console.log('has' + hash);
         iota.getBundle(hash).then((bundle) => {
-            console.log(bundle);
-            console.log(Extract.extractJson(bundle));
-            // console.log(JSON.parse(Extract.extractJson(bundle)));
-            return response.status(StatusCodes.OK).jsonp(Extract.extractJson(bundle));
+            const sign = bundle[0].signatureMessageFragment;
+            const num = sign.match(/^(.*)99/);
+            let data = Buffer.from(trytesToAscii(num[1].slice(0, -1)), 'base64').toString('utf-8');
+            return response.status(StatusCodes.OK).jsonp(JSON.parse(data));
         }).catch((err) => {
             return response.status(StatusCodes.BAD_REQUEST).jsonp(err);
         })
