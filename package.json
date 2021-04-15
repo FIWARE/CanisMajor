@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@iota/converter": "^1.0.0-beta.30",
+    "@iota/core": "^1.0.0-beta.30",
+    "@iota/extract-json": "^1.0.0-beta.30",
     "@iota/mam": "^0.7.3",
     "aeicontract": "0.0.2",
     "app-root-path": "^2.2.1",

@@ -24,7 +24,7 @@ A stable solution to use canis major as a proxy which is more suitable and will 
 
 ## Supported DLT Clients
 - [x] Ethereum 
-- [ ] IOTA
+- [x] IOTA
 - [ ] FABRIC Chaincode
 
 ### Dependencies

@@ -1,5 +1,4 @@
 import express from 'express';
-import { proxy } from './route/proxy';
 import serviceRoutes from './route/service-route';
 import cors from 'cors';
 

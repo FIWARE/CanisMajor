@@ -4,7 +4,7 @@ import loadash from 'lodash';
 import EthereumService from '../service/eth-service';
 import EntityRepository from '../repository/entity-repository';
 import ConfigRepository from '../repository/config-repository';
-import { CONSTANTS } from '../configuration/config';
+import { CONSTANTS, DLT_TYPE } from '../configuration/config';
 
 class EthTransactionHandlerController {
 
@@ -66,6 +66,7 @@ class EthTransactionHandlerController {
             .then((recipts) => {
                 let obj = [];
                 recipts.forEach(recipt => {
+                    recipt['dltType'] = DLT_TYPE;
                     recipt['objectType'] = contextType;
                     recipt['encyptionMode'] = CONSTANTS.ETHEREUM_CONFIG.encrpytionMode;
                     recipt['txSignMode'] = CONSTANTS.ETHEREUM_CONFIG.encrpytionMode;

@@ -7,10 +7,9 @@ import versionHandlerController from '../controller/vesion-controller';
 import configHandlerController from '../controller/config-controller';
 import entityCRUDController from '../controller/entity-controller';
 // transaction processor
-import ethTransactionController from '../controller/eth-transaction-controller';
-import aeiContractController from '../controller/aei-contract-controller';
+import transactionController from '../controller/transaction-controller';
 import helperController from '../controller/helper-controller';
-import { CONSTANTS } from '../configuration/config';
+
 
 const router = express.Router();
 
@@ -66,26 +65,27 @@ router.delete('/entity/:id([0-9]+)',
 router.get('/ipfs/:id',
 helperController.getDataFromIPFS.bind(helperController));
 
-router.get('/iota/:id',
-helperController.getDatafromIOTA.bind(helperController));
+router.get('/iotaMaM/:id',
+helperController.getDatafromIOTAMaM.bind(helperController));
+
+router.get('/iotaTx/:id',
+helperController.getDatafromIOTATx.bind(helperController));
 
 router.post('/merkle/:id/:key',
 helperController.verifyMerkleTree.bind(helperController));
 
 // PEP Proxy Request Handler only for NGSI-LD
 router.post('/ngsi-ld/v1/entities/', 
-  dltKeyValidator.validate, 
-  (CONSTANTS.ETHEREUM_CONFIG.aei_contract_mode) 
-  ? aeiContractController.CreateAsset.bind(aeiContractController)
-  : ethTransactionController.createATrasaction.bind(ethTransactionController)
+  dltKeyValidator.validate,
+  transactionController.createATransaction.bind(transactionController)
 );
 
-router.post('/ngsi-ld/v1/entities/:id/attrs', 
-  dltKeyValidator.validate, 
-  (CONSTANTS.ETHEREUM_CONFIG.aei_contract_mode) 
-  ? aeiContractController.AddMetaData.bind(aeiContractController)
-  : ethTransactionController.createATrasaction.bind(ethTransactionController)
-);
+// router.post('/ngsi-ld/v1/entities/:id/attrs', 
+//   dltKeyValidator.validate, 
+//   (CONSTANTS.ETHEREUM_CONFIG.aei_contract_mode) 
+//   ? aeiContractController.AddMetaData.bind(aeiContractController)
+//   : ethTransactionController.createATrasaction.bind(ethTransactionController)
+// );
 
 // http://{{orion}}/ngsi-ld/v1/entities/urn:ngsi-ld:Device:water001/attrs/off
 

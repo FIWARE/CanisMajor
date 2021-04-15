@@ -13,30 +13,32 @@ class EntityCRUDController extends BaseCRUDController {
 
   fetchDataFromDLT(request, response, next) {
     if(!CONSTANTS.ETHEREUM_CONFIG.aei_contract_mode) {
-      return response.status(StatusCodes.BAD_REQUEST).jsonp({'message': 'method is only supported for aeicontract'});
+      return response.status(StatusCodes.FORBIDDEN).jsonp({'message': 'method is only supported for aeicontract'});
     }
     EntityRepository.findOneById(request.params.id).then((entity) => {
        if(entity.txDetails.objectType == 'asset') {
         getAsset(entity.entityId,(result) => {
           if(result == null || result == '') {
-            return response.status(StatusCodes.BAD_REQUEST).jsonp({'message': 'no data found'});
+            return response.status(StatusCodes.FORBIDDEN).jsonp({'message': 'no data found'});
           }
             return response.status(StatusCodes.OK).jsonp(result);
         })
        } else if(entity.txDetails.objectType == 'metadata') {
         getMetaData(entity.entityId,(result) => {
           if(result == null || result == '') {
-            return response.status(StatusCodes.BAD_REQUEST).jsonp({'message': 'no data found'});
+            return response.status(StatusCodes.FORBIDDEN).jsonp({'message': 'no data found'});
           }
             return response.status(StatusCodes.OK).jsonp(result);
         })
        }else if(entity.txDetails.objectType == 'relationship') {
         getRelations(entity.entityId,(result) => {
           if(result == null || result == '') {
-            return response.status(StatusCodes.BAD_REQUEST).jsonp({'message': 'no data found'});
+            return response.status(StatusCodes.FORBIDDEN).jsonp({'message': 'no data found'});
           }
             return response.status(StatusCodes.OK).jsonp(result);
         })
+       } else {
+        return response.status(StatusCodes.FORBIDDEN).jsonp({'message': 'method is only supported for aeicontract'});
        }
     })
     .catch((err) => {

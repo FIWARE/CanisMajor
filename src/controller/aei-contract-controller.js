@@ -2,7 +2,7 @@ import { StatusCodes } from 'http-status-codes';
 import { createAsset, addMetaData } from './interface/aei-interface';
 import { vaildateIdentity } from '../util/resolver-utils';
 import EntityRepository from '../repository/entity-repository';
-import { CONSTANTS , storageType } from '../configuration/config';
+import { CONSTANTS , storageType, DLT_TYPE } from '../configuration/config';
 import { getMerkelRoot } from '../util/helper/merkle';
 import { uploadToIPFS } from '../util/helper/ipfs';
 import { publishToIOTA } from '../util/helper/iota';
@@ -45,6 +45,7 @@ class AEIContractController {
             return createAsset(payload.id, value, identity.address);
         })
         .then((res) => {
+            res['dltType'] = DLT_TYPE;
             res['storageType'] = CONSTANTS.ETHEREUM_CONFIG.storage_type;
             res['objectType'] = 'asset';
             res['encyptionMode'] = CONSTANTS.ETHEREUM_CONFIG.encrpytionMode;
@@ -98,6 +99,7 @@ class AEIContractController {
             return addMetaData(id, value, identity.address);
         })
         .then((res) => {
+            res['dltType'] = DLT_TYPE;
             res['storageType'] = CONSTANTS.ETHEREUM_CONFIG.storage_type;
             res['objectType'] = 'metadata';
             res['encyptionMode'] = CONSTANTS.ETHEREUM_CONFIG.encrpytionMode;

@@ -1,5 +1,22 @@
 const ENV = process.env;
 
+//supported storage
+const storageType = {
+    IPFS: 'ipfs',
+    MERKLETREE: 'merkletree',
+    IOTA: 'iota',
+    //In Future
+    //DCB (decentralized context broker)
+    //storj
+};
+
+const DLTType = {
+    ETHEREUM : 'eth',
+    IOTA: 'iota'
+    // In future
+    // fabric chaincode
+}
+
 const DB_NAME = ENV.DB_NAME || 'cm';
 const DB_HOST = ENV.DB_HOST || 'localhost';
 const DB_PORT = ENV.DB_PORT || '3306';
@@ -12,6 +29,7 @@ const CM_PROXY_APP_HOST = ENV.CM_PROXY_APP_HOST || 'localhost';
 const CM_PROXY_APP_PORT = ENV.CM_PROXY_APP_PORT || 1026;
 const CM_PROXY_HTTPS_ENABLED = ENV.CM_PROXY_HTTPS_ENABLED || false;
 const TRANSCTION_TIMEOUT = ENV.TRANSCTION_TIMEOUT || 1000;
+const DLT_TYPE = ENV.DLT_TYPE || DLTType.IOTA;
 
 
 const CONSTANTS = {
@@ -25,13 +43,16 @@ const CONSTANTS = {
         DLT_TOKEN: 'dlt-token',
         CONTEXT_MAPPING_KEYS: 'ctx_map',
     },
+    IOTA_CONFIG: {
+        endpoint: ENV.IOTA_ENDPOINT || 'https://nodes.devnet.iota.org:443'
+    },
     ETHEREUM_CONFIG: {
         endpoint: ENV.RPC_ENDPOINT ||  'http://127.0.0.1:8545',
         default_gas: ENV.DEFAULT_GAS || 3000000,
         default_gasPrice: ENV.DEFAULT_GAS_PRICE || 0,
         aei_contract_mode: ENV.AEI_CONTRACT_MODE || false,
         contractAddress: ENV.AEI_CONTRACT_ADDRESS || '0x5fc63Ebb59fca11962bC06b11E7164d425950Bdf',
-        storage_type: ENV.STORAGE_TYPE || 'merkletree', //supported type: merkletree, ipfs, iota,
+        storage_type: ENV.STORAGE_TYPE || storageType.MERKLETREE, //supported type: merkletree, ipfs, iota,
         encrpytionMode: false,
         txSignMode: false,
         encyptionConfig: {
@@ -57,17 +78,8 @@ const CONSTANTS = {
     }
 };
 
-//supported storage
-var storageType = {
-    IPFS: 'ipfs',
-    MERKLETREE: 'merkletree',
-    IOTA: 'iota',
-    //In Future
-    //DCB (decentralized context broker)
-    //storj
-};
-
 module.exports = {
+    DLT_TYPE,
     DB_DILECT,
     DB_USERNAME,
     DB_NAME,
@@ -80,5 +92,6 @@ module.exports = {
     CM_PROXY_HTTPS_ENABLED,
     CM_PORT,
     TRANSCTION_TIMEOUT,
-    storageType
+    storageType,
+    DLTType
 }
