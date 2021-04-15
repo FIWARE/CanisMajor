@@ -33,6 +33,10 @@ export default class BaseCRUDRepository {
     return this.model.create(createObject);
   }
 
+  bulkcreate (entry) {
+    return this.model.bulkCreate(entry);
+  }
+
   update(id, entry, updateEntry) {
     const updateObject = {};
     for (const key of this.updateFields) {

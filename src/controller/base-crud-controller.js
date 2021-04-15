@@ -40,7 +40,6 @@ export default class BaseCRUDController {
       })
       .catch((err) => {
         res.status(400).jsonp(generalErrors.addErrStatus(err, 400));
-
       });
   }
 

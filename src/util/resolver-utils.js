@@ -1,35 +1,43 @@
 import { CONSTANTS, CM_PROXY_APP_HOST, CM_PROXY_APP_PORT, CM_PROXY_HTTPS_ENABLED } from '../configuration/config';
 import * as fetch from 'node-fetch';
+import logger from './logger';
 // import JWTController from '../controller/jwt-controller';
 
 // context mapping with the configuration and payload
 const contextMappingResolver = (configuration, data) => {
     // let contextMapping = configuration.contextMapping;
     return new Promise((resolve, reject) => {
+        try {
         const obj = [];
         //context mapping from payload to contract method, vars
         configuration.forEach((mapping) => {
-            mapping.contextMapping.forEach((items) => {
-                Object.keys(items).forEach((key) => {
-                    const values = [];
-                    items[key].forEach((params) => {
+            console.log(JSON.stringify(mapping));
+            for(let key in  mapping.contextMapping) {
+                const values = [];
+                    mapping.contextMapping[key].forEach((params) => {
                         // maps for ID and TYPE from NGSI payload
                         if (data.hasOwnProperty(params)) {
                             if (params == 'id') {
                                 values.push(data[params]);
-                            } else if (params == 'type') {
+                            } else 
+                            if (params == 'type') {
                                 values.push(data[params]);
                             } else {
                                 // else values
                                 values.push(data[params].value);
                             }
                         }
-                    });
-                    obj.push({ method: key, value: values });
                 })
-            });
+                if(values.length !=0 ) {
+                    obj.push({ method: key, value: values });
+                }
+            }
         })
         resolve(obj);
+        } catch(e) {
+            logger.error('contextMappingResolver error');
+            reject('contextMappingResolver error');
+        }
     });
 }
 
@@ -43,11 +51,11 @@ const ABIValidator = (configuration, mapping) => {
                     mapping.forEach((maps) => {
                         // method validation
                         if (maps.method != element.name) {
-                            reject(`Smart Contract ABI doesnt have "${element.name}" method, please fix config`);
+                            reject(`Smart Contract ABI doesnt have "${maps.method}" method, please fix config`);
                         }
                         // variable validation
                         if (element.inputs.length != maps.value.length) {
-                            reject(`Smart Contract method "${element.name}" takes ${element.inputs.length} inputs, please fix config`);
+                            reject(`Smart Contract method "${maps.method}" takes ${maps.inputs.length} inputs, please fix config`);
                         }
                         // variable type validation
                         // TO DO

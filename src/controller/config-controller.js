@@ -13,38 +13,26 @@ class ConfigController extends BaseCRUDController {
   createConfig(request, response, next) {
     const contextType = request.body.contextType;
     const contextMapping  = request.body.contextMapping;
-    let exist = false;
     // context type exist or not
     if(contextType == null || contextType == '') {
       response.status(StatusCodes.BAD_REQUEST).jsonp({'message': 'contextType is missing'});
     }
 
     //context mapping validation if exist or not
-    if(contextMapping == null || contextMapping == '' || !Array.isArray(contextMapping) || Array.isArray(contextMapping).length == 0) {
+    if(contextMapping == null || contextMapping == '' || Array.isArray(contextMapping)) {
       response.status(StatusCodes.BAD_REQUEST).jsonp({'message': 'contextMapping is missing or not correct'});
     }
-
 
     ConfigRepository.findAllCountAllByContextType(contextType)
     .then((configs) => {
       // if empty create
       if(configs.count === 0 ) {
-        exist = true;
-        this.createEntry(request, response, next);
-      }
-      // check if config exists
-      configs.rows.forEach(element => {
-        // if context mapping exist check
-        if(JSON.stringify(element.contextMapping) === JSON.stringify(contextMapping)) {
-          exist = true;
-          return response.status(StatusCodes.BAD_REQUEST).jsonp(generalErrors.badRequest('config already exist'));
-        }
-      });
-    }).then(() => {
-      if(!exist) {
         return this.createEntry(request, response, next);
       }
-    })
+      return response.status(StatusCodes.UNPROCESSABLE_ENTITY).jsonp(generalErrors.badRequest('config already exist'));
+    }).catch((err) => {
+      response.status(StatusCodes.UNPROCESSABLE_ENTITY).jsonp(generalErrors.addErrStatus(err, StatusCodes.UNPROCESSABLE_ENTITY));
+    });
   }
 
   updateConfig(request, response, next) {
@@ -54,9 +42,8 @@ class ConfigController extends BaseCRUDController {
     if(contextType == null || contextType == '') {
       return response.status(StatusCodes.BAD_REQUEST).jsonp({'message': 'contextType is missing'});
     }
-
     //context mapping validation if exist or not
-    if(contextMapping == null || contextMapping == '' || !Array.isArray(contextMapping) || Array.isArray(contextMapping).length == 0) {
+    if(contextMapping == null || contextMapping == '' || Array.isArray(contextMapping)) {
       return response.status(StatusCodes.BAD_REQUEST).jsonp({'message': 'contextMapping is missing or not correct'});
     }
     return this.updateEntry(request, response, next);

@@ -4,6 +4,7 @@ import loadash from 'lodash';
 import EthereumService from '../service/eth-service';
 import EntityRepository from '../repository/entity-repository';
 import ConfigRepository from '../repository/config-repository';
+import { CONSTANTS } from '../configuration/config';
 
 class EthTransactionHandlerController {
 
@@ -63,7 +64,19 @@ class EthTransactionHandlerController {
                 return this.processTransaction(configurations, contextMappingParams, address, privateKey);
             })
             .then((recipts) => {
-                return this.storeRecipts(contextResponses, configurations, recipts);
+                let obj = [];
+                recipts.forEach(recipt => {
+                    recipt['objectType'] = contextType;
+                    recipt['encyptionMode'] = CONSTANTS.ETHEREUM_CONFIG.encrpytionMode;
+                    recipt['txSignMode'] = CONSTANTS.ETHEREUM_CONFIG.encrpytionMode;
+                    recipt['contractAddress'] = configurations[0].metadata.contractAddress;
+                    recipt['configId'] = configurations[0].id;
+                    recipt['storageType'] = '';
+                    recipt['keys'] = '';
+                    delete recipt.events;
+                    obj.push({entityId: contextResponses.id, txDetails: recipt});
+                });   
+                return EntityRepository.bulkcreate(obj);            
             })
             .then((txRecipt) => {
                 return response.status(StatusCodes.OK).jsonp(txRecipt);
@@ -71,7 +84,6 @@ class EthTransactionHandlerController {
             .catch((error) => {
                 return response.status(StatusCodes.FORBIDDEN).jsonp(error);
             })
-
     }
 
     processTransaction(configuration, params, address, privateKey) {
@@ -88,15 +100,6 @@ class EthTransactionHandlerController {
         });
     }
 
-    storeRecipts(context, configuration, recipts) {
-        let txObject = [];
-        configuration.forEach((element) => {
-            recipts.forEach((recipt) => {
-                txObject.push({configId: element.id, txRecipt: recipt});
-            })
-        })
-       return EntityRepository.create({entityId: context.id, txDetails: txObject});
-    }
 
     async readTransactionData() {
 
