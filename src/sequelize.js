@@ -9,15 +9,27 @@ const sequelize = new Sequelize(
         host: DB_HOST,
         port: DB_PORT,
         dialect: DB_DILECT,
-        omitNull: false
-    }
+        omitNull: false,
+        retry: {
+            match: [
+                Sequelize.ConnectionError,
+                Sequelize.ConnectionTimedOutError,
+                Sequelize.TimeoutError,
+                /Deadlock/i,
+                'SQLITE_BUSY'],
+            max: 3
+        }
+    },
 );
 
-sequelize.authenticate().then(() => {
-    console.error('connected to db');
-}).catch(() => {
-    console.error('Unable to connect to the database');
-    // terminate the program
-    process.exit(1);
-});
+const authenticate = () => {
+    sequelize.authenticate().then(() => {
+        console.error('connected to db');
+    }).catch(() => {
+        console.error('Unable to connect to the database');
+        setTimeout(authenticate, 5000);
+    });
+}
+authenticate();
+
 module.exports = sequelize;
