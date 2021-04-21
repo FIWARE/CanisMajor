@@ -25,13 +25,13 @@ class DLTKeyValidators {
         return response.status(403).jsonp(err);
       }
       // will be enabled on privatekey signed tx
-      // let wallet = web3.eth.accounts.privateKeyToAccount(keys[1]);
-      // if(wallet.address != keys[0]) {
-      //     const err = new Error();
-      //     err.status = 403;
-      //     err.message = 'Invalid account details please check DLT-Token Header';
-      //     return response.status(403).jsonp(err);
-      // }
+      let wallet = web3.eth.accounts.privateKeyToAccount(keys[1]);
+      if(wallet.address != keys[0]) {
+          const err = new Error();
+          err.status = 403;
+          err.message = 'Invalid account details please check DLT-Token Header';
+          return response.status(403).jsonp(err);
+      }
     } else if (DLT_TYPE == DLTType.IOTA) {
       // seed length is always 81
       if(keys[0].length != 81 && keys[1].length != 81) {
