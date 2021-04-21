@@ -4,7 +4,7 @@ import { verify } from '../util/helper/merkle';
 import { StatusCodes } from 'http-status-codes';
 import { trytesToAscii} from '@iota/converter';
 import { composeAPI } from '@iota/core';
-import { CONSTANTS } from '../configuration/config';
+import { DLT_CONFIGURATION } from '../configuration/config';
 
 class HelperController {
 
@@ -41,7 +41,7 @@ class HelperController {
 
     getDatafromIOTATx(request, response) {
         const iota = composeAPI({
-            provider: CONSTANTS.IOTA_CONFIG.endpoint
+            provider: DLT_CONFIGURATION.IOTA_CONFIG.endpoint
         });
 
         let hash = request.params.id;

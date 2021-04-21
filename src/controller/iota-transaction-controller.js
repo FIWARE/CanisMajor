@@ -1,6 +1,6 @@
 import { composeAPI } from '@iota/core';
-import { asciiToTrytes, trytesToAscii } from '@iota/converter';
-import { CONSTANTS, DLT_TYPE } from '../configuration/config';
+import { asciiToTrytes } from '@iota/converter';
+import { DLT_CONFIGURATION, DLT_TYPE, ENCYPTION_CONFIG, CONSTANTS, STORAGE_CONFIGURATION } from '../configuration/config';
 import { StatusCodes } from 'http-status-codes';
 import { vaildateIdentity } from '../util/resolver-utils';
 import logger from '../util/logger';
@@ -8,7 +8,7 @@ import NestedKey from 'nested-keys';
 import EntityRepository from '../repository/entity-repository';
 
 const iota = composeAPI({
-    provider: CONSTANTS.IOTA_CONFIG.endpoint
+    provider: DLT_CONFIGURATION.IOTA_CONFIG.endpoint
 });
 const depth = 3;
 const minimumWeightMagnitude = 9;
@@ -50,14 +50,15 @@ class IOTATransactionHandlerController {
             .then((bundle) => {
                 let recipt = bundle[0];
                 recipt['dltType'] = DLT_TYPE;
-                recipt['storageType'] = CONSTANTS.ETHEREUM_CONFIG.storage_type;
+                recipt['storageType'] = STORAGE_CONFIGURATION.storage_type;
                 recipt['objectType'] = request.body.type;
-                recipt['encyptionMode'] = CONSTANTS.ETHEREUM_CONFIG.encrpytionMode;
-                recipt['txSignMode'] = CONSTANTS.ETHEREUM_CONFIG.encrpytionMode;
+                recipt['encyptionMode'] = ENCYPTION_CONFIG.encrpytionMode;
+                recipt['txSignMode'] = ENCYPTION_CONFIG.txSignMode;
                 recipt['keys'] = keys;
                 return EntityRepository.create({ entityId: request.body.id, txDetails: recipt });
             })
             .then((result) => {
+                logger.info(result);
                 return response.status(StatusCodes.CREATED).jsonp(result);
             })
             .catch((err) => {

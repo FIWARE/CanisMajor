@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "nodemon --exec babel-node src/bin/www --verbose",
-    "healthcheck": "node ./bin/healthcheck.js",
+    "healthcheck": "node src/bin/health.js",
     "build": "rm -rf dist && babel src --out-dir dist && babel src/bin/www --out-dir dist/ && mv dist/src/bin dist/bin && rm -rf dist/src",
     "start": "node dist/bin/www.js",
     "test": "mocha --require babel-core/register --require babel-polyfill --recursive --exit",
@@ -20,7 +20,6 @@
     "chai-http": "^4.3.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.4",
-    "ethereumjs-tx": "^2.1.2",
     "ethereumjs-util": "^7.0.10",
     "express": "^4.17.1",
     "gulp": "^4.0.2",

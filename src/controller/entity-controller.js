@@ -1,6 +1,6 @@
 import BaseCRUDController from './base-crud-controller';
 import EntityRepository from '../repository/entity-repository';
-import { CONSTANTS } from '../configuration/config';
+import { DLT_CONFIGURATION } from '../configuration/config';
 import { StatusCodes } from 'http-status-codes';
 import { getAsset, getMetaData, getRelations } from './interface/aei-interface';
 
@@ -12,7 +12,7 @@ class EntityCRUDController extends BaseCRUDController {
   }
 
   fetchDataFromDLT(request, response, next) {
-    if(!CONSTANTS.ETHEREUM_CONFIG.aei_contract_mode) {
+    if(!DLT_CONFIGURATION.ETHEREUM_CONFIG.aei_contract_mode) {
       return response.status(StatusCodes.FORBIDDEN).jsonp({'message': 'method is only supported for aeicontract'});
     }
     EntityRepository.findOneById(request.params.id).then((entity) => {

@@ -1,8 +1,8 @@
 import Mam from '@iota/mam';
 import { asciiToTrytes, trytesToAscii } from '@iota/converter';
-import { CONSTANTS } from '../../configuration/config';
-let mamState = Mam.init(CONSTANTS.ETHEREUM_CONFIG.IOTAMaMConfig.host);
-Mam.changeMode(mamState, CONSTANTS.ETHEREUM_CONFIG.IOTAMaMConfig.mode);
+import { STORAGE_CONFIGURATION } from '../../configuration/config';
+let mamState = Mam.init(STORAGE_CONFIGURATION.IOTAMaMConfig.host);
+Mam.changeMode(mamState, STORAGE_CONFIGURATION.IOTAMaMConfig.mode);
 
 const publishToIOTA = (payload) => {
     return new Promise((resolve, reject) => {
@@ -21,7 +21,7 @@ const publishToIOTA = (payload) => {
 
 const getFromIOTA = (root) => {
     return new Promise((resolve, reject) => {
-        Mam.fetch(root, CONSTANTS.ETHEREUM_CONFIG.IOTAMaMConfig.mode).then((res) => {
+        Mam.fetch(root, STORAGE_CONFIGURATION.IOTAMaMConfig.mode).then((res) => {
             res.messages.forEach(message => {
                 console.log(trytesToAscii(message));
                 let data = Buffer.from(trytesToAscii(message), 'base64').toString('utf-8');

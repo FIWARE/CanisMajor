@@ -1,15 +1,14 @@
 import Web3 from 'web3';
-import { CONSTANTS } from '../configuration/config';
-import Tx from 'ethereumjs-tx';
+import { DLT_CONFIGURATION } from '../configuration/config';
 
 class EthereumService {
 
     // web3 instance
     constructor(configuration) {
         this.abi = configuration.metadata.abi;
-        this.endpoint = CONSTANTS.ETHEREUM_CONFIG.endpoint;
-        this.default_gas = CONSTANTS.ETHEREUM_CONFIG.default_gas;
-        this.default_gasPrice = CONSTANTS.ETHEREUM_CONFIG.default_gasPrice;
+        this.endpoint = DLT_CONFIGURATION.ETHEREUM_CONFIG.endpoint;
+        this.default_gas = DLT_CONFIGURATION.ETHEREUM_CONFIG.default_gas;
+        this.default_gasPrice = DLT_CONFIGURATION.ETHEREUM_CONFIG.default_gasPrice;
         this.contract_address = configuration.metadata.contractAddress;
         this.web3 = new Web3();
         this.contract_schema = this.abi;

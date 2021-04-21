@@ -2,7 +2,7 @@ import { StatusCodes } from 'http-status-codes';
 import { createAsset, addMetaData } from './interface/aei-interface';
 import { vaildateIdentity } from '../util/resolver-utils';
 import EntityRepository from '../repository/entity-repository';
-import { CONSTANTS , storageType, DLT_TYPE } from '../configuration/config';
+import { CONSTANTS , DLT_CONFIGURATION , ENCYPTION_CONFIG, storageType, DLT_TYPE, STORAGE_CONFIGURATION } from '../configuration/config';
 import { getMerkelRoot } from '../util/helper/merkle';
 import { uploadToIPFS } from '../util/helper/ipfs';
 import { publishToIOTA } from '../util/helper/iota';
@@ -32,25 +32,25 @@ class AEIContractController {
         }
 
         return Promise.resolve().then(() => {
-            if (CONSTANTS.ETHEREUM_CONFIG.storage_type == storageType.IPFS) {
+            if (STORAGE_CONFIGURATION.storage_type == storageType.IPFS) {
                 return uploadToIPFS(payload);
             }
-            else if (CONSTANTS.ETHEREUM_CONFIG.storage_type == storageType.IOTA) {
+            else if (STORAGE_CONFIGURATION.storage_type == storageType.IOTA) {
                 return publishToIOTA(payload);
             } else {
                 return getMerkelRoot(payload);
             }
         })
         .then((value) => {
-            return createAsset(payload.id, value, identity.address);
+            return createAsset(payload.id, value, identity);
         })
         .then((res) => {
             res['dltType'] = DLT_TYPE;
-            res['storageType'] = CONSTANTS.ETHEREUM_CONFIG.storage_type;
+            res['storageType'] = STORAGE_CONFIGURATION.storage_type;
             res['objectType'] = 'asset';
-            res['encyptionMode'] = CONSTANTS.ETHEREUM_CONFIG.encrpytionMode;
-            res['txSignMode'] = CONSTANTS.ETHEREUM_CONFIG.encrpytionMode;
-            res['contractAddress'] = CONSTANTS.ETHEREUM_CONFIG.contractAddress;
+            res['encyptionMode'] = ENCYPTION_CONFIG.encrpytionMode;
+            res['txSignMode'] = ENCYPTION_CONFIG.txSignMode;
+            res['contractAddress'] = DLT_CONFIGURATION.ETHEREUM_CONFIG.contractAddress;
             res['keys'] = keys;
             delete res.events;
             return EntityRepository.create({entityId: payload.id, txDetails: res});
@@ -71,7 +71,6 @@ class AEIContractController {
         let payload = {};
         let keys = [];
         let contextKeys = request.headers[CONSTANTS.HEADER.CONTEXT_MAPPING_KEYS];
-        console.log(contextKeys);
         if(contextKeys == null || contextKeys == '') {
             payload = request.body;
         } else {
@@ -86,25 +85,25 @@ class AEIContractController {
             keys.push(key);
         }
         return Promise.resolve().then(() => {
-            if (CONSTANTS.ETHEREUM_CONFIG.storage_type == storageType.IPFS) {
+            if (STORAGE_CONFIGURATION.storage_type == storageType.IPFS) {
                 return uploadToIPFS(payload);
             }
-            else if (CONSTANTS.ETHEREUM_CONFIG.storage_type == storageType.IOTA) {
+            else if (STORAGE_CONFIGURATION.storage_type == storageType.IOTA) {
                 return publishToIOTA(payload);
             } else {
                 return getMerkelRoot(payload);
             }
         })
         .then((value) => {
-            return addMetaData(id, value, identity.address);
+            return addMetaData(id, value, identity);
         })
         .then((res) => {
             res['dltType'] = DLT_TYPE;
-            res['storageType'] = CONSTANTS.ETHEREUM_CONFIG.storage_type;
+            res['storageType'] = STORAGE_CONFIGURATION.storage_type;
             res['objectType'] = 'metadata';
-            res['encyptionMode'] = CONSTANTS.ETHEREUM_CONFIG.encrpytionMode;
-            res['txSignMode'] = CONSTANTS.ETHEREUM_CONFIG.encrpytionMode;
-            res['contractAddress'] = CONSTANTS.ETHEREUM_CONFIG.contractAddress;
+            res['encyptionMode'] = ENCYPTION_CONFIG.encrpytionMode;
+            res['txSignMode'] = ENCYPTION_CONFIG.encrpytionMode;
+            res['contractAddress'] = DLT_CONFIGURATION.ETHEREUM_CONFIG.contractAddress;
             res['keys'] = keys;
             delete res.events;
             return EntityRepository.create({entityId: id, txDetails: res});

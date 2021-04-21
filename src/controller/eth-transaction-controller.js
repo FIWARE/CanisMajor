@@ -4,7 +4,8 @@ import loadash from 'lodash';
 import EthereumService from '../service/eth-service';
 import EntityRepository from '../repository/entity-repository';
 import ConfigRepository from '../repository/config-repository';
-import { CONSTANTS, DLT_TYPE } from '../configuration/config';
+import { ENCYPTION_CONFIG, DLT_TYPE } from '../configuration/config';
+import logger from '../util/logger';
 
 class EthTransactionHandlerController {
 
@@ -68,8 +69,8 @@ class EthTransactionHandlerController {
                 recipts.forEach(recipt => {
                     recipt['dltType'] = DLT_TYPE;
                     recipt['objectType'] = contextType;
-                    recipt['encyptionMode'] = CONSTANTS.ETHEREUM_CONFIG.encrpytionMode;
-                    recipt['txSignMode'] = CONSTANTS.ETHEREUM_CONFIG.encrpytionMode;
+                    recipt['encyptionMode'] = ENCYPTION_CONFIG.encrpytionMode;
+                    recipt['txSignMode'] = ENCYPTION_CONFIG.encrpytionMode;
                     recipt['contractAddress'] = configurations[0].metadata.contractAddress;
                     recipt['configId'] = configurations[0].id;
                     recipt['storageType'] = '';
@@ -80,9 +81,11 @@ class EthTransactionHandlerController {
                 return EntityRepository.bulkcreate(obj);            
             })
             .then((txRecipt) => {
+                logger.info(txRecipt);
                 return response.status(StatusCodes.OK).jsonp(txRecipt);
             })
             .catch((error) => {
+                logger.error(error);
                 return response.status(StatusCodes.FORBIDDEN).jsonp(error);
             })
     }

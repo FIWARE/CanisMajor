@@ -1,5 +1,4 @@
-import { CONSTANTS, CM_PROXY_APP_HOST, CM_PROXY_APP_PORT, CM_PROXY_HTTPS_ENABLED } from '../configuration/config';
-import * as fetch from 'node-fetch';
+import { CONSTANTS } from '../configuration/config';
 import logger from './logger';
 // import JWTController from '../controller/jwt-controller';
 
@@ -80,34 +79,34 @@ const vaildateIdentity = (request) => {
     return account;
 }
 
-// check the entity Exist in Context Broker
-const contextBrokerEntityCheck = (entityId) => {
-    return new Promise((resolve, reject) => {
-        // support only v2 now ld implementation and resolver to be added
-        let protocol = CM_PROXY_HTTPS_ENABLED ? 'https' : 'http';
-        let url = `${protocol}://${CM_PROXY_APP_HOST}:${CM_PROXY_APP_PORT}/v2/entities/${entityId}`;
-        // fetch the data from the ContextBroker
-        fetch(url).then((response) => {
-            if (response.status == StatusCodes.OK) {
-                resolve(resolve.json());
-            }
-        }).catch(() => {
-            let err = new Error();
-            err.status = StatusCodes.NOT_FOUND;
-            err.message = 'entity doesnt exists';
-            reject(err);
-        })
-    });
-}
+// // check the entity Exist in Context Broker
+// const contextBrokerEntityCheck = (entityId) => {
+//     return new Promise((resolve, reject) => {
+//         // support only v2 now ld implementation and resolver to be added
+//         let protocol = CM_PROXY_HTTPS_ENABLED ? 'https' : 'http';
+//         let url = `${protocol}://${CM_PROXY_APP_HOST}:${CM_PROXY_APP_PORT}/v2/entities/${entityId}`;
+//         // fetch the data from the ContextBroker
+//         fetch(url).then((response) => {
+//             if (response.status == StatusCodes.OK) {
+//                 resolve(resolve.json());
+//             }
+//         }).catch(() => {
+//             let err = new Error();
+//             err.status = StatusCodes.NOT_FOUND;
+//             err.message = 'entity doesnt exists';
+//             reject(err);
+//         })
+//     });
+// }
 
  // future implementation
- const signingTransaction = (payload, identity) => {
-    // to do
-  }
+//  const signingTransaction = (payload, identity) => {
+//     // to do
+//   }
 
 export {
     ABIValidator,
     contextMappingResolver,
     vaildateIdentity,
-    contextBrokerEntityCheck,
+    // contextBrokerEntityCheck,
 }
