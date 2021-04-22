@@ -1,5 +1,6 @@
 import { Sequelize } from 'sequelize';
 import { DB_DILECT, DB_USERNAME, DB_NAME, DB_HOST, DB_PORT, DB_PASSWORD } from './configuration/config';
+import { exec } from 'child_process';
 // create a connection
 const sequelize = new Sequelize(
     DB_NAME,
@@ -14,17 +15,44 @@ const sequelize = new Sequelize(
             match: [
                 Sequelize.ConnectionError,
                 Sequelize.ConnectionTimedOutError,
-                Sequelize.TimeoutError,
-                /Deadlock/i,
-                'SQLITE_BUSY'],
-            max: 3
+                Sequelize.TimeoutError
+                ],
+            max: 5
         }
     },
 );
 
+const DBCreate = (success, error) => {
+    exec('npm run create',  (err, stdout, stderr) => {
+        if (err) {
+            error(err);
+        }
+        success(stdout);
+    });
+}
+
+const DBMigrate = (success, error) => {
+    exec('npm run migrate',  (err, stdout, stderr) => {
+        if (err) {
+            error(err);
+        }
+        success(stdout);
+    });
+}
+
 const authenticate = () => {
     sequelize.authenticate().then(() => {
-        console.error('connected to db');
+        console.log('connected to db');
+        DBCreate((success) => {
+            console.log('DBCreate success :' + success);
+            DBMigrate((success) => {
+                console.log('DBMigrate success :' + success);
+            }, (err) => {
+                console.error('DBMigrate err :' + err);
+            });
+        }, (err) => {
+            console.error('DBCreate err :' + err);
+        })
     }).catch(() => {
         console.error('Unable to connect to the database');
         setTimeout(authenticate, 5000);

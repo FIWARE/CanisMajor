@@ -31,7 +31,7 @@ const CM_PORT = ENV.CM_PORT || 4000;
 const TRANSCTION_TIMEOUT = ENV.TRANSCTION_TIMEOUT || 1000;
 
 // default DLT Transaction Type
-const DLT_TYPE = ENV.DLT_TYPE || DLTType.ETHEREUM;
+const DLT_TYPE = ENV.DLT_TYPE || DLTType.IOTA;
 
 // DLT Configuration
 const DLT_CONFIGURATION = {
