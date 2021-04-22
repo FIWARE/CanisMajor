@@ -13,6 +13,8 @@ const createAsset = async (uuid, hash, identity) => {
     return new Promise((resolve, reject) => {
         let uuidToByte32 = Web3.utils.fromAscii(uuid);
         let payloadData = contract.methods.createAsset(uuidToByte32, hash).encodeABI();
+        console.log('uuidToByte32 ' + uuidToByte32);
+        console.log('encoded payload ' + payloadData);
         web3.eth.getTransactionCount(identity.address)
             .then((TxCount) => {
                 let txObj = {
@@ -21,17 +23,21 @@ const createAsset = async (uuid, hash, identity) => {
                     data: payloadData,
                     to: DLT_CONFIGURATION.ETHEREUM_CONFIG.contractAddress,
                 };
+                console.log('txObject' + JSON.stringify(txObj));
                 return web3.eth.accounts.signTransaction(txObj, identity.privateKey);
             })
             .then((tx) => {
+                console.log('tx to be uploaded' + JSON.stringify(tx));
                 return web3.eth.sendSignedTransaction(tx.rawTransaction);
             })
             .then((recipt) => {
+                console.log('tx recipt' + JSON.stringify(recipt));
                 logger.info(recipt);
                 resolve(recipt);
             })
 
             .catch((error) => {
+                console.log('tx error' + JSON.stringify(error));
                 logger.error(error);
                 reject(error);
             })
@@ -88,6 +94,8 @@ const addMetaData = (uuid, hash, identity) => {
     return new Promise((resolve, reject) => {
         let uuidToByte32 = Web3.utils.fromAscii(uuid);
         let payloadData = contract.methods.addMetadata(uuidToByte32, hash).encodeABI();
+        console.log('uuidToByte32 ' + uuidToByte32);
+        console.log('encoded payload ' + payloadData);
         web3.eth.getTransactionCount(identity.address)
             .then((TxCount) => {
                 let txObj = {
@@ -96,17 +104,21 @@ const addMetaData = (uuid, hash, identity) => {
                     data: payloadData,
                     to: DLT_CONFIGURATION.ETHEREUM_CONFIG.contractAddress,
                 };
+                console.log('txObject' + JSON.stringify(txObj));
                 return web3.eth.accounts.signTransaction(txObj, identity.privateKey);
             })
             .then((tx) => {
+                console.log('tx to be uploaded' + JSON.stringify(tx));
                 return web3.eth.sendSignedTransaction(tx.rawTransaction);
             })
             .then((recipt) => {
+                console.log('tx recipt' + JSON.stringify(recipt));
                 logger.info(recipt);
                 resolve(recipt);
             })
 
             .catch((error) => {
+                console.log('tx error' + JSON.stringify(error));
                 logger.error(error);
                 reject(error);
             })

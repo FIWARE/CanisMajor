@@ -11,7 +11,8 @@ import NestedKey from 'nested-keys';
 
 class AEIContractController {
 
-    async CreateAsset(request, response, next) {      
+    async CreateAsset(request, response, next) {  
+        console.log('creating asset');    
         let identity = vaildateIdentity(request);
         let payload = {};
         let keys = [];
@@ -42,9 +43,11 @@ class AEIContractController {
             }
         })
         .then((value) => {
+            console.log('hash value'+ value); 
             return createAsset(payload.id, value, identity);
         })
         .then((res) => {
+            console.log('recipt'+ res); 
             res['dltType'] = DLT_TYPE;
             res['storageType'] = STORAGE_CONFIGURATION.storage_type;
             res['objectType'] = 'asset';
@@ -56,10 +59,12 @@ class AEIContractController {
             return EntityRepository.create({entityId: payload.id, txDetails: res});
         })
         .then((result) => {
+            console.log('result'+ result); 
             logger.info(result);
             return response.status(StatusCodes.CREATED).jsonp(result);
         })     
         .catch((err) => {
+            console.log('err'+ err); 
             logger.error(err);
             return response.status(StatusCodes.BAD_REQUEST).jsonp(err);
         });

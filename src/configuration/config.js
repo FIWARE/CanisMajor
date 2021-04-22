@@ -1,3 +1,4 @@
+import fetch from 'node-fetch';
 const ENV = process.env;
 //supported storage
 const storageType = {
@@ -40,7 +41,7 @@ const DLT_CONFIGURATION = {
     },
     // ETH-RPC Clients
     ETHEREUM_CONFIG: {
-        endpoint: ENV.RPC_ENDPOINT || 'http://46.17.108.87:8545',
+        endpoint: ENV.RPC_ENDPOINT || 'http://localhost:8545',
         default_gas: ENV.DEFAULT_GAS || 3000000,
         default_gasPrice: ENV.DEFAULT_GAS_PRICE || 0,
         aei_contract_mode: ENV.AEI_CONTRACT_MODE || true,
@@ -50,7 +51,7 @@ const DLT_CONFIGURATION = {
 
 // Storage Configuration for ETH-Clients
 const STORAGE_CONFIGURATION = {
-    storage_type: ENV.STORAGE_TYPE || storageType.IOTA, //supported type: merkletree, ipfs, iota,
+    storage_type: ENV.STORAGE_TYPE || storageType.IPFS, //supported type: merkletree, ipfs, iota,
     ipfsConfig: {
         host: ENV.IPFS_HOST || 'ipfs.infura.io',
         port: ENV.IPFS_PORT || 5001,
@@ -93,7 +94,7 @@ const CONSTANTS = {
     },
 };
 
-const validateConfig = () => {
+const validateConfig = async() => {
 
     if(CM_PORT == '') {
         throw new Error('CM_PORT is not defined');
@@ -103,6 +104,50 @@ const validateConfig = () => {
             throw new Error('DLT_TYPE should be either eth or iota');
         }
         throw new Error('DLT_TYPE is not defined');
+    }
+
+    //check if IOTA network is up or not
+    if(DLT_TYPE == DLTType.IOTA) {
+        await fetch(DLT_CONFIGURATION.IOTA_CONFIG.endpoint)
+        .catch((err) => {
+            console.log('IOTA Network Error : ' + err);
+            process.exit(1);
+        })
+    }
+
+    // check if RPC client is working or not
+    if(DLT_TYPE == DLTType.ETHEREUM) {
+        await fetch(DLT_CONFIGURATION.ETHEREUM_CONFIG.endpoint, 
+            {method: 'POST', body: '{"jsonrpc":"2.0","method":"web3_clientVersion","params":[],"id":1}' }
+        )
+        .then((res) => {
+            if(res.status != 200) {
+            console.log('Ethereum Network Error status : ' + res.status);
+            process.exit(1);
+            }
+        }).catch((err) => {
+            console.log('Ethereum Network Error : ' + err);
+            process.exit(1);
+        });
+    }
+
+    // check if storage type IPFS is working or not
+    if(STORAGE_CONFIGURATION.storage_type == storageType.IOTA) {
+        await fetch(STORAGE_CONFIGURATION.IOTAMaMConfig.host)
+        .catch((err) => {
+            console.log('IOTAMaM Storage Error : ' + err);
+            process.exit(1);
+        })
+    }
+
+    if(STORAGE_CONFIGURATION.storage_type == storageType.IPFS) {
+        await fetch(STORAGE_CONFIGURATION.ipfsConfig.protocol 
+                    + '://' + STORAGE_CONFIGURATION.ipfsConfig.host 
+                    + ':' + STORAGE_CONFIGURATION.ipfsConfig.port)
+        .catch((err) => {
+            console.log('IPFS Storage Error : ' + err);
+            process.exit(1);
+        })
     }
 
     console.log('configuration validated');

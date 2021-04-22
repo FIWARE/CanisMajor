@@ -77,15 +77,13 @@ helperController.verifyMerkleTree.bind(helperController));
 // PEP Proxy Request Handler only for NGSI-LD
 router.post('/ngsi-ld/v1/entities/', 
   dltKeyValidator.validate,
-  transactionController.createATransaction.bind(transactionController)
+  transactionController.createAssetTransaction.bind(transactionController)
 );
 
-// router.post('/ngsi-ld/v1/entities/:id/attrs', 
-//   dltKeyValidator.validate, 
-//   (CONSTANTS.ETHEREUM_CONFIG.aei_contract_mode) 
-//   ? aeiContractController.AddMetaData.bind(aeiContractController)
-//   : ethTransactionController.createATrasaction.bind(ethTransactionController)
-// );
+router.post('/ngsi-ld/v1/entities/:id/attrs', 
+  dltKeyValidator.validate,
+  transactionController.addMetaDataTransaction.bind(transactionController)
+);
 
 // http://{{orion}}/ngsi-ld/v1/entities/urn:ngsi-ld:Device:water001/attrs/off
 
