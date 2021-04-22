@@ -35,6 +35,7 @@ FROM node:12
 WORKDIR /app
 COPY . /app
 RUN npm install
+RUN npm run build
 EXPOSE 4000
 CMD [ "npm", "start" ]
 HEALTHCHECK  --interval=30s --timeout=3s --start-period=60s \
