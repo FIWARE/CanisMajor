@@ -50,7 +50,7 @@ const connect = () => {
                 
             }).catch(() => {
                 console.error('Unable to connect to the database');
-                setTimeout(authenticate, 5000);
+                setTimeout(connect, 5000);
             });
         }, (err) => {
             console.error('DBMigrate err :' + err);
