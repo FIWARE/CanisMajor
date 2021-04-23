@@ -12,7 +12,7 @@ class EntityCRUDController extends BaseCRUDController {
   }
 
   fetchDataFromDLT(request, response, next) {
-    if(!DLT_CONFIGURATION.ETHEREUM_CONFIG.aei_contract_mode) {
+    if(!DLT_CONFIGURATION.ETHEREUM_CONFIG.aei_contract_mode === 'true') {
       return response.status(StatusCodes.FORBIDDEN).jsonp({'message': 'method is only supported for aeicontract'});
     }
     EntityRepository.findOneById(request.params.id).then((entity) => {

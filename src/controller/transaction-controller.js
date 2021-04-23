@@ -6,12 +6,16 @@ import { DLT_TYPE, DLTType, DLT_CONFIGURATION } from '../configuration/config';
 class TransactionController {
     
     async createAssetTransaction(request, response, next) {
+        console.log('DLT_CONFIGURATION.ETHEREUM_CONFIG.aei_contract_mode ');
+        console.log(DLT_CONFIGURATION.ETHEREUM_CONFIG.aei_contract_mode);
         if (DLT_TYPE == DLTType.IOTA) {
             iotaTransactionController.createATrasaction(request, response, next);
         } else if (DLT_TYPE == DLTType.ETHEREUM) {
-            (DLT_CONFIGURATION.ETHEREUM_CONFIG.aei_contract_mode == true)
-                ? aeiContractController.CreateAsset(request, response, next)
-                : ethTransactionController.createATrasaction(request, response, next)
+            if(DLT_CONFIGURATION.ETHEREUM_CONFIG.aei_contract_mode === 'true') {
+                aeiContractController.CreateAsset(request, response, next);
+            }else {
+                ethTransactionController.createATrasaction(request, response, next);
+            }
         }
     }
 
@@ -20,9 +24,11 @@ class TransactionController {
         if (DLT_TYPE == DLTType.IOTA) {
             iotaTransactionController.createATrasaction(request, response, next);
         } else if (DLT_TYPE == DLTType.ETHEREUM) {
-            (DLT_CONFIGURATION.ETHEREUM_CONFIG.aei_contract_mode == true)
-                ? aeiContractController.AddMetaData(request, response, next)
-                : ethTransactionController.createATrasaction(request, response, next)
+            if(DLT_CONFIGURATION.ETHEREUM_CONFIG.aei_contract_mode === 'true') {
+                aeiContractController.AddMetaData(request, response, next);
+            }else {
+                ethTransactionController.createATrasaction(request, response, next);
+            }
         }
     }
 }

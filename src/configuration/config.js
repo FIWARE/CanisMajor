@@ -44,7 +44,7 @@ const DLT_CONFIGURATION = {
         endpoint: ENV.RPC_ENDPOINT || 'http://localhost:8545',
         default_gas: ENV.DEFAULT_GAS || 3000000,
         default_gasPrice: ENV.DEFAULT_GAS_PRICE || 0,
-        aei_contract_mode: ENV.AEI_CONTRACT_MODE || false,
+        aei_contract_mode:(ENV.AEI_CONTRACT_MODE === 'true') ? 'true' : 'false'  || 'false',
         contractAddress: ENV.CONTRACT_ADDRESS || '',
     }
 }
@@ -130,7 +130,7 @@ const validateConfig = async() => {
             process.exit(1);
         });
 
-        if(DLT_CONFIGURATION.ETHEREUM_CONFIG.aei_contract_mode == true ) {
+        if(DLT_CONFIGURATION.ETHEREUM_CONFIG.aei_contract_mode === 'true' ) {
             if(DLT_CONFIGURATION.ETHEREUM_CONFIG.contractAddress == '') {
                 console.log('AEI Contract address is missing');
                 process.exit(1);
