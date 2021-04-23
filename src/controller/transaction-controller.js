@@ -9,7 +9,7 @@ class TransactionController {
         if (DLT_TYPE == DLTType.IOTA) {
             iotaTransactionController.createATrasaction(request, response, next);
         } else if (DLT_TYPE == DLTType.ETHEREUM) {
-            (DLT_CONFIGURATION.ETHEREUM_CONFIG.aei_contract_mode)
+            (DLT_CONFIGURATION.ETHEREUM_CONFIG.aei_contract_mode == true)
                 ? aeiContractController.CreateAsset(request, response, next)
                 : ethTransactionController.createATrasaction(request, response, next)
         }
@@ -20,7 +20,7 @@ class TransactionController {
         if (DLT_TYPE == DLTType.IOTA) {
             iotaTransactionController.createATrasaction(request, response, next);
         } else if (DLT_TYPE == DLTType.ETHEREUM) {
-            (DLT_CONFIGURATION.ETHEREUM_CONFIG.aei_contract_mode)
+            (DLT_CONFIGURATION.ETHEREUM_CONFIG.aei_contract_mode == true)
                 ? aeiContractController.AddMetaData(request, response, next)
                 : ethTransactionController.createATrasaction(request, response, next)
         }

@@ -24,6 +24,7 @@ class EthTransactionHandlerController {
         } else {
             contextResponses = request.body;
         }
+        console.log('other type tx');
        
         contextResponses = Buffer.isBuffer(contextResponses) ? JSON.parse(request.body.toString()) : contextResponses;
         if (Object.keys(contextResponses).length === 0) {
@@ -49,6 +50,7 @@ class EthTransactionHandlerController {
                     err.message = 'config doesnt exists';
                     return response.status(StatusCodes.NOT_FOUND).jsonp(err);
                 }
+                console.log('config found');
                 configurations = configs.rows;
                 return vaildateIdentity(request);
             })
@@ -65,6 +67,8 @@ class EthTransactionHandlerController {
                 return this.processTransaction(configurations, contextMappingParams, address, privateKey);
             })
             .then((recipts) => {
+                console.log('recipts');
+                console.log(recipts);
                 let obj = [];
                 recipts.forEach(recipt => {
                     recipt['dltType'] = DLT_TYPE;
@@ -81,6 +85,8 @@ class EthTransactionHandlerController {
                 return EntityRepository.bulkcreate(obj);            
             })
             .then((txRecipt) => {
+                console.log('txRecipt');
+                console.log(txRecipt);
                 logger.info(txRecipt);
                 return response.status(StatusCodes.OK).jsonp(txRecipt);
             })
