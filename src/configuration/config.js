@@ -45,7 +45,7 @@ const DLT_CONFIGURATION = {
         default_gas: ENV.DEFAULT_GAS || 3000000,
         default_gasPrice: ENV.DEFAULT_GAS_PRICE || 0,
         aei_contract_mode: ENV.AEI_CONTRACT_MODE || true,
-        contractAddress: ENV.CONTRACT_ADDRESS || '0x79fED8b0524beC12B7867aeDA3252dd2b3974Bc1',
+        contractAddress: ENV.CONTRACT_ADDRESS || '',
     }
 }
 
