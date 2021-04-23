@@ -25,7 +25,7 @@ const DB_DILECT = ENV.DB_DILECT || 'mysql';
 const DB_USERNAME = ENV.DB_USERNAME || 'root';
 const DB_PASSWORD = ENV.DB_PASSWORD || 'root';
 // DEFAULT CanisMajor PORT
-const CM_PORT = ENV.CM_PORT || 5000;
+const CM_PORT = ENV.CM_PORT || 4000;
 
 // implementation pending
 const TRANSCTION_TIMEOUT = ENV.TRANSCTION_TIMEOUT || 1000;

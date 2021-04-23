@@ -37,6 +37,6 @@ COPY . /app
 RUN npm install
 RUN npm run build
 EXPOSE 4000
-CMD [ "npm", "start" ]
+CMD ["npm","run", "dev" ]
 HEALTHCHECK  --interval=30s --timeout=3s --start-period=60s \
   CMD ["npm", "healthcheck"]

@@ -40,24 +40,26 @@ const DBMigrate = (success, error) => {
     });
 }
 
-const authenticate = () => {
-    sequelize.authenticate().then(() => {
-        console.log('connected to db');
-        DBCreate((success) => {
-            console.log('DBCreate success :' + success);
-            DBMigrate((success) => {
-                console.log('DBMigrate success :' + success);
-            }, (err) => {
-                console.error('DBMigrate err :' + err);
+const connect = () => {
+    DBCreate((success) => {
+        console.log('DBCreate success :' + success);
+        DBMigrate((success) => {
+            console.log('DBMigrate success :' + success);
+            sequelize.authenticate().then(() => {
+                console.log('connected to db');
+                
+            }).catch(() => {
+                console.error('Unable to connect to the database');
+                setTimeout(authenticate, 5000);
             });
         }, (err) => {
-            console.error('DBCreate err :' + err);
-        })
-    }).catch(() => {
-        console.error('Unable to connect to the database');
-        setTimeout(authenticate, 5000);
-    });
+            console.error('DBMigrate err :' + err);
+        });
+    }, (err) => {
+        console.error('DBCreate err :' + err);
+    })
 }
-authenticate();
+
+connect();
 
 module.exports = sequelize;
