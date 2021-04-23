@@ -52,9 +52,13 @@ class HelperController {
             return response.status(StatusCodes.FORBIDDEN).jsonp(err);
         }
         iota.getBundle(hash).then((bundle) => {
+            console.log(bundle);
             const sign = bundle[0].signatureMessageFragment;
+            console.log(sign);
             const num = sign.match(/^(.*)99/);
+            console.log(num);
             let data = Buffer.from(trytesToAscii(num[1].slice(0, -1)), 'base64').toString('utf-8');
+            console.log(data);
             return response.status(StatusCodes.OK).jsonp(JSON.parse(data));
         }).catch((err) => {
             return response.status(StatusCodes.BAD_REQUEST).jsonp(err);

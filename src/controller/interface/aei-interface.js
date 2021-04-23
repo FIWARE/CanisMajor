@@ -46,6 +46,7 @@ const createAsset = async (uuid, hash, identity) => {
 
 const getAsset = (uuid, callback) => {
     let uuidToByte32 = Web3.utils.fromAscii(uuid);
+    console.log(uuidToByte32);
     contract.methods.getAsset(uuidToByte32).call().then((response) => {
         logger.info(response);
         callback(response);

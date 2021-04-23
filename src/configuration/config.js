@@ -25,13 +25,13 @@ const DB_DILECT = ENV.DB_DILECT || 'mysql';
 const DB_USERNAME = ENV.DB_USERNAME || 'root';
 const DB_PASSWORD = ENV.DB_PASSWORD || 'root';
 // DEFAULT CanisMajor PORT
-const CM_PORT = ENV.CM_PORT || 4000;
+const CM_PORT = ENV.CM_PORT || 5000;
 
 // implementation pending
 const TRANSCTION_TIMEOUT = ENV.TRANSCTION_TIMEOUT || 1000;
 
 // default DLT Transaction Type
-const DLT_TYPE = ENV.DLT_TYPE || DLTType.IOTA;
+const DLT_TYPE = ENV.DLT_TYPE || DLTType.ETHEREUM;
 
 // DLT Configuration
 const DLT_CONFIGURATION = {
@@ -45,7 +45,7 @@ const DLT_CONFIGURATION = {
         default_gas: ENV.DEFAULT_GAS || 3000000,
         default_gasPrice: ENV.DEFAULT_GAS_PRICE || 0,
         aei_contract_mode: ENV.AEI_CONTRACT_MODE || true,
-        contractAddress: ENV.CONTRACT_ADDRESS || '0x9a3DBCa554e9f6b9257aAa24010DA8377C57c17e',
+        contractAddress: ENV.CONTRACT_ADDRESS || '0x79fED8b0524beC12B7867aeDA3252dd2b3974Bc1',
     }
 }
 
