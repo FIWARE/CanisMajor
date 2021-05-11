@@ -29,7 +29,7 @@
     "http-status-codes": "^2.1.4",
     "ipfs-api": "^26.1.2",
     "jsonwebtoken": "^8.5.1",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "md5": "^2.3.0",
     "merkletreejs": "^0.2.18",
     "moment": "^2.29.1",
