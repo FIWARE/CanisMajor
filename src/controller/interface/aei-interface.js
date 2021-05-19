@@ -56,41 +56,6 @@ const getAsset = (uuid, callback) => {
     });
 };
 
-// const updateAsset = (uuid, payload, address, callback) => {
-//     return Promise.resolve().then(() => {
-//         if (CONSTANTS.ETHEREUM_CONFIG.storage_type == storageType.IPFS) {
-//             return uploadToIPFS(payload);
-//         }
-//         else if (CONSTANTS.ETHEREUM_CONFIG.storage_type == storageType.IOTA) {
-//             return publishToIOTA(payload);
-//         } else {
-//             return getMerkelRoot(payload);
-//         }
-//     }).then((value) => {
-//         let uuidToByte32 = Web3.utils.fromAscii(uuid);
-//         return contract.methods.updateAsset(uuidToByte32, value).send({
-//             from: address,
-//             gas: CONSTANTS.ETHEREUM_CONFIG.default_gas
-//         });
-//     }).then((res) => {
-//         callback({ TxRecipt: res, StorageType: CONSTANTS.ETHEREUM_CONFIG.storage_type });
-//     })
-//         .catch((err) => {
-//             callback(err);
-//         });
-// };
-
-// const removeAsset = (uuid, address, callback) => {
-//     var uuidToByte32 = Web3.utils.fromAscii(uuid);
-//     contract.methods.removeAsset(uuidToByte32).send({
-//         from: address
-//     }).then((response) => {
-//         callback({ TxRecipt: response });
-//     }).catch((err) => {
-//         callback(err);
-//     });
-// };
-
 const addMetaData = (uuid, hash, identity) => {
     return new Promise((resolve, reject) => {
         let uuidToByte32 = Web3.utils.fromAscii(uuid);
@@ -135,17 +100,6 @@ const getMetaData = (uuid, callback) => {
     });
 };
 
-// const remoteMetaData = (uuid, index, address, callback) => {
-//     var uuidToByte32 = Web3.utils.fromAscii(uuid);
-//     contract.methods.removeMetadata(uuidToByte32, index).send({
-//         from: address
-//     }).then((response) => {
-//         callback({ TxRecipt: response });
-//     }).catch((err) => {
-//         callback(err);
-//     });
-// };
-
 // const addRelation = (uuid, relationPayload, success, error) => {
 //     return new Promise((resolve, rejecct) => {
 //         let uuidToByte32 = Web3.utils.fromAscii(uuid);
@@ -172,26 +126,12 @@ const getMetaData = (uuid, callback) => {
 //     });
 // };
 
-// const removeRelation = (uuid, index, address, callback) => {
-//     var uuidToByte32 = Web3.utils.fromAscii(uuid);
-//     contract.methods.removeRelation(uuidToByte32, index).send({
-//         from: address
-//     }).then((response) => {
-//         callback({ TxRecipt: response });
-//     }).catch((err) => {
-//         callback(err);
-//     });
-// };
 
 export {
     createAsset,
     getAsset,
-    // updateAsset,
-    // removeAsset,
     addMetaData,
     getMetaData,
-    // remoteMetaData,
     // addRelation,
     // getRelations,
-    // removeRelation
 };

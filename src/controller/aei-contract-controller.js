@@ -24,8 +24,15 @@ class AEIContractController {
             contextKeys.forEach(element => {
                 payload[element] = NestedKey.get(request.body,element);
             });
-            payload['@context'] = NestedKey.get(request.body, '@context');
-            payload['id'] = NestedKey.get(request.body, 'id');
+            if('@context' in payload) {
+                payload['@context'] = NestedKey.get(request.body, '@context');
+            }
+            if('id' in payload) {
+                payload['id'] = NestedKey.get(request.body, 'id');
+            }
+            if('type' in payload) {
+                payload['type'] = NestedKey.get(request.body, 'type');
+            }            
         }
         
         for (let key in payload) {
@@ -47,8 +54,12 @@ class AEIContractController {
             return createAsset(payload.id, value, identity);
         })
         .then((res) => {
-            console.log('recipt'+ res); 
             res['dltType'] = DLT_TYPE;
+            if('@context' in payload) {
+                res['version'] = 'ngsi-ld';
+            } else {
+                res['version'] = 'ngsi-v2'
+            }
             res['storageType'] = STORAGE_CONFIGURATION.storage_type;
             res['objectType'] = 'asset';
             res['encyptionMode'] = ENCYPTION_CONFIG.encrpytionMode;
@@ -83,7 +94,15 @@ class AEIContractController {
             contextKeys.forEach(element => {
                 payload[element] = NestedKey.get(request.body,element);
             });
-            payload['@context'] = NestedKey.get(request.body, '@context');
+            if('@context' in payload) {
+                payload['@context'] = NestedKey.get(request.body, '@context');
+            }
+            if('id' in payload) {
+                payload['id'] = NestedKey.get(request.body, 'id');
+            }
+            if('type' in payload) {
+                payload['type'] = NestedKey.get(request.body, 'type');
+            }     
         }
 
         for (let key in payload) {
@@ -104,6 +123,11 @@ class AEIContractController {
         })
         .then((res) => {
             res['dltType'] = DLT_TYPE;
+            if('@context' in payload) {
+                res['version'] = 'ngsi-ld';
+            } else {
+                res['version'] = 'ngsi-v2'
+            }
             res['storageType'] = STORAGE_CONFIGURATION.storage_type;
             res['objectType'] = 'metadata';
             res['encyptionMode'] = ENCYPTION_CONFIG.encrpytionMode;
