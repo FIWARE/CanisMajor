@@ -18,8 +18,8 @@ The adaptor will not be recommended to work for public-permissionless blockchain
 ![CanisMajor Publish/Notify Architecture](https://github.com/FIWARE-Blockchain/CanisMajor/blob/master/docs/images/architecture_2.png) -->
 
 A stable solution to use canis major as a proxy which is more suitable and will be mature in future.
-## CanisMajor As a PROXY Architecture (v0.2 Architecture)
-![CanisMajor Publish/Notify Architecture](https://github.com/FIWARE-Blockchain/CanisMajor/blob/master/docs/images/architecture_1.png)
+## CanisMajor As a PROXY Architecture
+![CanisMajor Publish/Notify Architecture](https://github.com/FIWARE-Blockchain/CanisMajor/blob/master/docs/images/architecture.png)
 
 
 ## Supported DLT Clients
