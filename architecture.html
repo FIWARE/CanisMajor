@@ -66,6 +66,22 @@
                 <ul class="current">
                     <li class="toctree-l1 current"><a class="reference internal current" href="architecture.html">Architecture</a>
     <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#canis-major-in-powered-by-fiware-architecture">Canis Major in powered by FIWARE Architecture</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#flow-diagram">Flow Diagram</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#sequence-diagram">Sequence Diagram</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#canis-major-design">Canis Major Design:</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#supported-dlt-clients">Supported DLT Clients</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#storage-type">Storage Type</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
     </ul>
                     </li>
                 </ul>
@@ -117,6 +133,36 @@
             <div class="section">
               
                 <h1 id="architecture">Architecture</h1>
+<h2 id="canis-major-in-powered-by-fiware-architecture">Canis Major in powered by FIWARE Architecture</h2>
+<p>Canis major uses FIWARE Pep-Proxy (fork version) <a href="https://github.com/FIWARE-Blockchain/fiware-pep-proxy">link</a> which allow to config "canismajor endpoint"</p>
+<pre><code class="sh"> process.env.CANIS_MAJOR_URL = http://localhost:4000 (canis major endpoint)
+</code></pre>
+
+<p>chekout the sequece diagram to understand the flow:</p>
+<h3 id="flow-diagram">Flow Diagram</h3>
+<p>Flow diagram of canismjor communicated with other fiware components</p>
+<p><img alt="Sequence Diagram" src="https://github.com/FIWARE-Blockchain/CanisMajor/blob/master/docs/images/architecture.png" /></p>
+<h3 id="sequence-diagram">Sequence Diagram</h3>
+<p>Sequence diagram of canismjor communicated with other fiware components</p>
+<p><img alt="Sequence Diagram" src="https://github.com/FIWARE-Blockchain/CanisMajor/blob/master/docs/images/sequence.png" /></p>
+<h3 id="canis-major-design">Canis Major Design:</h3>
+<p>Canis major is designed to submit the transaction in diffrent kind of DLT current it support these blockchain</p>
+<h4 id="supported-dlt-clients">Supported DLT Clients</h4>
+<ul>
+<li>[x] Ethereum </li>
+<li>[x] IOTA</li>
+<li>[ ] FABRIC Chaincode</li>
+</ul>
+<p>and is not recommended to use in public-permissionless or crypotcurrencies.</p>
+<p>For the Etherum Clients such as geth, quorum, besu etc it is recommended to use AEI contract (plese check the contract section in this documentation), though you can also use your own contract and configure it using canismajor rest api.</p>
+<p>Canis Major also support varsion storage type store the payload </p>
+<h4 id="storage-type">Storage Type</h4>
+<ul>
+<li>[x] IPFS </li>
+<li>[x] IOTA MaM</li>
+<li>[x] Merkle Tree</li>
+</ul>
+<p>Please follow the usages section to learn more.</p>
               
             </div>
           </div>
