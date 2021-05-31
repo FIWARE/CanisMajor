@@ -14,8 +14,18 @@ guidelines only, and this section may be revised to provide newer information at
 any time.
 
 ## Short term
+AEI Contract stability
+ETH-Self Contract sendRawTransaction Support
+Merkle Tree Error's fixes
+Test Case:
+1. AEI-ETH test cases (with IOTAMaM, IPFS, MerkleTree)
+2. Merkle Tree Error's 
+3. IOTA Tx test cases
+4. ETH-Self Contract test
 
 ## Medium term
+IOTA new version updated
 
 ## Long term
+Fabric ChainCode Support
 
