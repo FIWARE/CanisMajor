@@ -149,9 +149,8 @@
                 <h1 id="architecture">Architecture</h1>
 <h2 id="canis-major-in-powered-by-fiware-architecture">Canis Major in powered by FIWARE Architecture</h2>
 <p>Canis major uses FIWARE Pep-Proxy (fork version) <a href="https://github.com/FIWARE-Blockchain/fiware-pep-proxy">link</a> which allow to config "canismajor endpoint"</p>
-<pre><code class="sh"> process.env.CANIS_MAJOR_URL = http://localhost:4000 (canis major endpoint)
+<pre><code class="language-sh"> process.env.CANIS_MAJOR_URL = http://localhost:4000 (canis major endpoint)
 </code></pre>
-
 <p>chekout the sequece diagram to understand the flow:</p>
 <h3 id="flow-diagram">Flow Diagram</h3>
 <p>Flow diagram of canismjor communicated with other fiware components</p>
@@ -200,7 +199,7 @@ To learn about IPFS please follow <a href="https://ipfs.io/">here</a> </p>
 <h4 id="example">Example</h4>
 <p><img alt="Example" src="https://raw.githubusercontent.com/FIWARE-Blockchain/AEIContract/master/docs/images/2.png" /></p>
 <h4 id="supported-methods">Supported Methods</h4>
-<pre><code class="sh">- createAsset(bytes32 uuid, string memory _newHash)
+<pre><code class="language-sh">- createAsset(bytes32 uuid, string memory _newHash)
 - getAsset(bytes32 uuid)
 - updateAsset(bytes32 uuid, string memory _newHash)
 - removeAsset (bytes32 uuid)
@@ -215,7 +214,6 @@ To learn about IPFS please follow <a href="https://ipfs.io/">here</a> </p>
 - removeMetadata(bytes32 uuid, uint index)
 - isValidMetadata(bytes32 uuid, uint index, bytes32[] memory _proof, bytes32 _leaf)
 </code></pre>
-
 <p>Apart from that ERC721, Ownable, MerkleProof, ECDSA methods are supported.</p>
 <h4 id="dependencies">Dependencies</h4>
 <p><em>This project uses:</em>
