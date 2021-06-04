@@ -20,3 +20,10 @@ jobs:
         with:
           push: true
           tags: singhhp10691/canismajor:latest
+      - name: Docker Hub Description
+        uses: peter-evans/dockerhub-description@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: peterevans/dockerhub-description
+          readme-filepath: ./README.md
