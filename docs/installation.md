@@ -26,7 +26,19 @@ The following steps need to be performed to get Canis Major up and running:
     cd canismajor
     npm install
 ```
- 
- 3. Configure the installation
+
+ 3. Database Init/Migration
+ ```sh
+    DB_USERNAME=${DB_USERNAME} \
+    DB_PASSWORD=${DB_PASSWORD} \
+    DB_NAME=${DB_NAME} \
+    DB_HOST=${DB_HOST} \
+    DB_PORT=${DB_PORT} \
+    npm run create && npm run migrate
+```
+
+ 4. Configure the installation
+ ```sh
+ ```
 
  

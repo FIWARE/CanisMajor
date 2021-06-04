@@ -1,3 +1,31 @@
+# Development Dockerfile not for production
+ARG NODE_VERSION=12
+# build environment
+FROM node:${NODE_VERSION}
+WORKDIR /app
+COPY . /app
+
+ENV CM_PORT="4000" \
+  DB_NAME="basic" \
+  DB_HOST="localhost" \
+  DB_NAME="cm" \
+  DB_DILECT="mysql" \
+  TRANSCTION_TIMEOUT=1000 
+
+# In DEVELOPMENT Mode Now
+ENV NODE_ENV=development
+
+RUN npm install
+RUN npm run build
+
+EXPOSE ${CM_PORT:-4000}
+
+CMD ["npm", "start"]
+
+HEALTHCHECK  --interval=30s --timeout=3s --start-period=60s \
+  CMD ["npm", "healthcheck"]
+
+# ALL ENVIRONMENT VARIABLES
 ########################################################################################
 #
 #  - DB_NAME
@@ -25,18 +53,3 @@
 #  - IOTAMAM_MODE
 #
 ########################################################################################
-
-# ARG NODE_VERSION=12
-# ARG GITHUB_ACCOUNT=fiware-blockchain
-# ARG GITHUB_REPOSITORY=CanisMajor
-
-# build environment (still under development)
-FROM node:12
-WORKDIR /app
-COPY . /app
-RUN npm install
-RUN npm run build
-EXPOSE 4000
-CMD ["npm","run", "dev" ]
-HEALTHCHECK  --interval=30s --timeout=3s --start-period=60s \
-  CMD ["npm", "healthcheck"]

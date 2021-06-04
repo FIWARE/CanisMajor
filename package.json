@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "nodemon --exec babel-node src/bin/www --verbose",
+    "postinstall": "npm run build",
     "healthcheck": "node src/bin/health.js",
     "build": "rm -rf dist && babel src --out-dir dist && babel src/bin/* --out-dir dist && mv dist/src/bin dist && rm -rf dist/src",
     "start": "node dist/bin/www.js",
