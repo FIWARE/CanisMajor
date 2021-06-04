@@ -137,7 +137,20 @@
     npm install
 </code></pre>
 <ol>
-<li>Configure the installation</li>
+<li>
+<p>Database Init/Migration
+ <code>sh
+    DB_USERNAME=${DB_USERNAME} \
+    DB_PASSWORD=${DB_PASSWORD} \
+    DB_NAME=${DB_NAME} \
+    DB_HOST=${DB_HOST} \
+    DB_PORT=${DB_PORT} \
+    npm run create &amp;&amp; npm run migrate</code></p>
+</li>
+<li>
+<p>Configure the installation
+ <code>sh</code></p>
+</li>
 </ol>
               
             </div>
