@@ -44,7 +44,7 @@ const DLT_CONFIGURATION = {
         endpoint: ENV.RPC_ENDPOINT || 'http://localhost:8545',
         default_gas: ENV.DEFAULT_GAS || 3000000,
         default_gasPrice: ENV.DEFAULT_GAS_PRICE || 0,
-        aei_contract_mode:(ENV.AEI_CONTRACT_MODE === 'true') ? 'true' : 'false'  || 'false',
+        aei_contract_mode: (ENV.AEI_CONTRACT_MODE === 'true') ? 'true' : 'false' || 'false',
         contractAddress: ENV.CONTRACT_ADDRESS || '',
     }
 }
@@ -94,67 +94,67 @@ const CONSTANTS = {
     },
 };
 
-const validateConfig = async() => {
+const validateConfig = async () => {
 
-    if(CM_PORT == '') {
+    if (CM_PORT == '') {
         throw new Error('CM_PORT is not defined');
     }
-    if(DLT_TYPE == '') {
-        if(DLT_TYPE != DLTType.IOTA || DLT_TYPE != DLTType.ETHEREUM) {
+    if (DLT_TYPE == '') {
+        if (DLT_TYPE != DLTType.IOTA || DLT_TYPE != DLTType.ETHEREUM) {
             throw new Error('DLT_TYPE should be either eth or iota');
         }
         throw new Error('DLT_TYPE is not defined');
     }
 
     //check if IOTA network is up or not
-    if(DLT_TYPE == DLTType.IOTA) {
+    if (DLT_TYPE == DLTType.IOTA) {
         await fetch(DLT_CONFIGURATION.IOTA_CONFIG.endpoint)
-        .catch((err) => {
-            console.log('IOTA Network Error : ' + err);
-            process.exit(1);
-        })
+            .catch((err) => {
+                console.log('IOTA Network Error : ' + err);
+                process.exit(1);
+            })
     }
 
     // check if RPC client is working or not
-    if(DLT_TYPE == DLTType.ETHEREUM) {
-        await fetch(DLT_CONFIGURATION.ETHEREUM_CONFIG.endpoint, 
-            {method: 'POST', body: '{"jsonrpc":"2.0","method":"web3_clientVersion","params":[],"id":1}' }
+    if (DLT_TYPE == DLTType.ETHEREUM) {
+        await fetch(DLT_CONFIGURATION.ETHEREUM_CONFIG.endpoint,
+            { method: 'POST', body: '{"jsonrpc":"2.0","method":"web3_clientVersion","params":[],"id":1}' }
         )
-        .then((res) => {
-            if(res.status != 200) {
-            console.log('Ethereum Network Error status : ' + res.status);
-            process.exit(1);
-            }
-        }).catch((err) => {
-            console.log('Ethereum Network Error : ' + err);
-            process.exit(1);
-        });
+            .then((res) => {
+                if (res.status != 200) {
+                    console.log('Ethereum Network Error status : ' + res.status);
+                    process.exit(1);
+                }
+            }).catch((err) => {
+                console.log('Ethereum Network Error : ' + err);
+                process.exit(1);
+            });
 
-        if(DLT_CONFIGURATION.ETHEREUM_CONFIG.aei_contract_mode === 'true' ) {
-            if(DLT_CONFIGURATION.ETHEREUM_CONFIG.contractAddress == '') {
+        if (DLT_CONFIGURATION.ETHEREUM_CONFIG.aei_contract_mode === 'true') {
+            if (DLT_CONFIGURATION.ETHEREUM_CONFIG.contractAddress == '') {
                 console.log('AEI Contract address is missing');
                 process.exit(1);
             }
         }
     }
 
-    // check if storage type IPFS is working or not
-    if(STORAGE_CONFIGURATION.storage_type == storageType.IOTA) {
+    // check if storage type is working or not
+    if (STORAGE_CONFIGURATION.storage_type == storageType.IOTA) {
         await fetch(STORAGE_CONFIGURATION.IOTAMaMConfig.host)
-        .catch((err) => {
-            console.log('IOTAMaM Storage Error : ' + err);
-            process.exit(1);
-        })
+            .catch((err) => {
+                console.log('IOTAMaM Storage Error : ' + err);
+                process.exit(1);
+            })
     }
 
-    if(STORAGE_CONFIGURATION.storage_type == storageType.IPFS) {
-        await fetch(STORAGE_CONFIGURATION.ipfsConfig.protocol 
-                    + '://' + STORAGE_CONFIGURATION.ipfsConfig.host 
-                    + ':' + STORAGE_CONFIGURATION.ipfsConfig.port)
-        .catch((err) => {
-            console.log('IPFS Storage Error : ' + err);
-            process.exit(1);
-        })
+    if (STORAGE_CONFIGURATION.storage_type == storageType.IPFS) {
+        await fetch(STORAGE_CONFIGURATION.ipfsConfig.protocol
+            + '://' + STORAGE_CONFIGURATION.ipfsConfig.host
+            + ':' + STORAGE_CONFIGURATION.ipfsConfig.port)
+            .catch((err) => {
+                console.log('IPFS Storage Error : ' + err);
+                process.exit(1);
+            })
     }
 
     console.log('configuration validated');
