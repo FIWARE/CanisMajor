@@ -115,54 +115,55 @@
 <p># Installation</p>
 <p>The following steps need to be performed to get Canis Major up and running:</p>
 <ol>
-<li>
-<p>Download the software, using GitHub.</p>
-<p><code>sh
-git clone https://github.com/fiware-blockchain/canismajor</code></p>
-</li>
-<li>
-<p>Install all required libraries using npm.</p>
-<p><code>sh
-cd canismajor
-npm install</code></p>
-</li>
-<li>
-<p>Database Init/Migration</p>
-<p><code>sh
-DB_USERNAME=${DB_USERNAME} \
-DB_PASSWORD=${DB_PASSWORD} \
-DB_NAME=${DB_NAME} \
-DB_HOST=${DB_HOST} \
-DB_PORT=${DB_PORT} \
-npm run create &amp;&amp; npm run migrate</code></p>
-</li>
-<li>
-<p>Configure the installation</p>
-<p><code>sh
-      - DB_NAME
-      - DB_HOST
-      - DB_PORT
-      - DB_DILECT
-      - DB_USERNAME
-      - DB_PASSWORD
-      - CM_PORT
-      - TRANSCTION_TIMEOUT
-      - DLT_TYPE  // eth or iota
-      - IOTA_ENDPOINT // iota config
-     // eth config
-      - RPC_ENDPOINT
-      - DEFAULT_GAS
-      - DEFAULT_GAS_PRICE
-      - AEI_CONTRACT_MODE
-      - CONTRACT_ADDRESS
-     // storage config
-      - STORAGE_TYPE // iota, ipfs or merkletree
-      - IPFS_HOST
-      - IPFS_PORT
-      - IPFS_PROTOCOL
-      - IPFS_AUTH_CODE
-      - IOTAMAM_HOST
-      - IOTAMAM_MODE</code></p>
+<li>Download the software, using GitHub.</li>
+</ol>
+<p>```sh
+    git clone https://github.com/fiware-blockchain/canismajor</p>
+<pre><code>
+ 2. Install all required libraries using npm.
+
+```sh
+    cd canismajor
+    npm install
+</code></pre>
+<ol>
+<li>Database Init/Migration</li>
+</ol>
+<pre><code class="language-sh">    DB_USERNAME=${DB_USERNAME} \
+    DB_PASSWORD=${DB_PASSWORD} \
+    DB_NAME=${DB_NAME} \
+    DB_HOST=${DB_HOST} \
+    DB_PORT=${DB_PORT} \
+    npm run create &amp;&amp; npm run migrate
+</code></pre>
+<ol>
+<li>Configure the installation</li>
+</ol>
+<pre><code class="language-sh">          - DB_NAME
+          - DB_HOST
+          - DB_PORT
+          - DB_DILECT
+          - DB_USERNAME
+          - DB_PASSWORD
+          - CM_PORT
+          - TRANSCTION_TIMEOUT
+          - DLT_TYPE  // eth or iota
+          - IOTA_ENDPOINT // iota config
+         // eth config
+          - RPC_ENDPOINT
+          - DEFAULT_GAS
+          - DEFAULT_GAS_PRICE
+          - AEI_CONTRACT_MODE
+          - CONTRACT_ADDRESS
+         // storage config
+          - STORAGE_TYPE // iota, ipfs or merkletree
+          - IPFS_HOST
+          - IPFS_PORT
+          - IPFS_PROTOCOL
+          - IPFS_AUTH_CODE
+          - IOTAMAM_HOST
+          - IOTAMAM_MODE
+</code></pre>
 <table>
 <thead>
 <tr>
@@ -239,37 +240,96 @@ npm run create &amp;&amp; npm run migrate</code></p>
 </tr>
 </tbody>
 </table>
-</li>
-</ol>
 <p><strong>Storage Configuration</strong>   </p>
 <p><strong><em>ipfs</em></strong></p>
-<pre><code>| ENV Variable        | Description           | Example  |
-| STORAGE_TYPE | Storage type to store the payload (can be ipfs, iota or merkletree)     |    ipfs |
-| IPFS_HOST | IPFS host name     |    ipfs.infura.io |
-| IPFS_PORT | IPFS port number     |    5001 |
-| IPFS_PROTOCOL | IPFS protocol     |    https |
-| IPFS_AUTH_CODE (optional) | Bearer Auth code     |  " "   |
-</code></pre>
+<table>
+<thead>
+<tr>
+<th>ENV Variable</th>
+<th align="center">Description</th>
+<th align="right">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>STORAGE_TYPE</td>
+<td align="center">Storage type to store the payload (can be ipfs, iota or merkletree)</td>
+<td align="right">ipfs</td>
+</tr>
+<tr>
+<td>IPFS_HOST</td>
+<td align="center">IPFS host name</td>
+<td align="right">ipfs.infura.io</td>
+</tr>
+<tr>
+<td>IPFS_PORT</td>
+<td align="center">IPFS port number</td>
+<td align="right">5001</td>
+</tr>
+<tr>
+<td>IPFS_PROTOCOL</td>
+<td align="center">IPFS protocol</td>
+<td align="right">https</td>
+</tr>
+<tr>
+<td>IPFS_AUTH_CODE (optional)</td>
+<td align="center">Bearer Auth code</td>
+<td align="right">" "</td>
+</tr>
+</tbody>
+</table>
 <p><strong><em>IOTAMaM</em></strong></p>
-<pre><code>| ENV Variable        | Description           | Example  |
-| STORAGE_TYPE | Storage type to store the payload (can be ipfs, iota or merkletree)     |    iota |
-| IOTAMAM_HOST | IOTAMaM Host Name   |    https://nodes.devnet.iota.org |
-| IOTAMAM_MODE | IOTAMaM mode (can be public or private)     |    public |
-</code></pre>
+<table>
+<thead>
+<tr>
+<th>ENV Variable</th>
+<th align="center">Description</th>
+<th align="right">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>STORAGE_TYPE</td>
+<td align="center">Storage type to store the payload (can be ipfs, iota or merkletree)</td>
+<td align="right">iota</td>
+</tr>
+<tr>
+<td>IOTAMAM_HOST</td>
+<td align="center">IOTAMaM Host Name</td>
+<td align="right">https://nodes.devnet.iota.org</td>
+</tr>
+<tr>
+<td>IOTAMAM_MODE</td>
+<td align="center">IOTAMaM mode (can be public or private)</td>
+<td align="right">public</td>
+</tr>
+</tbody>
+</table>
 <p><strong><em>Merkle Tree</em></strong></p>
-<pre><code>| ENV Variable        | Description           | Example  |
-| STORAGE_TYPE | Storage type to store the payload (can be ipfs, iota or merkletree)     |    merkletree |
-</code></pre>
+<table>
+<thead>
+<tr>
+<th>ENV Variable</th>
+<th align="center">Description</th>
+<th align="right">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>STORAGE_TYPE</td>
+<td align="center">Storage type to store the payload (can be ipfs, iota or merkletree)</td>
+<td align="right">merkletree</td>
+</tr>
+</tbody>
+</table>
 <p>Configuration diagram 
 <img alt="config" src="https://raw.githubusercontent.com/FIWARE-Blockchain/tutorials.Step-by-Step/master/docs/config.png" /></p>
 <p>there configuration can be also mentioned in src/configuration/config.js</p>
 <ol>
-<li>
-<p>Running the CanisMajor</p>
+<li>Running the CanisMajor</li>
+</ol>
 <p><code>sh
     npm start</code></p>
-</li>
-</ol>
               
             </div>
           </div>
