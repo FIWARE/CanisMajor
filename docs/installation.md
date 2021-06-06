@@ -16,18 +16,18 @@ The following steps need to be performed to get Canis Major up and running:
 
 1. Download the software, using GitHub.
 
- ```sh
+```sh
     git clone https://github.com/fiware-blockchain/canismajor
 ```
 
- 2. Install all required libraries using npm.
+2. Install all required libraries using npm.
 
 ```sh
     cd canismajor
     npm install
 ```
 
- 3. Database Init/Migration
+3. Database Init/Migration
  
 ```sh
     DB_USERNAME=${DB_USERNAME} \
@@ -38,33 +38,35 @@ The following steps need to be performed to get Canis Major up and running:
     npm run create && npm run migrate
 ```
 
- 4. Configure the installation
+4. Configure the installation
  
 ```sh
-          - DB_NAME
-          - DB_HOST
-          - DB_PORT
-          - DB_DILECT
-          - DB_USERNAME
-          - DB_PASSWORD
-          - CM_PORT
-          - TRANSCTION_TIMEOUT
-          - DLT_TYPE  // eth or iota
-          - IOTA_ENDPOINT // iota config
-         // eth config
-          - RPC_ENDPOINT
-          - DEFAULT_GAS
-          - DEFAULT_GAS_PRICE
-          - AEI_CONTRACT_MODE
-          - CONTRACT_ADDRESS
-         // storage config
-          - STORAGE_TYPE // iota, ipfs or merkletree
-          - IPFS_HOST
-          - IPFS_PORT
-          - IPFS_PROTOCOL
-          - IPFS_AUTH_CODE
-          - IOTAMAM_HOST
-          - IOTAMAM_MODE
+    - DB_NAME
+    - DB_HOST
+    - DB_PORT
+    - DB_DILECT
+    - DB_USERNAME
+    - DB_PASSWORD
+    - CM_PORT
+    - TRANSCTION_TIMEOUT
+    - DLT_TYPE  // eth or iota
+    - IOTA_ENDPOINT // iota config
+    
+    // eth config
+    - RPC_ENDPOINT
+    - DEFAULT_GAS
+    - DEFAULT_GAS_PRICE
+    - AEI_CONTRACT_MODE
+    - CONTRACT_ADDRESS
+    
+    // storage config
+    - STORAGE_TYPE // iota, ipfs or merkletree
+    - IPFS_HOST
+    - IPFS_PORT
+    - IPFS_PROTOCOL
+    - IPFS_AUTH_CODE
+    - IOTAMAM_HOST
+    - IOTAMAM_MODE
 ```
 
 
@@ -112,15 +114,16 @@ The following steps need to be performed to get Canis Major up and running:
 | STORAGE_TYPE | Storage type to store the payload (can be ipfs, iota or merkletree)     |    merkletree |
 
 
-Configuration diagram 
+**Configuration diagram** 
+
 ![config](https://raw.githubusercontent.com/FIWARE-Blockchain/tutorials.Step-by-Step/master/docs/config.png)
 
 
 there configuration can be also mentioned in src/configuration/config.js
 
 
- 4. Running the CanisMajor
+5. Running the CanisMajor
 
- ```sh
+```sh
     npm start
- ```
+```
