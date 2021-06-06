@@ -60,8 +60,6 @@
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#flow-diagram">Flow Diagram</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#sequence-diagram">Sequence Diagram</a>
-    </li>
     <li class="toctree-l3"><a class="reference internal" href="#canis-major-design">Canis Major Design:</a>
         <ul>
     <li class="toctree-l4"><a class="reference internal" href="#supported-dlt-clients">Supported DLT Clients</a>
@@ -71,6 +69,8 @@
         </ul>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#aei-contract-model">AEI Contract Model</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#erc-721">ERC 721</a>
         <ul>
     <li class="toctree-l4"><a class="reference internal" href="#aei-architecture">AEI Architecture</a>
     </li>
@@ -83,6 +83,22 @@
     <li class="toctree-l4"><a class="reference internal" href="#canis-major-with-aei-contract">Canis Major with AEI Contract:</a>
     </li>
         </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#use-of-canis-major">Use of Canis Major</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#canis-major-design_1">Canis Major Design</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#usages">Usages</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#creation-of-an-entity-animal-farm-etc">Creation of an Entity (Animal, Farm etc)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#adding-metadata-eventy-on-an-entity-animal-farm-etc">Adding Metadata (eventy) on an Entity (Animal, Farm etc)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#qyery">Qyery</a>
     </li>
         </ul>
     </li>
@@ -141,13 +157,16 @@
 <p>Canis major uses FIWARE Pep-Proxy (fork version) <a href="https://github.com/FIWARE-Blockchain/fiware-pep-proxy">link</a> which allow to config "canismajor endpoint"</p>
 <pre><code class="language-sh"> process.env.CANIS_MAJOR_URL = http://localhost:4000 (canis major endpoint)
 </code></pre>
-<p>chekout the sequece diagram to understand the flow:</p>
 <h3 id="flow-diagram">Flow Diagram</h3>
-<p>Flow diagram of canismjor communicated with other fiware components</p>
-<p><img alt="Sequence Diagram" src="https://raw.githubusercontent.com/FIWARE-Blockchain/CanisMajor/master/docs/images/architecture.png" /></p>
-<h3 id="sequence-diagram">Sequence Diagram</h3>
-<p>Sequence diagram of canismjor communicated with other fiware components</p>
-<p><img alt="Sequence Diagram" src="https://raw.githubusercontent.com/FIWARE-Blockchain/CanisMajor/master/docs/images/sequence.png" /></p>
+<p><img alt="Architecture Diagram" src="https://raw.githubusercontent.com/FIWARE-Blockchain/CanisMajor/master/docs/images/cm.png" /></p>
+<p>The way Canis Major work's in 'Powered By FIWARE' architecture as follows:</p>
+<ol>
+<li>Request from the user is consist of the Payload, Header with token and DLT_ID (base64 of public key and private key of the blockchain).</li>
+<li>Wilma PEP Proxy validate the token and check with the KeyRock IDM and validate the user, permission (Authentication and Autherisation).</li>
+<li>Once the user is validate Wilma forward the request to the Context Broker and persist it.</li>
+<li>Once the Payload stored in Context Broker Wilma notify to Canis Major with the configuration such as what attribute of the payload should be store, Blockchain Identity of the user.</li>
+<li>Futher Canis Major persist the data in blockchain using AEI contract (will be explained futher in this chapter).</li>
+</ol>
 <h3 id="canis-major-design">Canis Major Design:</h3>
 <p>Canis major is designed to submit the transaction in diffrent kind of DLT current it support these blockchain</p>
 <h4 id="supported-dlt-clients">Supported DLT Clients</h4>
@@ -178,6 +197,20 @@ To learn about IPFS please follow <a href="https://ipfs.io/">here</a> </p>
 <p><img alt="Sequence Diagram" src="https://raw.githubusercontent.com/FIWARE-Blockchain/CanisMajor/master/docs/images/merkletree.png" /></p>
 <h3 id="aei-contract-model">AEI Contract Model</h3>
 <p>AEI (Asset, Event and Identity) Smart Contract is written in Solidity using ERC721 standard (NFT) and can be use with Ethereum Clients. It is compatible with FIWARE-Canis Major Adaptor to store the data in blockchain. </p>
+<p>ERC 721 Contract is follow OpenZepplin standards, security audits are trusted by leading organizations building decentralized systems.</p>
+<h3 id="erc-721">ERC 721</h3>
+<p>ERC 721 A standard interface for non-fungible tokens, also known as deeds.
+The following standard allows for the implementation of a standard API for NFTs within smart contracts. This standard provides basic functionality to track and transfer NFTs.</p>
+<p>We considered use cases of NFTs being owned and transacted by individuals as well as consignment to third party brokers/wallets/auctioneers (“operators”). NFTs can represent ownership over digital or physical assets. We considered a diverse universe of assets, and we know you will dream up many more:</p>
+<p>Physical property — houses, unique artwork
+Virtual collectables — unique pictures of kittens, collectable cards
+“Negative value” assets — loans, burdens and other responsibilities
+In general, all houses are distinct and no two kittens are alike. NFTs are distinguishable and you must track the ownership of each one separately.</p>
+<p>to know more follow here: </p>
+<ol>
+<li><a href="https://eips.ethereum.org/EIPS/eip-721">ERC 721</a></li>
+<li><a href="https://docs.openzeppelin.com/contracts/2.x/api/token/erc721">OpenZepplin ERC721</a></li>
+</ol>
 <h4 id="aei-architecture">AEI Architecture</h4>
 <p>AEI Contract Design</p>
 <p><img alt="Sequence Diagram" src="https://raw.githubusercontent.com/FIWARE-Blockchain/CanisMajor/master/docs/images/aei_model.png" /></p>
@@ -213,7 +246,71 @@ To learn about IPFS please follow <a href="https://ipfs.io/">here</a> </p>
  - OpenZeppelin</p>
 <h4 id="canis-major-with-aei-contract">Canis Major with AEI Contract:</h4>
 <p><img alt="Canis Major with AEI Contract" src="https://raw.githubusercontent.com/FIWARE-Blockchain/AEIContract/master/docs/images/3.png" /></p>
-<p>Please follow the usages section to learn more.</p>
+<h2 id="use-of-canis-major">Use of Canis Major</h2>
+<p>CanisMajor is a blockchain adaptor that supports various DLT.</p>
+<h3 id="canis-major-design_1">Canis Major Design</h3>
+<p><img alt="CanisMajor Design" src="https://raw.githubusercontent.com/CattleChain/Docs/master/images/cm.png" /></p>
+<p>The way Canis Major work's in 'Powered By FIWARE' architecture as follows:</p>
+<ol>
+<li>Request from the user is consist of the Payload, Header with token and DLT_ID (base64 of public key and private key of the blockchain).</li>
+<li>Wilma PEP Proxy validate the token and check with the KeyRock IDM and validate the user, permission (Authentication and Autherisation).</li>
+<li>Once the user is validate Wilma forward the request to the Context Broker and persist it.</li>
+<li>Once the Payload stored in Context Broker Wilma notify to Canis Major with the configuration such as what attribute of the payload should be store, Blockchain Identity of the user.</li>
+<li>Futher Canis Major persist the data in blockchain using AEI contract (will be explained futher in this chapter).</li>
+</ol>
+<p><a href="https://github.com/FIWARE-Blockchain/CanisMajor">Github Souce</a>
+<a href="https://fiware-blockchain.github.io/CanisMajor/architecture.html">Documentation</a></p>
+<h2 id="usages">Usages</h2>
+<h3 id="creation-of-an-entity-animal-farm-etc">Creation of an Entity (Animal, Farm etc)</h3>
+<p><img alt="Creation of an entity" src="https://raw.githubusercontent.com/CattleChain/Docs/master/images/createentity.png" /></p>
+<p><strong>Creation of an entity goes as follow:</strong></p>
+<ol>
+<li>Actor create an request with a payload to PEP Proxy.<ul>
+<li>the request is consist of the payload and in header TOKEN (generate from the keyrock IDM) and the DLT_KEYS (which is a base64 for public and private key of the wallet).</li>
+</ul>
+</li>
+<li>Wilma autherize the request of the user by validating it from the keyrock IDM.</li>
+<li>On Success wilma submit the request to the Context Broker and the entity will be store.</li>
+<li>On Successfully entity creation wilma notify the CanisMajor Adaptor to persist the entity in blockchain (where the smart contract is already configured).<ul>
+<li>Willma notify the CanisMajor with payload, dlt_keys in header and it also support option ctx_map (which allow user to mention what particular keys from the payload should be persist in the smart contract).</li>
+</ul>
+</li>
+<li>Canis Major further validate the DLT_KEY (identity), create a signed transaction and submit it to the blockchain.<ul>
+<li>Here we are using AEI_Contract and the createAsset method of the contract is called.</li>
+</ul>
+</li>
+<li>On successful transacation creation the tx_reciept of the transaction will be available in canis major, which can be queried any time.</li>
+</ol>
+<h3 id="adding-metadata-eventy-on-an-entity-animal-farm-etc">Adding Metadata (eventy) on an Entity (Animal, Farm etc)</h3>
+<p><img alt="Adding Metadata" src="https://raw.githubusercontent.com/CattleChain/Docs/master/images/addattr.png" /></p>
+<p><strong>Adding Metadata on an entity goes as follow:</strong></p>
+<ol>
+<li>Actor create an request with a payload to PEP Proxy.<ul>
+<li>the request is consist of the payload and in header TOKEN (generate from the keyrock IDM) and the DLT_KEYS (which is a base64 for public and private key of the wallet).</li>
+</ul>
+</li>
+<li>Wilma autherize the request of the user by validating it from the keyrock IDM.</li>
+<li>On Success wilma submit the request to the Context Broker with the meta information and entity_id.</li>
+<li>On Successfully entity creation wilma notify the CanisMajor Adaptor to persist the entity in blockchain (where the smart contract is already configured).<ul>
+<li>Willma notify the CanisMajor with payload, dlt_keys in header and it also support option ctx_map (which allow user to mention what particular keys from the payload should be persist in the smart contract).</li>
+</ul>
+</li>
+<li>Canis Major further validate the DLT_KEY (identity), create a signed transaction and submit it to the blockchain.<ul>
+<li>here the request is for adding the metadata, canis major will call AddMetadata method of the AEI Contract.</li>
+</ul>
+</li>
+<li>On successful transacation creation the tx_reciept of the transaction will be available in canis major, which can be queried any time.</li>
+</ol>
+<h3 id="qyery">Qyery</h3>
+<p><img alt="Query" src="https://raw.githubusercontent.com/CattleChain/Docs/master/images/query.png" /></p>
+<p><strong>Quering the data on blockchain goes as follow:</strong></p>
+<ol>
+<li>Actor send a request to canis major with the Entity_ID.</li>
+<li>Canis major check the transaction details from the local storage and fetch the reciept.</li>
+<li>Canis Major futher call the AEI contarct, getAsset method and the fetch the stored hash.</li>
+<li>Hash will be returned back to the hash.</li>
+</ol>
+<p>**Note: the returned Hash could be a IPFS Hash, IOTAMaM hash or MerkleRoot, depend on the configuration of the CanisMajor and data from the has can be fetched or validated from the canismajor query apis (for more checkout the canismajor api specification)"</p>
               
             </div>
           </div>
