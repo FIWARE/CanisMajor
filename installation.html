@@ -117,13 +117,12 @@
 <ol>
 <li>Download the software, using GitHub.</li>
 </ol>
-<p>```sh
-    git clone https://github.com/fiware-blockchain/canismajor</p>
-<pre><code>
- 2. Install all required libraries using npm.
-
-```sh
-    cd canismajor
+<pre><code class="language-sh">    git clone https://github.com/fiware-blockchain/canismajor
+</code></pre>
+<ol>
+<li>Install all required libraries using npm.</li>
+</ol>
+<pre><code class="language-sh">    cd canismajor
     npm install
 </code></pre>
 <ol>
@@ -139,30 +138,32 @@
 <ol>
 <li>Configure the installation</li>
 </ol>
-<pre><code class="language-sh">          - DB_NAME
-          - DB_HOST
-          - DB_PORT
-          - DB_DILECT
-          - DB_USERNAME
-          - DB_PASSWORD
-          - CM_PORT
-          - TRANSCTION_TIMEOUT
-          - DLT_TYPE  // eth or iota
-          - IOTA_ENDPOINT // iota config
-         // eth config
-          - RPC_ENDPOINT
-          - DEFAULT_GAS
-          - DEFAULT_GAS_PRICE
-          - AEI_CONTRACT_MODE
-          - CONTRACT_ADDRESS
-         // storage config
-          - STORAGE_TYPE // iota, ipfs or merkletree
-          - IPFS_HOST
-          - IPFS_PORT
-          - IPFS_PROTOCOL
-          - IPFS_AUTH_CODE
-          - IOTAMAM_HOST
-          - IOTAMAM_MODE
+<pre><code class="language-sh">    - DB_NAME
+    - DB_HOST
+    - DB_PORT
+    - DB_DILECT
+    - DB_USERNAME
+    - DB_PASSWORD
+    - CM_PORT
+    - TRANSCTION_TIMEOUT
+    - DLT_TYPE  // eth or iota
+    - IOTA_ENDPOINT // iota config
+
+    // eth config
+    - RPC_ENDPOINT
+    - DEFAULT_GAS
+    - DEFAULT_GAS_PRICE
+    - AEI_CONTRACT_MODE
+    - CONTRACT_ADDRESS
+
+    // storage config
+    - STORAGE_TYPE // iota, ipfs or merkletree
+    - IPFS_HOST
+    - IPFS_PORT
+    - IPFS_PROTOCOL
+    - IPFS_AUTH_CODE
+    - IOTAMAM_HOST
+    - IOTAMAM_MODE
 </code></pre>
 <table>
 <thead>
@@ -322,14 +323,14 @@
 </tr>
 </tbody>
 </table>
-<p>Configuration diagram 
-<img alt="config" src="https://raw.githubusercontent.com/FIWARE-Blockchain/tutorials.Step-by-Step/master/docs/config.png" /></p>
+<p><strong>Configuration diagram</strong> </p>
+<p><img alt="config" src="https://raw.githubusercontent.com/FIWARE-Blockchain/tutorials.Step-by-Step/master/docs/config.png" /></p>
 <p>there configuration can be also mentioned in src/configuration/config.js</p>
 <ol>
 <li>Running the CanisMajor</li>
 </ol>
-<p><code>sh
-    npm start</code></p>
+<pre><code class="language-sh">    npm start
+</code></pre>
               
             </div>
           </div>
