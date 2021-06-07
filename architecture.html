@@ -14,7 +14,7 @@
 
   <link rel="stylesheet" href="css/theme.css" />
   <link rel="stylesheet" href="css/theme_extra.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
   <link href="https://www.fiware.org/style/fiware_readthedocs.css" rel="stylesheet" />
   <link href="https://www.fiware.org/style/fiware_readthedocs_iot.css" rel="stylesheet" />
   
@@ -27,9 +27,8 @@
   
   <script src="js/jquery-2.1.1.min.js" defer></script>
   <script src="js/modernizr-2.8.3.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script> 
-  
 </head>
 
 <body class="wy-body-for-nav" role="document">
@@ -40,10 +39,10 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
     <div class="wy-side-scroll">
       <div class="wy-side-nav-search">
-        <a href="." class="icon icon-home"> CanisMajor</a>
+        <a href="index.html" class="icon icon-home"> CanisMajor</a>
         <div role="search">
   <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
   </form>
 </div>
       </div>
@@ -126,7 +125,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href=".">CanisMajor</a>
+        <a href="index.html">CanisMajor</a>
       </nav>
 
       
@@ -134,14 +133,14 @@
         <div class="rst-content">
           <div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href=".">Docs</a> &raquo;</li>
+    <li><a href="index.html">Docs</a> &raquo;</li>
     
       
     
     <li>Architecture</li>
     <li class="wy-breadcrumbs-aside">
       
-        <a href="https://github.com/FIWARE-Blockchain/CanisMajor/docs/edit/master/docs/architecture.md"
+        <a href="https://github.com/fiware/CanisMajor/docs/edit/master/docs/architecture.md"
           class="icon icon-github"> Edit on GitHub</a>
       
     </li>
@@ -149,16 +148,17 @@
   
   <hr/>
 </div>
+
           <div role="main">
             <div class="section">
               
                 <h1 id="architecture">Architecture</h1>
 <h2 id="canis-major-in-powered-by-fiware-architecture">Canis Major in powered by FIWARE Architecture</h2>
-<p>Canis major uses FIWARE Pep-Proxy (fork version) <a href="https://github.com/FIWARE-Blockchain/fiware-pep-proxy">link</a> which allow to config "canismajor endpoint"</p>
+<p>Canis major uses FIWARE Pep-Proxy (fork version) <a href="https://github.com/fiware/fiware-pep-proxy">link</a> which allow to config "canismajor endpoint"</p>
 <pre><code class="language-sh"> process.env.CANIS_MAJOR_URL = http://localhost:4000 (canis major endpoint)
 </code></pre>
 <h3 id="flow-diagram">Flow Diagram</h3>
-<p><img alt="Architecture Diagram" src="https://raw.githubusercontent.com/FIWARE-Blockchain/CanisMajor/master/docs/images/cm.png" /></p>
+<p><img alt="Architecture Diagram" src="https://raw.githubusercontent.com/fiware/CanisMajor/master/docs/images/cm.png" /></p>
 <p>The way Canis Major work's in 'Powered By FIWARE' architecture as follows:</p>
 <ol>
 <li>Request from the user is consist of the Payload, Header with token and DLT_ID (base64 of public key and private key of the blockchain).</li>
@@ -194,7 +194,7 @@ To learn about IPFS please follow <a href="https://ipfs.io/">here</a> </p>
 <p>Merkle trees are data structures devised to authenticate, with a unique signature, a set of messages, by at the same time making an intended verifier able to verify authenticity of a single message without the disclosure of the other messages.</p>
 <p>To learn about Merkle Tree please follow <a href="https://en.wikipedia.org/wiki/Merkle_tree">link</a></p>
 <p>In a canis major merkle is use as mentioned in below</p>
-<p><img alt="Sequence Diagram" src="https://raw.githubusercontent.com/FIWARE-Blockchain/CanisMajor/master/docs/images/merkletree.png" /></p>
+<p><img alt="Sequence Diagram" src="https://raw.githubusercontent.com/fiware/CanisMajor/master/docs/images/merkletree.png" /></p>
 <h3 id="aei-contract-model">AEI Contract Model</h3>
 <p>AEI (Asset, Event and Identity) Smart Contract is written in Solidity using ERC721 standard (NFT) and can be use with Ethereum Clients. It is compatible with FIWARE-Canis Major Adaptor to store the data in blockchain. </p>
 <p>ERC 721 Contract is follow OpenZepplin standards, security audits are trusted by leading organizations building decentralized systems.</p>
@@ -213,7 +213,7 @@ In general, all houses are distinct and no two kittens are alike. NFTs are disti
 </ol>
 <h4 id="aei-architecture">AEI Architecture</h4>
 <p>AEI Contract Design</p>
-<p><img alt="Sequence Diagram" src="https://raw.githubusercontent.com/FIWARE-Blockchain/CanisMajor/master/docs/images/aei_model.png" /></p>
+<p><img alt="Sequence Diagram" src="https://raw.githubusercontent.com/fiware/CanisMajor/master/docs/images/aei_model.png" /></p>
 <ol>
 <li>Entity/Asset with a unique identity will be a new asset (1:1 mapping of asset to an identity).</li>
 <li>Event or Metadata of the asset/entity has a 1:n mapping.</li>
@@ -258,8 +258,8 @@ In general, all houses are distinct and no two kittens are alike. NFTs are disti
 <li>Once the Payload stored in Context Broker Wilma notify to Canis Major with the configuration such as what attribute of the payload should be store, Blockchain Identity of the user.</li>
 <li>Futher Canis Major persist the data in blockchain using AEI contract (will be explained futher in this chapter).</li>
 </ol>
-<p><a href="https://github.com/FIWARE-Blockchain/CanisMajor">Github Souce</a>
-<a href="https://fiware-blockchain.github.io/CanisMajor/architecture.html">Documentation</a></p>
+<p><a href="https://github.com/fiware/CanisMajor">Github Souce</a>
+<a href="https://fiware.github.io/CanisMajor/architecture.html">Documentation</a></p>
 <h2 id="usages">Usages</h2>
 <h3 id="creation-of-an-entity-animal-farm-etc">Creation of an Entity (Animal, Farm etc)</h3>
 <p><img alt="Creation of an entity" src="https://raw.githubusercontent.com/CattleChain/Docs/master/images/createentity.png" /></p>
@@ -344,19 +344,22 @@ In general, all houses are distinct and no two kittens are alike. NFTs are disti
   </div>
 
   <div class="rst-versions" role="note" aria-label="versions">
-    <span class="rst-current-version" data-toggle="rst-current-version">
-      
-          <a href="https://github.com/FIWARE-Blockchain/CanisMajor/docs/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
-      
-      
-        <span><a href="index.html" style="color: #fcfcfc;">&laquo; Previous</a></span>
-      
-      
-        <span style="margin-left: 15px"><a href="installation.html" style="color: #fcfcfc">Next &raquo;</a></span>
-      
-    </span>
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/fiware/CanisMajor/docs/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="index.html" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="installation.html" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
 </div>
     <script>var base_url = '.';</script>
+    <script src="js/theme_extra.js" defer></script>
     <script src="js/theme.js" defer></script>
       <script src="search/main.js" defer></script>
     <script defer>
