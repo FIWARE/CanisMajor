@@ -1,6 +1,6 @@
 site_name: CanisMajor
 site_url: https://canismajor.readthedocs.io
-repo_url: https://github.com/FIWARE-Blockchain/CanisMajor/docs
+repo_url: https://github.com/fiware/CanisMajor/docs
 site_description: CanisMajor Documentation
 docs_dir: docs
 site_dir: html

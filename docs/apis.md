@@ -216,4 +216,4 @@ curl --location --request POST 'http://localhost:4000/merkle/bfc871626e72c2550bc
 }'
 ```
 
-Try out the postman collection [here](https://github.com/FIWARE-Blockchain/CanisMajor/blob/master/postman.json)
+Try out the postman collection [here](https://github.com/fiware/CanisMajor/blob/master/postman.json)
