@@ -39,6 +39,8 @@ Information about how to use the canis major can be found in [CanisMajor Documen
 
 ## License
 
-CanisMajor is licensed under the [MIT](LICENSE) License.
+CanisMajor is licensed under the Apache License, Version 2.0. See
+[LICENSE](https://github.com/FIWARE-Blockchain/CanisMajor/blob/master/LICENSE) for the full
+license text.
 
 © 2021 FIWARE Foundation e.V.
