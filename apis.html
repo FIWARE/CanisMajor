@@ -68,6 +68,14 @@
                 <ul class="current">
                     <li class="toctree-l1 current"><a class="reference internal current" href="apis.html">APIs</a>
     <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#meta">Meta</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#config">Config</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#query">Query</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#helpers">Helpers</a>
+    </li>
     </ul>
                     </li>
                 </ul>
@@ -107,6 +115,203 @@
             <div class="section">
               
                 <h1 id="apis">APIs</h1>
+<h2 id="meta">Meta</h2>
+<ol>
+<li>Get the status </li>
+</ol>
+<pre><code class="language-sh">curl --location --request GET 'http://localhost:4000/version'
+</code></pre>
+<p><strong>Response:</strong></p>
+<pre><code class="language-json">{
+    &quot;name&quot;: &quot;canismajor&quot;,
+    &quot;version&quot;: &quot;0.0.1&quot;
+}
+</code></pre>
+<h2 id="config">Config</h2>
+<p><strong>APIs when you are using and configuring your own contract use </strong>config<strong> api else it is recommended use AEI Standard Contract Method</strong></p>
+<ol>
+<li>Get All the configs</li>
+</ol>
+<pre><code class="language-sh">curl --location --request GET 'http://localhost:4000/config'
+</code></pre>
+<ol>
+<li>Get the config by ID</li>
+</ol>
+<pre><code class="language-sh">curl --location --request GET 'http://localhost:4000/config/16'
+</code></pre>
+<ol>
+<li>Delete a config by ID</li>
+</ol>
+<pre><code class="language-sh">curl --location --request DELETE 'http://localhost:4000/config/17'
+</code></pre>
+<ol>
+<li>Create a config</li>
+</ol>
+<pre><code class="language-sh">curl --location --request POST 'http://localhost:4000/config' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+            &quot;contextType&quot;: &quot;AgriProductType&quot;,
+            &quot;contextMapping&quot;: {
+                    &quot;set&quot;: [&quot;id&quot;]
+            },
+            &quot;metadata&quot;: {
+                &quot;abi&quot;: [
+    {
+      &quot;constant&quot;: false,
+      &quot;inputs&quot;: [
+        {
+          &quot;name&quot;: &quot;x&quot;,
+          &quot;type&quot;: &quot;string&quot;
+        }
+      ],
+      &quot;name&quot;: &quot;set&quot;,
+      &quot;outputs&quot;: [],
+      &quot;payable&quot;: false,
+      &quot;stateMutability&quot;: &quot;nonpayable&quot;,
+      &quot;type&quot;: &quot;function&quot;
+    }
+  ],
+    &quot;contractAddress&quot;: &quot;0x089b05e9307e56c9dCbF6bd681c405b097bDa586&quot;
+    }
+}'
+</code></pre>
+<p><strong>Response</strong></p>
+<pre><code class="language-json">{
+    &quot;id&quot;: 1,
+    &quot;contextType&quot;: &quot;AgriProductType&quot;,
+    &quot;contextMapping&quot;: {
+        &quot;set&quot;: [
+            &quot;id&quot;
+        ]
+    },
+    &quot;metadata&quot;: {
+        &quot;abi&quot;: [
+            {
+                &quot;constant&quot;: false,
+                &quot;inputs&quot;: [
+                    {
+                        &quot;name&quot;: &quot;x&quot;,
+                        &quot;type&quot;: &quot;string&quot;
+                    }
+                ],
+                &quot;name&quot;: &quot;set&quot;,
+                &quot;outputs&quot;: [],
+                &quot;payable&quot;: false,
+                &quot;stateMutability&quot;: &quot;nonpayable&quot;,
+                &quot;type&quot;: &quot;function&quot;
+            }
+        ],
+        &quot;contractAddress&quot;: &quot;0x089b05e9307e56c9dCbF6bd681c405b097bDa586&quot;
+    },
+    &quot;updatedAt&quot;: &quot;2021-06-07T13:33:57.750Z&quot;,
+    &quot;createdAt&quot;: &quot;2021-06-07T13:33:57.750Z&quot;
+}
+</code></pre>
+<ol>
+<li>Updating a config</li>
+</ol>
+<pre><code class="language-sh">curl --location --request PUT 'http://localhost:4000/config/17' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+            &quot;contextType&quot;: &quot;AgriProductType&quot;,
+            &quot;contextMapping&quot;: {
+                    &quot;set&quot;: [&quot;price&quot;]
+            },
+            &quot;metadata&quot;: {
+                &quot;abi&quot;: [
+                    {
+                        &quot;name&quot;: &quot;set&quot;,
+                        &quot;type&quot;: &quot;function&quot;,
+                        &quot;inputs&quot;: [
+                            {
+                                &quot;name&quot;: &quot;x&quot;,
+                                &quot;type&quot;: &quot;uint256&quot;
+                            }
+                        ],
+                        &quot;outputs&quot;: [],
+                        &quot;payable&quot;: false,
+                        &quot;constant&quot;: false,
+                        &quot;stateMutability&quot;: &quot;nonpayable&quot;
+                    }
+                ],
+                &quot;contractAddress&quot;: &quot;0x80734df3B3ac1A9381472158df979fd6328ea47D&quot;
+            }
+}'
+</code></pre>
+<h2 id="query">Query</h2>
+<ol>
+<li>Get All Entities</li>
+</ol>
+<pre><code class="language-sh">curl --location --request GET 'http://localhost:4000/entity'
+</code></pre>
+<ol>
+<li>Get Entity by Id</li>
+</ol>
+<pre><code class="language-sh">curl --location --request GET 'http://localhost:4000/entity/74'
+</code></pre>
+<ol>
+<li>Delete an Entity</li>
+</ol>
+<pre><code class="language-sh">curl --location --request DELETE 'http://localhost:4000/entity/3'
+</code></pre>
+<ol>
+<li>Get entity hash from the Smart Contarct (work's for ethereum client when using AEI contract)</li>
+</ol>
+<pre><code class="language-sh">curl --location --request GET 'http://localhost:4000/entity/85/dlt'
+</code></pre>
+<ol>
+<li>Get entity by query</li>
+</ol>
+<pre><code class="language-sh">curl --location --request GET 'http://localhost:4000/entity?entityId=urn:ngsi-ld:Building:store021'
+</code></pre>
+<h2 id="helpers">Helpers</h2>
+<ol>
+<li>Get Data from IPFS</li>
+</ol>
+<pre><code class="language-sh">curl --location --request GET 'http://localhost:4000/ipfs/zdpuAkwkFon16cicgPHZMwziAqKfGDaQSj1VPsyZLCbmXFKgD'
+</code></pre>
+<ol>
+<li>Get Data from IOTAMaM</li>
+</ol>
+<pre><code class="language-sh">curl --location --request GET 'http://localhost:4000/iotaMaM/MWJTKMJHQTXLMEDHNV9TAJDAYCTPLGURKCTKYUQMY9CMKUNYX99DCXGQVOVSCHQEAAZGMXDDXA9POSKXJ'
+</code></pre>
+<ol>
+<li>Get Data from IOTA as Tx</li>
+</ol>
+<pre><code class="language-sh">curl --location --request GET 'http://localhost:4000/iotaTx/VFEWUIWNLAOGYWLLPNUYBV9CGFJWDSVNBJGLOZJOCWYUOIVWXWGGGDP9GTP9TMLIPBFVUVL9TYJUGB999'
+</code></pre>
+<ol>
+<li>Verify Merkle Root Against given Payload (Result true or false)</li>
+</ol>
+<pre><code class="language-sh">curl --location --request POST 'http://localhost:4000/merkle/bfc871626e72c2550bc2c3b4f70b7c42f2260f3f4a1dc9ebc731785da47a30a5/address' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    &quot;id&quot;: &quot;urn:ngsi-ld:Building:store343&quot;,
+    &quot;type&quot;: &quot;AgriProductType&quot;,
+    &quot;category&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: [&quot;commercial&quot;]
+    },
+    &quot;address&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: {
+            &quot;streetAddress&quot;: &quot;Bornholmer Straße 65&quot;,
+            &quot;addressRegion&quot;: &quot;Berlin&quot;,
+            &quot;addressLocality&quot;: &quot;Prenzlauer Berg&quot;,
+            &quot;postalCode&quot;: &quot;10439&quot;
+        },
+        &quot;verified&quot;: {
+            &quot;type&quot;: &quot;Property&quot;,
+            &quot;value&quot;: true
+        }
+    },
+    &quot;@context&quot;: [
+        &quot;https://fiware.github.io/data-models/context.jsonld&quot;,
+        &quot;https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld&quot;
+    ]
+}'
+</code></pre>
+<p>Try out the postman collection <a href="https://github.com/FIWARE-Blockchain/CanisMajor/blob/master/postman.json">here</a></p>
               
             </div>
           </div>
