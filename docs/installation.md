@@ -127,3 +127,9 @@ there configuration can be also mentioned in src/configuration/config.js
 ```sh
     npm start
 ```
+or in development mode:
+
+```sh
+    npm run dev
+```
+
