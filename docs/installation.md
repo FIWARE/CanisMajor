@@ -17,7 +17,7 @@ The following steps need to be performed to get Canis Major up and running:
 1. Download the software, using GitHub.
 
 ```sh
-    git clone https://github.com/fiware-blockchain/canismajor
+    git clone https://github.com/fiware/canismajor
 ```
 
 2. Install all required libraries using npm.

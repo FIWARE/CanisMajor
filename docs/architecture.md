@@ -2,7 +2,7 @@
 
 ## Canis Major in powered by FIWARE Architecture
 
-Canis major uses FIWARE Pep-Proxy (fork version) [link](https://github.com/FIWARE-Blockchain/fiware-pep-proxy) which allow to config "canismajor endpoint"
+Canis major uses FIWARE Pep-Proxy (fork version) [link](https://github.com/fiware/fiware-pep-proxy) which allow to config "canismajor endpoint"
 
 ```sh
  process.env.CANIS_MAJOR_URL = http://localhost:4000 (canis major endpoint)
@@ -11,7 +11,7 @@ Canis major uses FIWARE Pep-Proxy (fork version) [link](https://github.com/FIWAR
 ### Flow Diagram
 
 
-![Architecture Diagram](https://raw.githubusercontent.com/FIWARE-Blockchain/CanisMajor/master/docs/images/cm.png)
+![Architecture Diagram](https://raw.githubusercontent.com/fiware/CanisMajor/master/docs/images/cm.png)
 
 The way Canis Major work's in 'Powered By FIWARE' architecture as follows:
 
@@ -62,7 +62,7 @@ To learn about Merkle Tree please follow [link](https://en.wikipedia.org/wiki/Me
 
 In a canis major merkle is use as mentioned in below
 
-![Sequence Diagram](https://raw.githubusercontent.com/FIWARE-Blockchain/CanisMajor/master/docs/images/merkletree.png)
+![Sequence Diagram](https://raw.githubusercontent.com/fiware/CanisMajor/master/docs/images/merkletree.png)
 
 ### AEI Contract Model
 
@@ -92,7 +92,7 @@ to know more follow here:
 
 AEI Contract Design
 
-![Sequence Diagram](https://raw.githubusercontent.com/FIWARE-Blockchain/CanisMajor/master/docs/images/aei_model.png)
+![Sequence Diagram](https://raw.githubusercontent.com/fiware/CanisMajor/master/docs/images/aei_model.png)
 
 
 1. Entity/Asset with a unique identity will be a new asset (1:1 mapping of asset to an identity).
@@ -154,8 +154,8 @@ The way Canis Major work's in 'Powered By FIWARE' architecture as follows:
 5. Futher Canis Major persist the data in blockchain using AEI contract (will be explained futher in this chapter).
 
 
-[Github Souce](https://github.com/FIWARE-Blockchain/CanisMajor)
-[Documentation](https://fiware-blockchain.github.io/CanisMajor/architecture.html)
+[Github Souce](https://github.com/fiware/CanisMajor)
+[Documentation](https://fiware.github.io/CanisMajor/architecture.html)
 
 
 ## Usages
