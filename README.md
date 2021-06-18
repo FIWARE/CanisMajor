@@ -1,8 +1,8 @@
-# CanisMajor - FIWARE Blockchain Adaptor
+# CanisMajor - FIWARE DLT Adaptor
 
 [![FIWARE Blockchain](https://nexus.lab.fiware.org/repository/raw/public/badges/chapters/third-party.svg)](https://www.fiware.org/developers/catalogue/)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/4661/badge)](https://bestpractices.coreinfrastructure.org/projects/4661)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Docker badge](https://img.shields.io/docker/pulls/singhhp10691/canismajor.svg)](https://hub.docker.com/r/singhhp10691/canismajor/)
 [![publish mkdocs](https://github.com/FIWARE/CanisMajor/actions/workflows/documentation.yml/badge.svg)](https://github.com/FIWARE/CanisMajor/actions/workflows/documentation.yml)
 [![Node.js CI](https://github.com/FIWARE/CanisMajor/actions/workflows/node.js.yml/badge.svg)](https://github.com/FIWARE/CanisMajor/actions/workflows/node.js.yml)
