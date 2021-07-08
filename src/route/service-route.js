@@ -10,7 +10,6 @@ import entityCRUDController from '../controller/entity-controller';
 import transactionController from '../controller/transaction-controller';
 import helperController from '../controller/helper-controller';
 
-
 const router = express.Router();
 
 //*******META*******
