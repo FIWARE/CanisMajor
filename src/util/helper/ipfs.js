@@ -1,12 +1,14 @@
-import IPFS from 'ipfs-api';
+import { create } from 'ipfs-http-client';
+
 import { STORAGE_CONFIGURATION } from '../../configuration/config';
 import { encrypt, decrypt } from './crypto';
-const ipfs = new IPFS(STORAGE_CONFIGURATION.ipfsConfig);
+
+const client = create(STORAGE_CONFIGURATION.ipfsConfig);
 
 const uploadToIPFS = (payload) => {
     return new Promise((resolve, reject) => {
-        let data = payload;
-        ipfs.dag.put(data, STORAGE_CONFIGURATION.ipfsConfig.dagOptions).then((cid) => {
+        let data = Buffer.from(JSON.stringify(payload), 'utf-8').toString('base64');
+        client.dag.put(data, STORAGE_CONFIGURATION.ipfsConfig.dagOptions).then((cid) => {
             resolve(cid.toString());
         }).catch((err) => {
             reject(err);
@@ -16,8 +18,9 @@ const uploadToIPFS = (payload) => {
 
 const getFromIPFS = (cid) => {
     return new Promise((resolve, reject) => {
-        ipfs.dag.get(cid).then((res) => {
-                resolve(res.value);    
+        client.dag.get(cid).then((res) => {
+        let data = Buffer.from(res.value, 'base64').toString('utf-8');
+            resolve(JSON.parse(data));    
         }).catch((err) => {
             reject(err);
         });
