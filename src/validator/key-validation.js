@@ -1,4 +1,4 @@
-import { CONSTANTS, DLT_TYPE, DLTType, CM_SECRET } from '../configuration/config';
+import { CONSTANTS, DLT_TYPE, DLTType, CM_SECRET, WALLET_PUBLIC_KEY, WALLET_PRIVATE_KEY } from '../configuration/config';
 import { decrypt } from '../util/helper/crypto';
 import Web3 from 'web3';
 const web3 = new Web3();
