@@ -1,4 +1,5 @@
-import { CONSTANTS, DLT_TYPE, DLTType } from '../configuration/config';
+import { CONSTANTS, DLT_TYPE, DLTType, CM_SECRET } from '../configuration/config';
+import { decrypt } from '../util/helper/crypto';
 import Web3 from 'web3';
 const web3 = new Web3();
 /*
@@ -14,7 +15,10 @@ class DLTKeyValidators {
       err.message = CONSTANTS.HEADER.DLT_TOKEN + ' is missing';
       return response.status(403).jsonp(err);
     }
-    let keys = Buffer.from(DLT_TOKEN, 'base64').toString();
+    //base64 decode
+    let base64 = decrypt(DLT_TOKEN, CM_SECRET);
+    //key generate
+    let keys = Buffer.from(base64, 'base64').toString();
     keys = keys.split(':');
     
     if (DLT_TYPE == DLTType.ETHEREUM) {

@@ -27,6 +27,13 @@ const DB_PASSWORD = ENV.DB_PASSWORD || 'root';
 // DEFAULT CanisMajor PORT
 const CM_PORT = ENV.CM_PORT || 4000;
 
+//For Token Encryption
+const CM_SECRET = ENV.CM_SECRET || '12345';
+
+// Local Wallet Details (adding for few applications)
+const WALLET_PUBLIC_KEY = ENV.WALLET_PUBLIC_KEY || '';
+const WALLET_PRIVATE_KEY = ENV.WALLET_PRIVATE_KEY || '';
+
 // implementation pending
 const TRANSCTION_TIMEOUT = ENV.TRANSCTION_TIMEOUT || 1000;
 
@@ -172,6 +179,9 @@ module.exports = {
     DB_PORT,
     DB_PASSWORD,
     CONSTANTS,
+    CM_SECRET,
+    WALLET_PUBLIC_KEY,
+    WALLET_PRIVATE_KEY,
     DLT_CONFIGURATION,
     STORAGE_CONFIGURATION,
     ENCYPTION_CONFIG,

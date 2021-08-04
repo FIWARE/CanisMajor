@@ -1,6 +1,7 @@
 import { create } from 'ipfs-http-client';
 
 import { STORAGE_CONFIGURATION } from '../../configuration/config';
+// to be use for user protected data (private mode of IPFS can also be added)
 import { encrypt, decrypt } from './crypto';
 
 const client = create(STORAGE_CONFIGURATION.ipfsConfig);
