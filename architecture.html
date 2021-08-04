@@ -252,7 +252,7 @@ In general, all houses are distinct and no two kittens are alike. NFTs are disti
 <p><img alt="CanisMajor Design" src="https://raw.githubusercontent.com/CattleChain/Docs/master/images/cm.png" /></p>
 <p>The way Canis Major work's in 'Powered By FIWARE' architecture as follows:</p>
 <ol>
-<li>Request from the user is consist of the Payload, Header with token and DLT_ID (base64 of public key and private key of the blockchain).</li>
+<li>Request from the user is consist of the Payload, Header with token and dlt-token (can be generate using canis major token api, please follow the api docs).</li>
 <li>Wilma PEP Proxy validate the token and check with the KeyRock IDM and validate the user, permission (Authentication and Autherisation).</li>
 <li>Once the user is validate Wilma forward the request to the Context Broker and persist it.</li>
 <li>Once the Payload stored in Context Broker Wilma notify to Canis Major with the configuration such as what attribute of the payload should be store, Blockchain Identity of the user.</li>

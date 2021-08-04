@@ -69,6 +69,8 @@
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#meta">Meta</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#generate-header-token">Generate Header TOKEN</a>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#config">Config</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#query">Query</a>
@@ -125,6 +127,40 @@
 <pre><code class="language-json">{
     &quot;name&quot;: &quot;canismajor&quot;,
     &quot;version&quot;: &quot;0.0.1&quot;
+}
+</code></pre>
+<h2 id="generate-header-token">Generate Header TOKEN</h2>
+<p><strong>API to generate token using wallet keys</strong></p>
+<ol>
+<li>Create a TOKEN</li>
+</ol>
+<pre><code class="language-sh">curl --location --request POST 'http://localhost:4000/token' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    &quot;public_key&quot;: &quot;HEQLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWOR99D&quot;,
+    &quot;private_key&quot;: &quot;HEQLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWOR99D:PUEOTSEITFEVEWCWBTSIZM9NKRGJEIMXTULBACGFRQK9IMGICLBKW9TTEVSDQMGWKBXPVCBMMCXWMNPDX&quot;
+}'
+</code></pre>
+<p><strong><em>Response:</em></strong></p>
+<pre><code class="language-json">{
+    &quot;dlt-token&quot;: &quot;7159c52fa533c84e5e62bba0cf9cb51147533194f5011310e007185977e92e9adc0e95755fea5792fd901252e8ce7977f11aa80088c94a06457f79e942dc22c769a7b7a458814ce71b597d5abf0ecd89a336d1162fd5f95c5ee6fd136d63391c347e5531034274c852f0a82789922e365a6bc54e0152cf274811327a67e3484151a2cef514671e35a2acd62f8341fa92d66342a6ef07a263281b17760b4ddcfbad1ca133ca7115fa451be9f5c35bd2c275b2bb4a5676634264d1a5c67b31a11a93a1871438ddb66f745afd88881255d0a3be16af3050c440f073e7025a931843b3d129921733bd50a607466c70f5f10d704bf6b39a0269691d40fd34bac25dd86715606eaeef84a04920370e9ce5e9b3dbebcb9805545e7e33ed62b3b4e27929f06f497793ce1a33b0c23ac2496c1564876f816cedd48174ea4a14797182bc3ade4479a5cae406de&quot;
+}
+</code></pre>
+<ol>
+<li>TOKEN Info:</li>
+</ol>
+<pre><code class="language-sh">{
+curl --location --request POST 'http://localhost:4000/token-info' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    &quot;dlt-token&quot;: &quot;6f54f40abf32bb534407a49ac4b4973a417d0fadfa5a7c01fb070f226bc61c92d955a41750eb6ae7fcbf0e5be6dc151cf440af7c95d977715e50438d5a864aee739886df47937ac1012f4073a532e7a0aa27e42221c4926e4793fe6c715c086f3a6c78550f2508e1539681539f832e1b407af42b1a18b41c463e210078e2573d4bc7fb900f5b3707bcadd91a8d438efed83535d6&quot;
+}'
+</code></pre>
+<p><strong><em>Response:</em></strong></p>
+<pre><code class="language-json">{
+{
+    &quot;public_key&quot;: &quot;0x042D550bbfFAbbEA8A672DB56f14F2Cee7BC59E5&quot;,
+    &quot;private_key&quot;: &quot;0x6437760cd4f29dee72e4c026769ee8ea37a5c8d82930af071855495d0061dc8f&quot;
 }
 </code></pre>
 <h2 id="config">Config</h2>
