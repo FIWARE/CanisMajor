@@ -2,6 +2,8 @@ import express from 'express';
 // validators
 import dltKeyValidator from '../validator/key-validation';
 import paginationValidator from '../validator/pagination-validator';
+//DLT Token Generate
+import tokenHandlerController from '../controller/token-controller';
 // CRUD Routes
 import versionHandlerController from '../controller/vesion-controller';
 import configHandlerController from '../controller/config-controller';
@@ -21,6 +23,15 @@ router.get('/version',
 router.get('/health',
   versionHandlerController.getHealthStatus.bind(versionHandlerController)
 );
+//*******TOKEN*******
+router.post('/token',
+tokenHandlerController.generateToken.bind(tokenHandlerController)
+);
+
+router.post('/token-info',
+tokenHandlerController.tokenInfo.bind(tokenHandlerController)
+);
+
 //*******CONFIG*******
 // create configuration
 router.post('/config',

@@ -147,7 +147,7 @@ CanisMajor is a blockchain adaptor that supports various DLT.
 
 The way Canis Major work's in 'Powered By FIWARE' architecture as follows:
 
-1. Request from the user is consist of the Payload, Header with token and DLT_ID (base64 of public key and private key of the blockchain).
+1. Request from the user is consist of the Payload, Header with token and dlt-token (can be generate using canis major token api, please follow the api docs).
 2. Wilma PEP Proxy validate the token and check with the KeyRock IDM and validate the user, permission (Authentication and Autherisation).
 3. Once the user is validate Wilma forward the request to the Context Broker and persist it.
 4. Once the Payload stored in Context Broker Wilma notify to Canis Major with the configuration such as what attribute of the payload should be store, Blockchain Identity of the user.
