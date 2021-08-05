@@ -1,5 +1,6 @@
-import { CONSTANTS } from '../configuration/config';
+import { CONSTANTS, CM_SECRET } from '../configuration/config';
 import logger from './logger';
+import { decrypt } from './helper/crypto';
 // import JWTController from '../controller/jwt-controller';
 
 // context mapping with the configuration and payload
@@ -70,7 +71,8 @@ const ABIValidator = (configuration, mapping) => {
 const vaildateIdentity = (request) => {
     // in the current implementation validate only ETH public address
     const token = request.headers[CONSTANTS.HEADER.DLT_TOKEN];
-    let keys = Buffer.from(token, 'base64').toString();
+    let decpt = decrypt(token, CM_SECRET);
+    let keys = Buffer.from(decpt, 'base64').toString();
     keys = keys.split(':');
     let account = {
         address : keys[0],
