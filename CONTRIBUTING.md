@@ -1,7 +1,7 @@
 # Contributing to CanisMajor
 
-Thanks for checking out the CanisMajor Project. We're excited to hear and learn from you. We've put together the following
-guidelines to help you figure out where you can best be helpful.
+Thanks for checking out the CanisMajor Project. We're excited to hear and learn from you. We've put together the
+following guidelines to help you figure out where you can best be helpful.
 
 ## Ground rules & expectations
 
