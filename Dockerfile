@@ -1,55 +1,30 @@
-# Development Dockerfile not for production
-ARG NODE_VERSION=12
-# build environment
-FROM node:${NODE_VERSION}
-WORKDIR /app
-COPY . /app
+FROM registry.access.redhat.com/ubi8/nodejs-14:1-53 as builder
 
-ENV CM_PORT="4000" \
-  DB_NAME="basic" \
-  DB_HOST="localhost" \
-  DB_NAME="cm" \
-  DB_DILECT="mysql" \
-  TRANSCTION_TIMEOUT=1000 
+ARG NODE_ENV_ARG=production
 
-# In DEVELOPMENT Mode Now
-ENV NODE_ENV=development
+# Set node mode
+ENV NODE_ENV=${NODE_ENV_ARG}
 
-RUN npm install
+COPY . .
+
+RUN mkdir node_modules
+
+RUN npm ci --only=production
 RUN npm run build
+
+FROM registry.access.redhat.com/ubi8/nodejs-14:1-53
+
+COPY --from=builder /opt/app-root/src /opt/app-root/src
+COPY --from=builder /opt/app-root/src/LICENSE /licenses/LICENSE
+
+ENV CM_PORT="4000"
+ENV DB_NAME="basic"
+ENV DB_HOST="localhost"
+ENV DB_NAME="cm"
+ENV DB_DILECT="mysql"
+ENV TRANSCTION_TIMEOUT=1000
+
 
 EXPOSE ${CM_PORT:-4000}
 
 CMD ["npm", "start"]
-
-HEALTHCHECK  --interval=30s --timeout=3s --start-period=60s \
-  CMD ["npm", "healthcheck"]
-
-# ALL ENVIRONMENT VARIABLES
-########################################################################################
-#
-#  - DB_NAME
-#  - DB_HOST
-#  - DB_PORT
-#  - DB_DILECT
-#  - DB_USERNAME
-#  - DB_PASSWORD
-#  - CM_PORT
-#  - TRANSCTION_TIMEOUT
-#  - DLT_TYPE  // eth or iota
-#  - IOTA_ENDPOINT // iota config
-# // eth config
-#  - DEFAULT_GAS
-#  - DEFAULT_GAS_PRICE
-#  - AEI_CONTRACT_MODE
-#  - CONTRACT_ADDRESS
-# // storage config
-#  - STORAGE_TYPE // iota, ipfs or merkletree
-#  - IPFS_HOST
-#  - IPFS_PORT
-#  - IPFS_PROTOCOL
-#  - IPFS_AUTH_CODE
-#  - IOTAMAM_HOST
-#  - IOTAMAM_MODE
-#
-########################################################################################
