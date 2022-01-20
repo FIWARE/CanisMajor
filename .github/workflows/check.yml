@@ -9,7 +9,7 @@ on:
       - labeled
       - unlabeled
     branches:
-      - main
+      - master
 
 jobs:
   check:

@@ -33,4 +33,4 @@ jobs:
 
       - name: Test
         run: | 
-          DB_NAME=cm DB_USERNAME=user DB_PASSWORD=user npm run test
+          DB_NAME=cm DB_USERNAME=user DB_PASSWORD=user npm run test --coverage
