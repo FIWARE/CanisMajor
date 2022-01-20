@@ -18,7 +18,6 @@ COPY --from=builder /opt/app-root/src /opt/app-root/src
 COPY --from=builder /opt/app-root/src/LICENSE /licenses/LICENSE
 
 ENV CM_PORT="4000"
-ENV DB_NAME="basic"
 ENV DB_HOST="localhost"
 ENV DB_NAME="cm"
 ENV DB_DILECT="mysql"

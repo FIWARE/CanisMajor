@@ -1,0 +1,179 @@
+version: "3.5"
+services:
+  ## CanisMajor setup
+  mysql-db:
+    restart: always
+    image: mysql:5.7
+    hostname: mysql-db
+    expose:
+      - '3306'
+    networks:
+      - default
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_USER=cm
+      - MYSQL_PASSWORD=password
+
+  canis-major:
+    restart: always
+    image: ${CANISMAJOR_IMAGE:-quay.io/fiware/canismajor:0.0.5}
+    hostname: canis-major
+    depends_on:
+      - mysql-db
+      - ganache-cli
+    expose:
+      - "4000"
+    entrypoint: /entrypoints/canis-major-entrypoint.sh
+    environment:
+      - DB_NAME=canismajor
+      - DB_HOST=mysql-db
+      - DB_USERNAME=root
+      - DB_PASSWORD=secret
+      - DLT_TYPE=eth
+      - AEI_CONTRACT_MODE=true
+      - DEFAULT_GAS=3000000
+      - STORAGE_TYPE=merkletree
+      - CM_SECRET='secret_key'
+      - RPC_ENDPOINT=http://ganache-cli:8545
+    networks:
+      - default
+    ports:
+      - 4000:4000
+    volumes:
+      - ./entrypoints:/entrypoints
+      - contract-folder:/contract-data
+
+
+  # Fiware environment setup
+  orion-ld:
+    image: ${ORION_IMAGE:-quay.io/fiware/orion-ld:1.0.1}
+    hostname: orion
+    # sometimes the initial startup fails due to a weird timescale behaviour
+    restart: always
+    environment:
+      - ORIONLD_MONGO_HOST=mongo-db
+      - ORIONLD_LOG_LEVEL=DEBUG
+    depends_on:
+      - mongo-db
+    networks:
+      - default
+    ports:
+      - "1026:1026"
+    healthcheck:
+      test: curl --fail -s http://orion:1026/version || exit 1
+      interval: 30s
+      retries: 15
+
+  mongo-db:
+    image: mongo:4.0
+    hostname: mongo-db
+    expose:
+      - "27017"
+    ports:
+      - "27017:27017" # localhost:27017
+    networks:
+      - default
+    command: --nojournal
+    healthcheck:
+      test: |
+        host=`hostname --ip-address || echo '127.0.0.1'`;
+        mongo --quiet $host/test --eval 'quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)' && echo 0 || echo 1
+      interval: 30s
+
+  mysql-keyrock-db:
+    restart: always
+    image: mysql:5.7
+    hostname: mysql-keyrock-db
+    expose:
+      - '3306'
+    networks:
+      - default
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_USER=idm
+      - MYSQL_PASSWORD=password
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d/:ro
+
+  keyrock:
+    image: fiware/idm:7.9.2
+    hostname: keyrock
+    depends_on:
+      - mysql-db
+    networks:
+      - default
+    ports:
+      - "3005:3005"
+      - "3443:3443"
+    environment:
+      - DEBUG=idm:*
+      - IDM_DB_HOST=mysql-keyrock-db
+      - IDM_DB_PASS=secret
+      - IDM_DB_USER=root
+      - IDM_PORT=3005
+      - IDM_HOST=http://localhost:3005
+      - IDM_HTTPS_ENABLED=false
+      - IDM_ADMIN_USER=alice
+      - IDM_ADMIN_EMAIL=alice-the-admin@test.com
+      - IDM_ADMIN_PASS=test
+      - IDM_DB_SEED=true
+    healthcheck:
+      interval: 5s
+
+  orion-proxy:
+    image: fiware/fiware-pep-proxy:7.9.2-PRE-DLT
+    hostname: pep-proxy
+    deploy:
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "1027:1027" # localhost:1027
+    expose:
+      - "1027"
+    depends_on:
+      - keyrock
+    networks:
+      - default
+    environment:
+      - DEBUG=pep-proxy:*
+      - PEP_PROXY_DEBUG=true
+      - PEP_PROXY_APP_HOST=orion
+      - PEP_PROXY_APP_PORT=1026
+      - PEP_PROXY_PORT=1027
+      - PEP_PROXY_IDM_HOST=keyrock
+      - PEP_PROXY_HTTPS_ENABLED=false
+      - PEP_PROXY_AUTH_ENABLED=false
+      - PEP_PROXY_IDM_SSL_ENABLED=false
+      - PEP_PROXY_IDM_PORT=3005
+      - PEP_PROXY_APP_ID=tutorial-dckr-site-0000-xpresswebapp
+      - PEP_PROXY_USERNAME=pep_proxy_00000000-0000-0000-0000-000000000000
+      - PEP_PASSWORD=test
+      - PEP_PROXY_PDP=idm
+      - PEP_PROXY_MAGIC_KEY=1234
+      - PEP_PROXY_PUBLIC_PATHS=/version
+      - CANIS_MAJOR_URL=http://canis-major:4000
+
+  # aei and eth
+  aei-contract:
+    image: fiware/aei-contract:0.0.3-DLT
+    hostname: aei-contract
+    command: bash -c "truffle migrate"
+    environment:
+      - RPC_ENDPOINT=ganache-cli
+      - RPC_PORT=8545
+    depends_on:
+      - ganache-cli
+    entrypoint: /entrypoints/contract-entrypoint.sh
+    volumes:
+      - ./entrypoints:/entrypoints
+      - contract-folder:/contract-data
+
+  ganache-cli:
+    image: trufflesuite/ganache-cli:latest
+    hostname: ganache-cli
+    ports:
+      - "8545:8545"
+    command: ganache-cli -l 8000000 --account '0x6e8f202ae50d774850d0678fb83a730e501ada8d2a6cda5851cdb42b27a4f45b, 100000000000000000000'
+
+volumes:
+  contract-folder: ~

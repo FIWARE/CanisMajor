@@ -1,0 +1,51 @@
+name: Integration-test
+
+on:
+  push
+
+jobs:
+  it:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions/setup-java@v1
+      with:
+        java-version: '17'
+        java-package: jdk
+
+    - name: Build CanisMajor
+      id: canis-major-build
+      run: docker build . -t canis-major
+
+    - name: Run compose
+      id: compose
+      env:
+        CANISMAJOR_IMAGE: canis-major
+      run: |
+        cd it/
+        docker-compose up -d
+        
+    - name: Extract Branch Name
+      run: echo "BRANCH=$(echo ${GITHUB_REF##*/})" >> $GITHUB_ENV
+
+    - name: Run tests
+      id: test
+      if: env.BRANCH == 'master'
+      run: |
+        cd ts/
+        mvn clean install -Dcucumber.publish-token=${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
+
+    - name: Run tests
+      id: test-dev
+      if: env.BRANCH != 'master'
+      run: |
+        cd integration-test/integration-test/
+        mvn clean install -Dcucumber.publish-token=${{ secrets.CUCUMBER_PUBLISH_TOKEN_DEV }}
+
+    - name: Collect logs
+      if: ${{ failure() }}
+      run: |
+        cd docker-compose/
+        docker-compose logs
