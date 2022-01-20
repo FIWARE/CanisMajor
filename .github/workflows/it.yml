@@ -24,8 +24,8 @@ jobs:
       env:
         CANISMAJOR_IMAGE: canis-major
       run: |
-        cd it/
-        docker-compose up -d
+        cd it/docker-compose
+        docker-compose -f docker-compose-env.yaml -f docker-compose-merkle.yaml up -d
         
     - name: Extract Branch Name
       run: echo "BRANCH=$(echo ${GITHUB_REF##*/})" >> $GITHUB_ENV
@@ -47,5 +47,5 @@ jobs:
     - name: Collect logs
       if: ${{ failure() }}
       run: |
-        cd docker-compose/
+        cd it/docker-compose
         docker-compose logs
