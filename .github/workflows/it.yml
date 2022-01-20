@@ -52,4 +52,4 @@ jobs:
       if: ${{ failure() }}
       run: |
         cd it/docker-compose
-        docker-compose logs
+        docker-compose -f docker-compose-env.yaml -f docker-compose-${{ matrix.storagetype }}.yaml logs
