@@ -1,0 +1,19 @@
+{
+  "enabler": "CanisMajor - FIWARE DLT Adaptor",
+  "chapter": "core",
+  "academy": "",
+  "readthedocs": "https://fiware.github.io/CanisMajor/",
+  "helpdesk": "",
+  "coveralls": "",
+  "github": ["FIWARE/CanisMajor"],
+  "dockerregistry": ["quay.io"],
+  "docker": ["fiware/canismajor"],
+  "email": "stefan.wiedemann@fiware.org",
+  "status": "incubating",
+  "compose": "",
+  "exclude": [""],
+  "stackexchange": [""],
+  "unit-test": "",
+  "smoke-test": "",
+  "dockerfile": "https://github.com/FIWARE/CanisMajor/blob/master/Dockerfile"
+}
