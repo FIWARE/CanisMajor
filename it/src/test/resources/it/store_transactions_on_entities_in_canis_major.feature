@@ -11,11 +11,11 @@ Feature: Store transactions on entities in CanisMajor for ${storagetype}
     Given CanisMajor is running and available for requests.
     When The test-store is created.
     When  Another entity is created.
-    Then All transactions should be in CanisMajor.
+    Then All non-destructive transactions should be in CanisMajor.
 
   Scenario: When multiple changes happen at an entity, they are all persisted in CanisMajor.
     Given  CanisMajor is running and available for requests.
     When The test-store is created.
     And The test-store is updated.
     And The test-store is deleted.
-    Then All transactions should be in CanisMajor.
+    Then All non-destructive transactions should be in CanisMajor.
