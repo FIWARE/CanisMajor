@@ -34,14 +34,14 @@ jobs:
       id: test
       if: env.BRANCH == 'master'
       run: |
-        cd ts/
+        cd it/
         mvn clean install -Dcucumber.publish-token=${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
 
     - name: Run tests
       id: test-dev
       if: env.BRANCH != 'master'
       run: |
-        cd integration-test/integration-test/
+        cd it/
         mvn clean install -Dcucumber.publish-token=${{ secrets.CUCUMBER_PUBLISH_TOKEN_DEV }}
 
     - name: Collect logs
