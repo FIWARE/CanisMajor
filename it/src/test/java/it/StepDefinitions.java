@@ -59,6 +59,9 @@ public class StepDefinitions {
 	private static final String TEST_USERNAME = "alice-the-admin@test.com";
 	private static final String TEST_PASSWORD = "test";
 
+	private static final int TX_AWAIT_MAX_S = 15;
+
+
 	// we use testCount for the tests, so that we dont need to empty the blockchain all the time
 	// we start at a random point, to be able to run multiple times in local testing.
 	private int testCounter = (int)(Math.random() * 10000);
@@ -208,7 +211,7 @@ public class StepDefinitions {
 		expectedTxMap.forEach((k,v) -> {
 			List<CMEntityResponse> entityResponses = new ArrayList<>();
 			// the entity should eventually be available in the blockchain
-			Awaitility.await().atMost(5, TimeUnit.SECONDS).until(() -> {
+			Awaitility.await().atMost(TX_AWAIT_MAX_S, TimeUnit.SECONDS).until(() -> {
 				List<CMEntityResponse> cmEntityResponses = getTransactionsForEntity(k);
 				if (!cmEntityResponses.isEmpty()) {
 					entityResponses.addAll(cmEntityResponses);
@@ -225,7 +228,7 @@ public class StepDefinitions {
 		List<CMEntityResponse> entityResponses = new ArrayList<>();
 
 		// the entity should eventually be available in the blockchain
-		Awaitility.await().atMost(5, TimeUnit.SECONDS).until(() -> {
+		Awaitility.await().atMost(TX_AWAIT_MAX_S, TimeUnit.SECONDS).until(() -> {
 			List<CMEntityResponse> cmEntityResponses = getTransactionsForEntity(String.format("urn:ngsi-ld:Building:%s", testCounter));
 			if (!cmEntityResponses.isEmpty()) {
 				entityResponses.addAll(cmEntityResponses);
@@ -256,7 +259,7 @@ public class StepDefinitions {
 		List<CMEntityResponse> entityResponses = new ArrayList<>();
 
 		// the entity should eventually be available in the blockchain
-		Awaitility.await().atMost(5, TimeUnit.SECONDS).until(() -> {
+		Awaitility.await().atMost(TX_AWAIT_MAX_S, TimeUnit.SECONDS).until(() -> {
 			List<CMEntityResponse> cmEntityResponses = getTransactionsForEntity(String.format("urn:ngsi-ld:Building:%s", testCounter));
 			if (!cmEntityResponses.isEmpty()) {
 				entityResponses.addAll(cmEntityResponses);
@@ -302,7 +305,6 @@ public class StepDefinitions {
 		Response response = okHttpClient.newCall(request).execute();
 		assertEquals(201, response.code(), "We expect a successful response.");
 		addTxToExpectations(entity.getId().toString());
-		return;
 	}
 
 	private void addTxToExpectations(String id) {
