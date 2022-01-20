@@ -21,7 +21,7 @@ This project is a part of [FIWARE](https://github.com/fiware). For more check th
 
 # Architecture
 
-A stable solution to use canis major as a proxy which is more suitable and will be mature in future.
+A stable solution to use CanisMajor as a proxy which is more suitable and will be mature in future.
 ## CanisMajor As a PROXY Architecture
 ![CanisMajor Publish/Notify Architecture](https://github.com/fiware/CanisMajor/blob/master/docs/images/architecture.png)
 
@@ -34,7 +34,7 @@ A stable solution to use canis major as a proxy which is more suitable and will 
 
 ### Installation guide, Configuration and Usage
 
-Information about how to use the canis major can be found in [CanisMajor Documentation](https://fiware.github.io/CanisMajor/).
+Information about how to use the CanisMajor can be found in [CanisMajor Documentation](https://fiware.github.io/CanisMajor/).
 
 
 ## License
