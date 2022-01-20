@@ -55,7 +55,6 @@ curl --location --request POST 'http://localhost:4000/token-info' \
 ***Response:***
 ```json
 {
-{
     "public_key": "0x042D550bbfFAbbEA8A672DB56f14F2Cee7BC59E5",
     "private_key": "0x6437760cd4f29dee72e4c026769ee8ea37a5c8d82930af071855495d0061dc8f"
 }

@@ -24,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Config API
 - Entity Query APIs
-- FIWARE Notification listner API
+- FIWARE Notification listener API
 - ETH-Client Transaction Submitter
 
 
