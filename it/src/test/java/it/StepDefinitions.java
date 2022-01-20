@@ -157,6 +157,7 @@ public class StepDefinitions {
 		OkHttpClient okHttpClient = new OkHttpClient();
 		Response response = okHttpClient.newCall(request).execute();
 		assertEquals(204, response.code(), "We expect the entity to be deleted.");
+		addTxToExpectations(String.format("urn:ngsi-ld:Building:%s", testCounter));
 	}
 
 	@NotNull
