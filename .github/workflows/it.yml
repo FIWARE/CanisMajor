@@ -6,6 +6,10 @@ on:
 jobs:
   it:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        storagetype: ["iota", "ipfs","merkle"]
 
     steps:
     - uses: actions/checkout@v2
@@ -25,7 +29,7 @@ jobs:
         CANISMAJOR_IMAGE: canis-major
       run: |
         cd it/docker-compose
-        docker-compose -f docker-compose-env.yaml -f docker-compose-merkle.yaml up -d
+        docker-compose -f docker-compose-env.yaml -f docker-compose-${{ matrix.storagetype }}.yaml up -d
         
     - name: Extract Branch Name
       run: echo "BRANCH=$(echo ${GITHUB_REF##*/})" >> $GITHUB_ENV
@@ -35,14 +39,14 @@ jobs:
       if: env.BRANCH == 'master'
       run: |
         cd it/
-        mvn clean install -Dcucumber.publish-token=${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
+        mvn clean install -Dstoragetype=${{ matrix.storagetype }} -Dcucumber.publish-token=${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
 
     - name: Run tests
       id: test-dev
       if: env.BRANCH != 'master'
       run: |
         cd it/
-        mvn clean install -Dcucumber.publish-token=${{ secrets.CUCUMBER_PUBLISH_TOKEN_DEV }}
+        mvn clean install -Dstoragetype=${{ matrix.storagetype }} -Dcucumber.publish-token=${{ secrets.CUCUMBER_PUBLISH_TOKEN_DEV }}
 
     - name: Collect logs
       if: ${{ failure() }}

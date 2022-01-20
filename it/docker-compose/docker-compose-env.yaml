@@ -115,6 +115,8 @@ services:
     image: fiware/aei-contract:0.0.3-DLT
     hostname: aei-contract
     command: bash -c "truffle migrate"
+    networks:
+      - default
     environment:
       - RPC_ENDPOINT=ganache-cli
       - RPC_PORT=8545
@@ -128,6 +130,8 @@ services:
   ganache-cli:
     image: trufflesuite/ganache-cli:latest
     hostname: ganache-cli
+    networks:
+      - default
     ports:
       - "8545:8545"
     command: ganache-cli -l 8000000 --account '0x6e8f202ae50d774850d0678fb83a730e501ada8d2a6cda5851cdb42b27a4f45b, 100000000000000000000'

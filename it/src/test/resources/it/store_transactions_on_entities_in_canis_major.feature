@@ -1,4 +1,4 @@
-Feature: Store transactions on entities in CanisMajor
+Feature: Store transactions on entities in CanisMajor for ${storagetype}
   CUD operations on entities in the broker should be persisted in CanisMajor.
 
   Scenario: A test-store, created at orion-ld, is available through CanisMajor.

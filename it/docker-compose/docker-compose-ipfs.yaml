@@ -32,9 +32,10 @@ services:
       - DLT_TYPE=eth
       - AEI_CONTRACT_MODE=true
       - DEFAULT_GAS=3000000
-      - STORAGE_TYPE=iota
-      - IOTAMAM_HOST=https://nodes.devnet.iota.org
-      - IOTAMAM_MODE=public # private
+      - STORAGE_TYPE=ipfs
+      - IPFS_HOST=ipfs.infura.io
+      - IPFS_PORT=5001
+      - IPFS_PROTOCOL=https
       - CM_SECRET='secret_key'
       - RPC_ENDPOINT=http://ganache-cli:8545
     networks:
