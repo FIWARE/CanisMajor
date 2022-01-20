@@ -1,17 +1,17 @@
 # Installation Guide
 
-This section describes installing Canis Major Blockchain Adaptor:
+This section describes installing CanisMajor Blockchain Adaptor:
 
 
-# Requirments
-In order to execute Canis Major, it is needed to have previously installed the following software:
+# Requirements
+In order to execute CanisMajor, it is needed to have previously installed the following software:
  - NodeJS 12
  - ORM Database (SQL, Postgres)
 
 
  # Installation
 
-The following steps need to be performed to get Canis Major up and running:
+The following steps need to be performed to get CanisMajor up and running:
 
 
 1. Download the software, using GitHub.
