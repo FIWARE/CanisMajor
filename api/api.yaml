@@ -1,0 +1,438 @@
+openapi: 3.0.3
+info:
+  description: 'Spec for the CanisMajor DLT adaptor'
+  version: 0.0.1
+  title: CanisMajor - FIWARE DLT Adaptor
+  contact:
+    email: stefan.wiedemann@fiware.org
+externalDocs:
+  description: Implementation on github.
+  url: 'https://github.com/FIWARE/CanisMajor'
+tags:
+  - name: Config
+    description: CanisMajor config API
+  - name: Ops
+    description: Methods to provide some ops-related infos
+  - name: Token
+    description: All token related endpoints
+  - name: NGSI-LD
+    description: All supported NGSI-LD endpoints.
+paths:
+  '/version':
+    get:
+      tags:
+        - Ops
+      description: Provide the current version of CanisMajor.
+      operationId: getVersion
+      responses:
+        '200':
+          description: Successfully returend the version.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Version'
+  '/health':
+    get:
+      tags:
+        - Ops
+      description: Provide the current health status of CanisMajor.
+      operationId: getHealth
+      responses:
+        '200':
+          description: Service is up and running.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+        '503':
+          description: Service is not available.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+  '/token':
+    post:
+      tags:
+        - Token
+      description: Generates a DLT token based on the current CanisMajor config.
+      operationId: generateToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenKeys'
+      responses:
+        '200':
+          description: Token to be used with the given DLT.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DLTToken'
+        '400':
+          description: Keys provided in the request are not valid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '403':
+          description: Keys provided in the request are not a valid account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+  '/token-info':
+    post:
+      tags:
+        - Token
+      description: Return information about the provided token.
+      operationId: getTokenInfo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DLTToken'
+      responses:
+        '200':
+          description: Keys used in the token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenKeys'
+        '400':
+          description: Token provided in the request is not valid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+  '/config':
+    post:
+      tags:
+        - Config
+      description: Create configuration 
+      operationId: createConfig
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Configuration'
+      responses:
+        '201':
+          description: Configuration successfully created.
+        '400':
+          description: Provided config is invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '409':
+          description: Config for the requested type already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+    get:
+      tags:
+        - Config
+      description: Get configuration 
+      operationId: getConfig
+      responses:
+        '200':
+          description: Configuration currently in use.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Configuration'
+  '/config/{contextType}':
+    get:
+      tags:
+        - Config
+      parameters:
+        - $ref: '#/components/parameters/contextType' 
+      description: Get configuration by context-type
+      operationId: getConfigByContextType
+      responses:
+        '200':
+          description: Configuration for the requested contextType
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Configuration'
+        '404':
+          description: No configuration for the requested type exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+    put: 
+      tags:
+        - Config
+      parameters:
+        - $ref: '#/components/parameters/contextType' 
+      description: Update configuration by context-type
+      operationId: updateConfigByContextType
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Configuration'
+      responses:
+        '204':
+          description: Configuration successfully updated.
+        '400':
+          description: Provided update is invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '404':
+          description: No configuration for the requested type exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+    delete:
+      tags:
+        - Config
+      parameters:
+        - $ref: '#/components/parameters/contextType' 
+      description: Delete configuration by context-type
+      operationId: deleteConfigByContextType
+      responses:
+        '204':
+          description: Configuration successfully deleted. 
+        '404':
+          description: No configuration for the requested type exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+  '/ngsi-ld/v1/entities/':
+    post:
+      tags:
+        - NGSI-LD
+      parameters:
+        - $ref: '#/components/parameters/link'
+      description: Entity creation requests.
+      operationId: createNgsiLDEntity
+      requestBody:
+        content:
+          application/ld+json:
+            schema:
+              type: object
+              description: Entity, as described by NGSI-LD
+      responses:
+        '201':
+          description: NGSI-LD Entity created.
+        '400':
+          description: Did not receive a valid NGSI-LD Entity.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '409':
+          description: Entity already exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'  
+  '/ngsi-ld/v1/entities/{entityId}/attrs':
+    post:
+      tags:
+        - NGSI-LD
+      parameters:
+        - $ref: '#/components/parameters/link'
+        - $ref: '#/components/parameters/entityId'
+      description: EntityUpdate requests.
+      operationId: postUpdateNgsiLDEntity
+      requestBody:
+        content:
+          application/ld+json:
+            schema:
+              type: object
+              description: Entity-Fragment, as described by NGSI-LD
+      responses:
+        '204':
+          description: All attributes where apended successfully.
+        '207':
+          description: Only attributes in the response body where appended.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '400':
+          description: Did not receive a valid NGSI-LD Entity-Fragement.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '404':
+          description: No such entity exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+                  '/ngsi-ld/v1/entities/{entityId}/attrs':
+    patch:
+      tags:
+        - NGSI-LD
+      parameters:
+        - $ref: '#/components/parameters/link'
+        - $ref: '#/components/parameters/entityId'
+      description: EntityUpdate requests.
+      operationId: postUpdateNgsiLDEntity
+      requestBody:
+        content:
+          application/ld+json:
+            schema:
+              type: object
+              description: Entity-Fragment, as described by NGSI-LD
+      responses:
+        '204':
+          description: All attributes where apended successfully.
+        '207':
+          description: Only attributes in the response body where appended.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '400':
+          description: Did not receive a valid NGSI-LD Entity-Fragement.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '404':
+          description: No such entity exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+components:
+  headers:
+    Cache-Control:
+      schema:
+        type: string
+        default: "max-age=31536000"
+
+  parameters:
+    contextType:
+      name: contextType
+      in: path
+      required: true
+      schema:
+        type: string
+    link:
+      name: Link
+      description: Link header to be used as described in the json-ld spec.
+      in: header
+      required: false
+      schema:
+        type: string
+    entityId:
+      name: entityId
+      description: ID of an NGSI-LD entity
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uri
+  schemas:
+    MetaData:
+      type: object
+      properties:
+        abi:
+          type: array
+          items:
+            type: string
+        contractAddress:
+          type: string
+    Configuration:
+      type: object
+      description: Configuration used by CanisMajor
+      properties:
+        contextType:
+          type: string
+        contextMapping:
+          type: string
+        metadata:
+          $ref: '#/components/schemas/MetaData'
+      required:
+        - contextType
+        - contextMapping
+    HealthStatus:
+      type: object
+      description: Status of the running service
+      properties:
+        status:
+          type: string
+          description: Current status, e.g. UP or DOWN
+          example: "UP"
+      required:
+        - staus
+    TokenKeys:
+      type: object
+      description: Secret information to be used for token generation.
+      properties:
+        private_key:
+          type: string
+          description: Private key to be used for token generation
+        public_key:
+          type: string
+          description: Public key to be used for token generation
+      required:
+        - private_key
+        - public_key
+    DLTToken:
+      type: object
+      description: Token to be used for authentication at the DTL
+      properties:
+        dlt-token:
+          type: string
+          format: byte
+          description: The base64 encoded key to be used with the configured DLT
+      required:
+        - dlt-token
+    Version:
+      type: object
+      description: Information about the version of the running service.
+      properties:
+        name:
+          type: string
+          description: Name of the component, should be CanisMajor
+          example: "canismajor"
+        version:
+          type: string
+          description: Version of the component, should be semver-compliant.
+          example: "0.0.1"
+      required:
+        - name
+        - version
+    ProblemDetails:
+      type: object
+      description: Information about the occured error.
+      properties:
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+        detail:
+          type: string
+      required:
+        - type
