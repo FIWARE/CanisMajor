@@ -1,0 +1,47 @@
+version: "3.5"
+services:
+  ## CanisMajor setup
+  mysql-db:
+    restart: always
+    image: mysql:5.7
+    hostname: mysql-db
+    expose:
+      - '3306'
+    networks:
+      - default
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_USER=cm
+      - MYSQL_PASSWORD=password
+
+  canis-major:
+    restart: always
+    image: ${CANISMAJOR_IMAGE:-quay.io/fiware/canismajor:0.0.5}
+    hostname: canis-major
+    depends_on:
+      - mysql-db
+      - ganache-cli
+    expose:
+      - "4000"
+    entrypoint: /entrypoints/canis-major-entrypoint.sh
+    environment:
+      - DB_NAME=canismajor
+      - DB_HOST=mysql-db
+      - DB_USERNAME=root
+      - DB_PASSWORD=secret
+      - DLT_TYPE=eth
+      - AEI_CONTRACT_MODE=true
+      - DEFAULT_GAS=3000000
+      - STORAGE_TYPE=ipfs
+      - IPFS_HOST=ipfs.infura.io
+      - IPFS_PORT=5001
+      - IPFS_PROTOCOL=https
+      - CM_SECRET='secret_key'
+      - RPC_ENDPOINT=http://ganache-cli:8545
+    networks:
+      - default
+    ports:
+      - 4000:4000
+    volumes:
+      - ./entrypoints:/entrypoints
+      - contract-folder:/contract-data
