@@ -17,6 +17,7 @@ tags:
     description: All token related endpoints
   - name: NGSI-LD
     description: All supported NGSI-LD endpoints.
+
 paths:
   '/version':
     get:
@@ -244,9 +245,9 @@ paths:
         '422':
           description: Unprocessable Entity
           content:
-            application/ld+json:
+            application/json:
               schema:
-                $ref: '#/components/schemas/ProblemDetails'  
+                $ref: '#/components/schemas/ProblemDetails'
   '/ngsi-ld/v1/entities/{entityId}/attrs':
     post:
       tags:
@@ -285,51 +286,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
-                  '/ngsi-ld/v1/entities/{entityId}/attrs':
-    patch:
-      tags:
-        - NGSI-LD
-      parameters:
-        - $ref: '#/components/parameters/link'
-        - $ref: '#/components/parameters/entityId'
-      description: EntityUpdate requests.
-      operationId: postUpdateNgsiLDEntity
-      requestBody:
-        content:
-          application/ld+json:
-            schema:
-              type: object
-              description: Entity-Fragment, as described by NGSI-LD
-      responses:
-        '204':
-          description: All attributes where apended successfully.
-        '207':
-          description: Only attributes in the response body where appended.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: string
-        '400':
-          description: Did not receive a valid NGSI-LD Entity-Fragement.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetails'
-        '404':
-          description: No such entity exists.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetails'
 components:
-  headers:
-    Cache-Control:
-      schema:
-        type: string
-        default: "max-age=31536000"
-
   parameters:
     contextType:
       name: contextType
