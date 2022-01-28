@@ -16,7 +16,7 @@ public class ContextConfiguration {
 	@GeneratedValue
 	private UUID id;
 
-	private String contextType;
+	private String entityType;
 	private String contextMapping;
 	// we can store it plain json, since we have very little of them and no frequent changes.
 	@Convert(converter = JacksonConverter.class)

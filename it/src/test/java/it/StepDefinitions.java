@@ -3,6 +3,7 @@ package it;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.source.tree.LiteralTree;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -13,6 +14,7 @@ import it.pojo.CMEntityResponse;
 import it.pojo.DLTTokenRequest;
 import it.pojo.DLTTokenResponse;
 import it.pojo.Entity;
+import it.pojo.EntityTransactions;
 import it.pojo.Oauth2Response;
 import it.pojo.Property;
 import okhttp3.MediaType;
@@ -40,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class StepDefinitions {
 
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+	public static final String NGSILD_TENANT = "orion";
 
 	{
 		OBJECT_MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -60,11 +63,11 @@ public class StepDefinitions {
 	private static final String TEST_PASSWORD = "test";
 
 	private static final int TX_AWAIT_MAX_S = 15;
-
+	private static final boolean USE_NEW_API = true;
 
 	// we use testCount for the tests, so that we dont need to empty the blockchain all the time
 	// we start at a random point, to be able to run multiple times in local testing.
-	private int testCounter = (int)(Math.random() * 10000);
+	private int testCounter = (int) (Math.random() * 10000);
 
 
 	Map<String, Integer> expectedTxMap = new HashMap<>();
@@ -86,7 +89,7 @@ public class StepDefinitions {
 	private boolean assertSystemIsRunning() {
 		// since the setup is relatively complex and does require root-permission, we only check that it is running here.
 		Request request = new Request.Builder()
-				.url(String.format("http://%s/version", CANIS_MAJOR_ADDRESS))
+				.url(String.format("http://%s/health", CANIS_MAJOR_ADDRESS))
 				.build();
 		OkHttpClient okHttpClient = new OkHttpClient();
 
@@ -132,6 +135,7 @@ public class StepDefinitions {
 		RequestBody requestBody = RequestBody.create(OBJECT_MAPPER.writeValueAsString(testStore), MediaType.get("application/json"));
 
 		Request request = new Request.Builder()
+				.addHeader("NGSILD-Tenant", NGSILD_TENANT)
 				.addHeader("X-Auth-Token", accessToken)
 				.addHeader("DLT-Token", dltToken)
 				.url(String.format("http://%s/ngsi-ld/v1/entities/%s/attrs", PEP_PROXY_ADDRESS, storeID))
@@ -151,6 +155,7 @@ public class StepDefinitions {
 		String dltToken = getDLTToken();
 
 		Request request = new Request.Builder()
+				.addHeader("NGSILD-Tenant", NGSILD_TENANT)
 				.addHeader("X-Auth-Token", accessToken)
 				.addHeader("DLT-Token", dltToken)
 				.url(String.format("http://%s/ngsi-ld/v1/entities/%s", PEP_PROXY_ADDRESS, String.format("urn:ngsi-ld:Building:%s", testCounter)))
@@ -208,13 +213,13 @@ public class StepDefinitions {
 	@Then("All non-destructive transactions should be in CanisMajor.")
 	public void assert_all_tx_stored() throws Exception {
 		assertFalse(expectedTxMap.isEmpty(), "We should have at least some expectations.");
-		expectedTxMap.forEach((k,v) -> {
-			List<CMEntityResponse> entityResponses = new ArrayList<>();
+		expectedTxMap.forEach((k, v) -> {
+			List<Object> entityResponses = new ArrayList<>();
 			// the entity should eventually be available in the blockchain
 			Awaitility.await().atMost(TX_AWAIT_MAX_S, TimeUnit.SECONDS).until(() -> {
-				List<CMEntityResponse> cmEntityResponses = getTransactionsForEntity(k);
-				if (!cmEntityResponses.isEmpty()) {
-					entityResponses.addAll(cmEntityResponses);
+				EntityTransactions entityTransactions = getTransactionsForEntity(k);
+				if (!entityTransactions.getTxDetails().isEmpty()) {
+					entityResponses.addAll(entityTransactions.getTxDetails());
 					return true;
 				}
 				return false;
@@ -225,13 +230,13 @@ public class StepDefinitions {
 
 	@Then("The transaction to persist test-store can be read through CanisMajor.")
 	public void get_test_store() throws Exception {
-		List<CMEntityResponse> entityResponses = new ArrayList<>();
+		List<Object> entityResponses = new ArrayList<>();
 
 		// the entity should eventually be available in the blockchain
 		Awaitility.await().atMost(TX_AWAIT_MAX_S, TimeUnit.SECONDS).until(() -> {
-			List<CMEntityResponse> cmEntityResponses = getTransactionsForEntity(String.format("urn:ngsi-ld:Building:%s", testCounter));
-			if (!cmEntityResponses.isEmpty()) {
-				entityResponses.addAll(cmEntityResponses);
+			EntityTransactions entityTransactions = getTransactionsForEntity(String.format("urn:ngsi-ld:Building:%s", testCounter));
+			if (!entityTransactions.getTxDetails().isEmpty()) {
+				entityResponses.addAll(entityTransactions.getTxDetails());
 				return true;
 			}
 			return false;
@@ -241,28 +246,38 @@ public class StepDefinitions {
 				"Only one such transaction should exist."
 		);
 
-		long txId = entityResponses.get(0).getId();
+		Request request;
+		if (USE_NEW_API) {
+			request = new Request.Builder()
+					// we can only request by db id
+					.url(String.format("http://%s/entity/%s", CANIS_MAJOR_ADDRESS, String.format("urn:ngsi-ld:Building:%s", testCounter)))
+					.build();
 
-		Request request = new Request.Builder()
-				// we can only request by db id
-				.url(String.format("http://%s/entity/%s", CANIS_MAJOR_ADDRESS, txId))
-				.build();
-		OkHttpClient okHttpClient = new OkHttpClient();
-		Response response = okHttpClient.newCall(request).execute();
-		assertEquals(200, response.code(), "We expect a successful response.");
-		CMEntityResponse cmEntityResponse = OBJECT_MAPPER.readValue(response.body().string(), CMEntityResponse.class);
-		assertEquals(String.format("urn:ngsi-ld:Building:%s", testCounter), cmEntityResponse.getEntityId());
+			OkHttpClient okHttpClient = new OkHttpClient();
+			Response response = okHttpClient.newCall(request).execute();
+			assertEquals(200, response.code(), "We expect a successful response.");
+			CMEntityResponse cmEntityResponse = OBJECT_MAPPER.readValue(response.body().string(), CMEntityResponse.class);
+			assertEquals(String.format("urn:ngsi-ld:Building:%s", testCounter), cmEntityResponse.getEntityId());
+		} else {
+			//TODO: this api has to be changed.
+//			long txId = entityResponses.get(0).getId();
+//
+//			request = new Request.Builder()
+//					// we can only request by db id
+//					.url(String.format("http://%s/entity/%s", CANIS_MAJOR_ADDRESS, txId))
+//					.build();
+		}
 	}
 
 	@Then("Only one transaction should be persisted for the entity.")
 	public void assert_only_one_transaction() throws Exception {
-		List<CMEntityResponse> entityResponses = new ArrayList<>();
+		List<Object> entityResponses = new ArrayList<>();
 
 		// the entity should eventually be available in the blockchain
 		Awaitility.await().atMost(TX_AWAIT_MAX_S, TimeUnit.SECONDS).until(() -> {
-			List<CMEntityResponse> cmEntityResponses = getTransactionsForEntity(String.format("urn:ngsi-ld:Building:%s", testCounter));
-			if (!cmEntityResponses.isEmpty()) {
-				entityResponses.addAll(cmEntityResponses);
+			EntityTransactions entityTransactions = getTransactionsForEntity(String.format("urn:ngsi-ld:Building:%s", testCounter));
+			if (!entityTransactions.getTxDetails().isEmpty()) {
+				entityResponses.addAll(entityTransactions.getTxDetails());
 				return true;
 			}
 			return false;
@@ -273,7 +288,7 @@ public class StepDefinitions {
 		);
 	}
 
-	private List<CMEntityResponse> getTransactionsForEntity(String entityId) throws Exception {
+	private EntityTransactions getTransactionsForEntity(String entityId) throws Exception {
 		Request request = new Request.Builder()
 				// we can only request by db id
 				.url(String.format("http://%s/entity", CANIS_MAJOR_ADDRESS))
@@ -283,11 +298,18 @@ public class StepDefinitions {
 		if (response.code() != 200) {
 			List.of();
 		}
+
 		CMEntitesResponse cmEntityResponse = OBJECT_MAPPER.readValue(response.body().string(), CMEntitesResponse.class);
 
-		return cmEntityResponse.getRecords().stream()
+
+		List<CMEntityResponse> filteredResponses = cmEntityResponse.getRecords().stream()
 				.filter(cmer -> cmer.getEntityId().equals(entityId))
 				.collect(Collectors.toList());
+		if (USE_NEW_API) {
+			return new EntityTransactions(entityId, (List<Object>) filteredResponses.stream().flatMap(cmer -> OBJECT_MAPPER.convertValue(cmer.getTxDetails(), List.class).stream()).collect(Collectors.toList()));
+		} else {
+			return new EntityTransactions(entityId, filteredResponses.stream().map(cmer -> cmer.getTxDetails()).collect(Collectors.toList()));
+		}
 	}
 
 
@@ -295,6 +317,7 @@ public class StepDefinitions {
 		RequestBody requestBody = RequestBody.create(OBJECT_MAPPER.writeValueAsString(entity), MediaType.get("application/json"));
 
 		Request request = new Request.Builder()
+				.addHeader("NGSILD-Tenant", NGSILD_TENANT)
 				.addHeader("X-Auth-Token", accessToken)
 				.addHeader("DLT-Token", dltToken)
 				.url(String.format("http://%s/ngsi-ld/v1/entities/", PEP_PROXY_ADDRESS))
@@ -309,7 +332,7 @@ public class StepDefinitions {
 
 	private void addTxToExpectations(String id) {
 		if (expectedTxMap.containsKey(id)) {
-			expectedTxMap.put(id, expectedTxMap.get(id)+1);
+			expectedTxMap.put(id, expectedTxMap.get(id) + 1);
 		} else {
 			expectedTxMap.put(id, 1);
 		}

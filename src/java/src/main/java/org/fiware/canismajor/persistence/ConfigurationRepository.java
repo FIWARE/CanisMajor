@@ -7,5 +7,5 @@ import java.util.UUID;
 
 public interface ConfigurationRepository extends CrudRepository<ContextConfiguration, UUID> {
 
-	Optional<ContextConfiguration> findByContextType(String contxtType);
+	Optional<ContextConfiguration> findByEntityType(String entityType);
 }

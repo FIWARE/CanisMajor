@@ -26,7 +26,7 @@ public class ConfigController implements ConfigApi {
 
 	@Override
 	public HttpResponse<Object> createConfig(ConfigurationVO configurationVO) {
-		if (configurationRepository.findByContextType(configurationVO.getContextType()).isPresent()) {
+		if (configurationRepository.findByEntityType(configurationVO.getEntityType()).isPresent()) {
 			return HttpResponse.status(HttpStatus.CONFLICT);
 		}
 
@@ -35,8 +35,8 @@ public class ConfigController implements ConfigApi {
 	}
 
 	@Override
-	public HttpResponse<Object> deleteConfigByContextType(String contextType) {
-		Optional<ContextConfiguration> optionalContextConfiguration = configurationRepository.findByContextType(contextType);
+	public HttpResponse<Object> deleteConfigByEntityType(String contextType) {
+		Optional<ContextConfiguration> optionalContextConfiguration = configurationRepository.findByEntityType(contextType);
 		if (optionalContextConfiguration.isEmpty()) {
 			return HttpResponse.notFound();
 		}
@@ -51,17 +51,17 @@ public class ConfigController implements ConfigApi {
 	}
 
 	@Override
-	public HttpResponse<ConfigurationVO> getConfigByContextType(String contextType) {
+	public HttpResponse<ConfigurationVO> getConfigByEntityType(String contextType) {
 		return configurationRepository
-				.findByContextType(contextType)
+				.findByEntityType(contextType)
 				.map(configMapper::contextConfigurationToConfigurationVO)
 				.map(HttpResponse::ok)
 				.orElse(HttpResponse.notFound());
 	}
 
 	@Override
-	public HttpResponse<Object> updateConfigByContextType(String contextType, ConfigurationVO configurationVO) {
-		Optional<ContextConfiguration> optionalContextConfiguration = configurationRepository.findByContextType(contextType);
+	public HttpResponse<Object> updateConfigByEntityType(String contextType, ConfigurationVO configurationVO) {
+		Optional<ContextConfiguration> optionalContextConfiguration = configurationRepository.findByEntityType(contextType);
 		if (optionalContextConfiguration.isEmpty()) {
 			return HttpResponse.notFound();
 		};

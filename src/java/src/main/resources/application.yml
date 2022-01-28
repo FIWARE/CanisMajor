@@ -12,6 +12,13 @@ micronaut:
         step: PT2s
         descriptions: false
 
+  http:
+    services:
+      read-timeout: 30s
+      ngsi:
+        path: ngsi-ld/v1
+        url: http://localhost:1026
+        read-timeout: 30
 ---
 endpoints:
   metrics:
@@ -36,3 +43,15 @@ datasources:
     password: ''
     schema-generate: CREATE_DROP
     dialect: H2
+
+---
+
+general:
+  ngsiTenant: orion-ld
+  dltAddress: localhost:8545
+  contractAddress: "0xcd125237903865f39caf6443209c89bA70a4A385"
+  gas: 3000000
+  gasPrice: 0
+
+encryption:
+  cmSecret: secret_key

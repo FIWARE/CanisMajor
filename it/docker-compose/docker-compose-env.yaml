@@ -56,7 +56,7 @@ services:
     image: fiware/idm:7.9.2
     hostname: keyrock
     depends_on:
-      - mysql-db
+      - mysql-keyrock-db
     networks:
       - default
     ports:

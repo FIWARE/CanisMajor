@@ -14,14 +14,14 @@ public interface ConfigMapper {
 	default ContextConfiguration configurationVoToContextConfiguration(ConfigurationVO configurationVO) {
 		ContextConfiguration contextConfiguration = new ContextConfiguration();
 		contextConfiguration.setContextMapping(configurationVO.getContextMapping());
-		contextConfiguration.setContextType(configurationVO.getContextType());
+		contextConfiguration.setEntityType(configurationVO.getEntityType());
 		contextConfiguration.setMetaData(configurationVO.getMetadata());
 		return contextConfiguration;
 	}
 
 	default ConfigurationVO contextConfigurationToConfigurationVO(ContextConfiguration contextConfiguration) {
 		ConfigurationVO configurationVO = new ConfigurationVO();
-		configurationVO.setContextType(contextConfiguration.getContextType());
+		configurationVO.setEntityType(contextConfiguration.getEntityType());
 		configurationVO.setContextMapping(contextConfiguration.getContextMapping());
 		configurationVO.setMetadata(OBJECT_MAPPER.convertValue(contextConfiguration.getMetaData(), MetaDataVO.class));
 		return configurationVO;

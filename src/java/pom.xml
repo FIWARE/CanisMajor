@@ -51,8 +51,8 @@
 
         <!-- docker -->
         <exec.mainClass>org.fiware.canismajor.Application</exec.mainClass>
-        <image.registry>docker.io</image.registry>
-        <image.repository>fiware</image.repository>
+        <image.registry>quay.io</image.registry>
+        <image.repository>wi_stefan</image.repository>
         <image.tag>latest</image.tag>
 
         <!-- DLT -->
@@ -150,6 +150,14 @@
             <artifactId>micronaut-micrometer-registry-prometheus</artifactId>
             <version>${micronaut.configuration.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-http-client-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-http-client</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>javax.inject</groupId>
@@ -168,6 +176,13 @@
             <groupId>org.web3j</groupId>
             <artifactId>core</artifactId>
             <version>${version.org.web3j.core}</version>
+        </dependency>
+
+        <!-- Hashing -->
+        <dependency>
+            <groupId>org.rebaze.integrity</groupId>
+            <artifactId>org.rebaze.integrity.tree</artifactId>
+            <version>0.3.0</version>
         </dependency>
 
         <!-- logging -->
@@ -207,11 +222,6 @@
         </dependency>
 
         <!-- testing -->
-        <dependency>
-            <groupId>io.micronaut</groupId>
-            <artifactId>micronaut-http-client</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -300,12 +310,46 @@
                             <output>${project.build.directory}</output>
                             <configOptions>
                                 <fullJavaUtil>true</fullJavaUtil>
+                                <useOptional>false</useOptional>
                                 <useGenericResponse>true</useGenericResponse>
                                 <useReferencedSchemaAsDefault>true</useReferencedSchemaAsDefault>
                                 <useLombokGenerated>true</useLombokGenerated>
                                 <introspected>true</introspected>
                                 <useBeanValidation>false</useBeanValidation>
                                 <jacksonDatabindNullable>false</jacksonDatabindNullable>
+                                <supportsAdditionalPropertiesWithComposedSchema>true</supportsAdditionalPropertiesWithComposedSchema>
+                            </configOptions>
+                            <typeMappings>
+                                <typeMapping>java.util.Date=java.time.Instant</typeMapping>
+                            </typeMappings>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>openapi-ngsi-json</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/ngsi-ld-api/broker-client.yaml</inputSpec>
+                            <apiPackage>org.fiware.ngsi.api</apiPackage>
+                            <strictSpec>true</strictSpec>
+                            <modelPackage>org.fiware.ngsi.model</modelPackage>
+                            <generateAliasAsModel>true</generateAliasAsModel>
+                            <generatorName>micronaut</generatorName>
+                            <modelNameSuffix>VO</modelNameSuffix>
+                            <output>${project.build.directory}</output>
+                            <configOptions>
+                                <clientId>ngsi</clientId>
+                                <fullJavaUtil>true</fullJavaUtil>
+                                <useOptional>false</useOptional>
+                                <useGenericResponse>true</useGenericResponse>
+                                <useReferencedSchemaAsDefault>true</useReferencedSchemaAsDefault>
+                                <useLombokGenerated>true</useLombokGenerated>
+                                <introspected>true</introspected>
+                                <useBeanValidation>false</useBeanValidation>
+                                <jacksonDatabindNullable>false</jacksonDatabindNullable>
+                                <supportsAdditionalPropertiesWithComposedSchema>true</supportsAdditionalPropertiesWithComposedSchema>
                             </configOptions>
                             <typeMappings>
                                 <typeMapping>java.util.Date=java.time.Instant</typeMapping>
