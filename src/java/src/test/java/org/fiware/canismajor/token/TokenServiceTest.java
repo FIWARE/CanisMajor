@@ -30,13 +30,6 @@ class TokenServiceTest {
 		tokenService = new TokenService(encryptionProperties);
 	}
 
-	@Test
-	public void signMessage() throws Exception {
-		String myMessage = "myMessage";
-		ECKeyPair ecKeyPair = ECKeyPair.create(Numeric.hexStringToByteArray(privateKey));
-		assertDoesNotThrow(() -> Sign.signMessage(myMessage.getBytes(), ecKeyPair));
-	}
-
 
 	@DisplayName("Decrypting a generated token should lead to the same key-combination.")
 	@Test
