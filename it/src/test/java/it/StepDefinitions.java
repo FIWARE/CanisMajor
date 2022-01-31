@@ -3,7 +3,6 @@ package it;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.source.tree.LiteralTree;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -63,7 +62,7 @@ public class StepDefinitions {
 	private static final String TEST_PASSWORD = "test";
 
 	private static final int TX_AWAIT_MAX_S = 15;
-	private static final boolean USE_NEW_API = true;
+	private static final boolean USE_NEW_API = false;
 
 	// we use testCount for the tests, so that we dont need to empty the blockchain all the time
 	// we start at a random point, to be able to run multiple times in local testing.
