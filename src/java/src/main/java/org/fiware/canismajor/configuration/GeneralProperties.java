@@ -5,7 +5,6 @@ import lombok.Data;
 
 import java.math.BigInteger;
 import java.net.URL;
-import java.util.UUID;
 
 /**
  * Configuration of general properties
@@ -15,8 +14,5 @@ import java.util.UUID;
 public class GeneralProperties {
 
 	private String ngsiTenant;
-	private URL dltAddress;
-	private String contractAddress;
-	private BigInteger gas;
-	private BigInteger gasPrice;
+
 }

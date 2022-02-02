@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.fiware.aeicontract.Assets;
+import org.fiware.canismajor.configuration.EthereumProperties;
 import org.fiware.canismajor.configuration.GeneralProperties;
 import org.fiware.canismajor.configuration.MerkleProperties;
 import org.fiware.canismajor.exception.TransactionException;
@@ -35,6 +36,7 @@ public class EthereumService {
 	private final ObjectMapper objectMapper;
 	private final ContractGasProvider contractGasProvider;
 	private final GeneralProperties generalProperties;
+	private final EthereumProperties ethereumProperties;
 	private final MerkleProperties merkleProperties;
 
 	public boolean isAddress(String publicKey) {
@@ -47,7 +49,7 @@ public class EthereumService {
 
 	public TransactionReceipt createAsset(Credentials credentials, EntityVO entityVO) throws TransactionException {
 		try {
-			Assets assets = Assets.load(generalProperties.getContractAddress(), ethClient, credentials, contractGasProvider);
+			Assets assets = Assets.load(ethereumProperties.getContractAddress(), ethClient, credentials, contractGasProvider);
 
 			RemoteFunctionCall<TransactionReceipt> txRFC = assets.createAsset(getAssetId(entityVO.id()), getMerkleTreeHash(entityVO));
 			return txRFC.send();
@@ -60,7 +62,7 @@ public class EthereumService {
 
 	public TransactionReceipt updateAsset(Credentials credentials, URI entityId, EntityFragmentVO entityFragmentVO) throws TransactionException {
 		try {
-			Assets assets = Assets.load(generalProperties.getContractAddress(), ethClient, credentials, contractGasProvider);
+			Assets assets = Assets.load(ethereumProperties.getContractAddress(), ethClient, credentials, contractGasProvider);
 			RemoteFunctionCall<TransactionReceipt> txRFC = assets.updateAsset(getAssetId(entityId), getMerkleTreeHash(entityFragmentVO));
 			return txRFC.send();
 		} catch (JsonProcessingException e) {

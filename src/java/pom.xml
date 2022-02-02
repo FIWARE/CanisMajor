@@ -30,8 +30,8 @@
 
 
     <properties>
-        <jdk.version>17</jdk.version>
-        <release.version>17</release.version>
+        <jdk.version>11</jdk.version>
+        <release.version>11</release.version>
         <micronaut.version>3.2.7</micronaut.version>
         <micronaut.configuration.version>1.3.1</micronaut.configuration.version>
 
@@ -117,11 +117,11 @@
             <artifactId>micronaut-http-server-netty</artifactId>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>org.graalvm.nativeimage</groupId>
-            <artifactId>svm</artifactId>
-            <scope>provided</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.graalvm.nativeimage</groupId>-->
+<!--            <artifactId>svm</artifactId>-->
+<!--            <scope>provided</scope>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>io.micronaut</groupId>
             <artifactId>micronaut-runtime</artifactId>
@@ -172,10 +172,18 @@
         </dependency>
 
         <!-- DLT -->
+        <!-- ETH -->
         <dependency>
             <groupId>org.web3j</groupId>
             <artifactId>core</artifactId>
             <version>${version.org.web3j.core}</version>
+        </dependency>
+
+        <!-- IOTA -->
+        <dependency>
+            <groupId>org.iota.client</groupId>
+            <artifactId>native</artifactId>
+            <version>1.0</version>
         </dependency>
 
         <!-- Hashing -->
@@ -300,7 +308,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>../../api/api.yaml</inputSpec>
+                            <inputSpec>${project.basedir}/api/api.yaml</inputSpec>
                             <apiPackage>org.fiware.canismajor.api</apiPackage>
                             <strictSpec>true</strictSpec>
                             <modelPackage>org.fiware.canismajor.model</modelPackage>
@@ -331,7 +339,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/ngsi-ld-api/broker-client.yaml</inputSpec>
+                            <inputSpec>${project.basedir}/api/broker-client.yaml</inputSpec>
                             <apiPackage>org.fiware.ngsi.api</apiPackage>
                             <strictSpec>true</strictSpec>
                             <modelPackage>org.fiware.ngsi.model</modelPackage>
@@ -403,6 +411,19 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
+                <configuration>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/*.SF</exclude>
+                                <exclude>META-INF/*.DSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                    <!-- Additional configuration. -->
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -435,11 +456,11 @@
                             <artifactId>micronaut-validation</artifactId>
                             <version>${micronaut.version}</version>
                         </path>
-                        <path>
-                            <groupId>io.micronaut</groupId>
-                            <artifactId>micronaut-graal</artifactId>
-                            <version>${micronaut.version}</version>
-                        </path>
+<!--                        <path>-->
+<!--                            <groupId>io.micronaut</groupId>-->
+<!--                            <artifactId>micronaut-graal</artifactId>-->
+<!--                            <version>${micronaut.version}</version>-->
+<!--                        </path>-->
                         <path>
                             <groupId>io.micronaut.data</groupId>
                             <artifactId>micronaut-data-processor</artifactId>
@@ -479,11 +500,11 @@
                                     <artifactId>micronaut-validation</artifactId>
                                     <version>${micronaut.version}</version>
                                 </path>
-                                <path>
-                                    <groupId>io.micronaut</groupId>
-                                    <artifactId>micronaut-graal</artifactId>
-                                    <version>${micronaut.version}</version>
-                                </path>
+<!--                                <path>-->
+<!--                                    <groupId>io.micronaut</groupId>-->
+<!--                                    <artifactId>micronaut-graal</artifactId>-->
+<!--                                    <version>${micronaut.version}</version>-->
+<!--                                </path>-->
                                 <path>
                                     <groupId>io.micronaut.data</groupId>
                                     <artifactId>micronaut-data-processor</artifactId>

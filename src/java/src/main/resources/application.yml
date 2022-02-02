@@ -48,6 +48,12 @@ datasources:
 
 general:
   ngsiTenant: orion-ld
+
+iota:
+  enabled: true
+
+ethereum:
+  enabled: true
   dltAddress: localhost:8545
   contractAddress: "0xcd125237903865f39caf6443209c89bA70a4A385"
   gas: 3000000

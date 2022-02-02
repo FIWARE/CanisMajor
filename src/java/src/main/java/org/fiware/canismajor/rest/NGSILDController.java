@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.fiware.canismajor.api.NgsiLdApi;
 import org.fiware.canismajor.configuration.GeneralProperties;
 import org.fiware.canismajor.dlt.EthereumService;
+import org.fiware.canismajor.dlt.IotaService;
 import org.fiware.canismajor.exception.TokenException;
 import org.fiware.canismajor.exception.TransactionException;
 import org.fiware.canismajor.mapping.TxReceiptMapper;
@@ -30,6 +31,7 @@ import java.net.URI;
 public class NGSILDController implements NgsiLdApi {
 
 	private final EthereumService ethereumService;
+	private final IotaService iotaService;
 	private final TokenService tokenService;
 	private final EntitiesApiClient entitiesApi;
 	private final TxReceiptMapper receiptMapper;
@@ -39,6 +41,7 @@ public class NGSILDController implements NgsiLdApi {
 
 	@Override
 	public HttpResponse<Object> createNgsiLDEntity(@NotNull String dltTokenString, @Nullable String link, EntityVO entityVO) {
+		iotaService.getInfo();
 		String entityType = entityVO.getType();
 //		Optional<ContextConfiguration> contextConfiguration = configurationRepository.findByEntityType(entityType);
 //		if (contextConfiguration.isEmpty()) {
@@ -46,7 +49,7 @@ public class NGSILDController implements NgsiLdApi {
 //		}
 		try {
 			DLTToken dltToken = tokenService.decryptToken(dltTokenString);
-			Credentials credentials = ethereumService.toAccount(dltToken.privateKey());
+			Credentials credentials = ethereumService.toAccount(dltToken.getPrivateKey());
 			TransactionReceipt transactionReceipt = ethereumService.createAsset(credentials, entityVO);
 			entitiesApi.createEntity(generalProperties.getNgsiTenant(), receiptMapper.transactionReceiptToEntityVO(transactionReceipt, entityVO.id()));
 			return HttpResponse.ok(transactionReceipt);
@@ -63,7 +66,7 @@ public class NGSILDController implements NgsiLdApi {
 	public HttpResponse<Object> postUpdateNgsiLDEntity(@NotNull String dltTokenString, URI entityId, @Nullable String link, EntityFragmentVO entityFragmentVO) {
 		try {
 			DLTToken dltToken = tokenService.decryptToken(dltTokenString);
-			Credentials credentials = ethereumService.toAccount(dltToken.privateKey());
+			Credentials credentials = ethereumService.toAccount(dltToken.getPrivateKey());
 			TransactionReceipt transactionReceipt = ethereumService.updateAsset(credentials, entityId, entityFragmentVO);
 			entitiesApi.createEntity(generalProperties.getNgsiTenant(), receiptMapper.transactionReceiptToEntityVO(transactionReceipt, entityId));
 			return HttpResponse.ok(transactionReceipt);

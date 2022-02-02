@@ -1,15 +1,9 @@
 package org.fiware.canismajor.token;
 
-import io.micronaut.http.HttpResponse;
-import io.micronaut.http.HttpStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bouncycastle.its.asn1.IValue;
 import org.fiware.canismajor.configuration.EncryptionProperties;
-import org.fiware.canismajor.configuration.GeneralProperties;
 import org.fiware.canismajor.exception.TokenException;
-import org.fiware.canismajor.model.DLTTokenVO;
-import org.graalvm.compiler.hotspot.replacements.CipherBlockChainingSubstitutions;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;

@@ -5,11 +5,7 @@ import org.fiware.canismajor.configuration.EncryptionProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.web3j.crypto.ECKeyPair;
-import org.web3j.crypto.Sign;
-import org.web3j.utils.Numeric;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.mock;
@@ -44,8 +40,8 @@ class TokenServiceTest {
 
 		assertFalse(dltTokenString.isEmpty(), "A token should have been returend.");
 		DLTToken dltToken = tokenService.decryptToken(dltTokenString);
-		assertEquals(privateKey, dltToken.privateKey());
-		assertEquals(publicKey, dltToken.publicKey());
+		assertEquals(privateKey, dltToken.getPrivateKey());
+		assertEquals(publicKey, dltToken.getPublicKey());
 	}
 
 

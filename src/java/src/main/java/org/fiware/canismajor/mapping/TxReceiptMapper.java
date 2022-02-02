@@ -73,13 +73,14 @@ public interface TxReceiptMapper {
 		Map property = ((Map) propertiesMap.get(propertyName));
 
 		switch ((String) property.get("type")) {
-			case PropertyVO.Type.PROPERTY_VALUE -> {
+			case PropertyVO.Type.PROPERTY_VALUE: {
 				return (T) property.get("value");
 			}
-			case RelationshipVO.Type.RELATIONSHIP_VALUE -> {
+			case RelationshipVO.Type.RELATIONSHIP_VALUE: {
 				return (T) property.get("object");
 			}
-			default -> throw new MappingException(String.format("Invalid type %s of property %s.", property.get("type"), propertiesMap));
+			default:
+				throw new MappingException(String.format("Invalid type %s of property %s.", property.get("type"), propertiesMap));
 		}
 	}
 }
