@@ -10,12 +10,15 @@ import io.cucumber.java.en.When;
 import it.pojo.Address;
 import it.pojo.CMEntitesResponse;
 import it.pojo.CMEntityResponse;
-import it.pojo.DLTTokenRequest;
-import it.pojo.DLTTokenResponse;
 import it.pojo.Entity;
 import it.pojo.EntityTransactions;
-import it.pojo.Oauth2Response;
+import it.pojo.ErrorMessage;
+import it.pojo.EthereumPluginMount;
+import it.pojo.PluginConfig;
 import it.pojo.Property;
+import it.pojo.TestAccount;
+import it.pojo.VaultAccount;
+import it.pojo.VaultPlugin;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -30,6 +33,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -37,6 +41,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class StepDefinitions {
 
@@ -49,20 +54,17 @@ public class StepDefinitions {
 	}
 
 	private static final String CANIS_MAJOR_ADDRESS = "localhost:4000";
-	private static final String KEYROCK_ADDRESS = "localhost:3005";
-	private static final String PEP_PROXY_ADDRESS = "localhost:1027";
-	private static final String ORION_ADDRESS = "localhost:1026";
+	private static final String VAULT_ADDRESS = "localhost:8200";
 
-	private static final String CANIS_MAJOR_PUBLIC_KEY = "0x3423f4d100f8646aaF6829cE32Cf801996f7007B";
-	private static final String CANIS_MAJOR_PRIVATE_KEY = "0x6e8f202ae50d774850d0678fb83a730e501ada8d2a6cda5851cdb42b27a4f45b";
 
-	private static final String KEYROCK_APP_AUTH = "Basic dHV0b3JpYWwtZGNrci1zaXRlLTAwMDAteHByZXNzd2ViYXBwOnR1dG9yaWFsLWRja3Itc2l0ZS0wMDAwLWNsaWVudHNlY3JldA";
+	private static final String VAULT_ROOT_TOKEN = "vault-plaintext-root-token";
 
-	private static final String TEST_USERNAME = "alice-the-admin@test.com";
-	private static final String TEST_PASSWORD = "test";
+	private static final Map<String, TestAccount> TEST_ACCOUNT_MAP = Map.of(
+			"Franzi", new TestAccount("franzi", "minimum symptom minute gloom tragic situate silver mechanic salad amused elite beef"),
+			"Mira", new TestAccount("mira", "ridge bargain sight table never risk isolate hold jaguar reflect curve globe awake witness reveal")
+	);
 
 	private static final int TX_AWAIT_MAX_S = 15;
-	private static final boolean USE_NEW_API = false;
 
 	// we use testCount for the tests, so that we dont need to empty the blockchain all the time
 	// we start at a random point, to be able to run multiple times in local testing.
@@ -78,33 +80,115 @@ public class StepDefinitions {
 	}
 
 	@Given("CanisMajor is running and available for requests.")
-	public void setup_sidecar_in_docker() throws Exception {
+	public void setup_canis_major_in_docker() throws Exception {
 		Awaitility
-				.await()
+				.await("Wait for canis major.")
 				.atMost(Duration.of(60, ChronoUnit.SECONDS))
-				.until(() -> assertSystemIsRunning());
+				.until(this::assertSystemIsRunning);
 	}
 
-	private boolean assertSystemIsRunning() {
-		// since the setup is relatively complex and does require root-permission, we only check that it is running here.
-		Request request = new Request.Builder()
-				.url(String.format("http://%s/health", CANIS_MAJOR_ADDRESS))
-				.build();
+	private boolean assertSuccess(Request request) {
 		OkHttpClient okHttpClient = new OkHttpClient();
-
 		try {
-			assertEquals(200, okHttpClient.newCall(request).execute().code(), "We expect the setup to run before starting.");
-			return true;
+			return okHttpClient.newCall(request).execute().code() == 200;
 		} catch (Exception e) {
 			// in case of an exception we assume the system is not reachable yet.
 			return false;
 		}
 	}
 
-	@When("The test-store is created.")
+	private boolean assertSystemIsRunning() {
+		return assertSuccess(new Request.Builder()
+				.url(String.format("http://%s/health", CANIS_MAJOR_ADDRESS))
+				.build());
+
+	}
+
+	private boolean assertVaultIsRunning() {
+		return assertSuccess(new Request.Builder()
+				.url(String.format("http://%s/v1/sys/health", VAULT_ADDRESS))
+				.build());
+	}
+
+	@Given("Vault is configured as a signing endpoint.")
+	public void configure_ethereum_plugin_vault() throws Exception {
+		Awaitility
+				.await("Wait for vault.")
+				.atMost(Duration.of(60, ChronoUnit.SECONDS))
+				.until(this::assertVaultIsRunning);
+
+		RequestBody registrationRequestBody = RequestBody.create(OBJECT_MAPPER.writeValueAsString(new VaultPlugin()), MediaType.get("application/json"));
+
+		Request registrationRequest = new Request.Builder()
+				.addHeader("X-Vault-Token", VAULT_ROOT_TOKEN)
+				.url(String.format("http://%s/v1/sys/plugins/catalog/secret/vault-ethereum", VAULT_ADDRESS))
+				.method("PUT", registrationRequestBody)
+				.addHeader("Content-Type", "application/json")
+				.build();
+		OkHttpClient okHttpClient = new OkHttpClient();
+		Response registrationResponse = okHttpClient.newCall(registrationRequest).execute();
+		assertEquals(204, registrationResponse.code(), "A plugin should have been registered succesfully.");
+
+		RequestBody enableRequestBody = RequestBody.create(OBJECT_MAPPER.writeValueAsString(new EthereumPluginMount()), MediaType.get("application/json"));
+		Request enableRequest = new Request.Builder()
+				.addHeader("X-Vault-Token", VAULT_ROOT_TOKEN)
+				.url(String.format("http://%s/v1/sys/mounts/ethereum", VAULT_ADDRESS))
+				.method("POST", enableRequestBody)
+				.build();
+		Response enableResponse = okHttpClient.newCall(enableRequest).execute();
+		if (enableResponse.code() == 400) {
+			ErrorMessage errorMessage = OBJECT_MAPPER.readValue(enableResponse.body().string(), ErrorMessage.class);
+			assertEquals("path is already in use at ethereum/", errorMessage.getErrors().get(0), "If the plugin is already configured, we are fine.");
+		} else {
+			assertEquals(204, enableResponse.code(), "The plugin should have been enabled successfully.");
+		}
+
+		RequestBody configRequestBody = RequestBody.create(OBJECT_MAPPER.writeValueAsString(new PluginConfig()), MediaType.get("application/json"));
+
+		Request configRequest = new Request.Builder()
+				.addHeader("X-Vault-Token", VAULT_ROOT_TOKEN)
+				.url(String.format("http://%s/v1/ethereum/config", VAULT_ADDRESS))
+				.method("PUT", configRequestBody)
+				.addHeader("Content-Type", "application/json")
+				.build();
+		Response configResponse = okHttpClient.newCall(configRequest).execute();
+		if (configResponse.code() < 200 || configResponse.code() > 299) {
+			fail("The plugin should be configured succeesfully.");
+		}
+	}
+
+	@Given("Franzi is registered in vault.")
+	public void register_franzi_in_vault() throws Exception {
+		RequestBody accountRegistrationRequest = RequestBody.create(OBJECT_MAPPER.writeValueAsString(new VaultAccount(TEST_ACCOUNT_MAP.get("Franzi").getMnemonic())), MediaType.get("application/json"));
+
+		Request registrationRequest = new Request.Builder()
+				.addHeader("X-Vault-Token", VAULT_ROOT_TOKEN)
+				.url(String.format("http://%s/v1/ethereum/accounts/franzi", VAULT_ADDRESS))
+				.method("PUT", accountRegistrationRequest)
+				.addHeader("Content-Type", "application/json")
+				.build();
+		OkHttpClient okHttpClient = new OkHttpClient();
+		Response registrationResponse = okHttpClient.newCall(registrationRequest).execute();
+		assertEquals(200, registrationResponse.code(), "The account should be successfully put into vault.");
+	}
+
+	@Given("Mira is registered in vault.")
+	public void register_mira_in_vault() throws Exception {
+		RequestBody accountRegistrationRequest = RequestBody.create(OBJECT_MAPPER.writeValueAsString(new VaultAccount(TEST_ACCOUNT_MAP.get("Mira").getMnemonic())), MediaType.get("application/json"));
+
+		Request registrationRequest = new Request.Builder()
+				.addHeader("X-Vault-Token", VAULT_ROOT_TOKEN)
+				.url(String.format("http://%s/v1/ethereum/accounts/mira", VAULT_ADDRESS))
+				.method("PUT", accountRegistrationRequest)
+				.addHeader("Content-Type", "application/json")
+				.build();
+		OkHttpClient okHttpClient = new OkHttpClient();
+		Response registrationResponse = okHttpClient.newCall(registrationRequest).execute();
+		assertEquals(200, registrationResponse.code(), "The account should be successfully put into vault.");
+	}
+
+	@When("Franzi creates the test-store.")
 	public void create_test_store() throws Exception {
-		String accessToken = getOauthToken();
-		String dltToken = getDLTToken();
 
 		Address address = new Address();
 		address.setStreetAddress("Via Cascata 1");
@@ -113,13 +197,11 @@ public class StepDefinitions {
 		address.setPostalCode("39020");
 
 		Entity testStore = getStore(String.format("urn:ngsi-ld:Building:%s", testCounter), address);
-		createEntity(accessToken, dltToken, testStore);
+		createEntity("Franzi", testStore);
 	}
 
-	@When("The test-store is updated.")
+	@When("Franzi updates the test store.")
 	public void update_test_store() throws Exception {
-		String accessToken = getOauthToken();
-		String dltToken = getDLTToken();
 
 		Address address = new Address();
 		address.setStreetAddress("Via S. Valentino 51/A");
@@ -135,9 +217,10 @@ public class StepDefinitions {
 
 		Request request = new Request.Builder()
 				.addHeader("NGSILD-Tenant", NGSILD_TENANT)
-				.addHeader("X-Auth-Token", accessToken)
-				.addHeader("DLT-Token", dltToken)
-				.url(String.format("http://%s/ngsi-ld/v1/entities/%s/attrs", PEP_PROXY_ADDRESS, storeID))
+				.addHeader("Wallet-Type", "Vault")
+				.addHeader("Wallet-Address", "http://vault:8200/v1/ethereum/accounts/franzi")
+				.addHeader("Wallet-Token", VAULT_ROOT_TOKEN)
+				.url(String.format("http://%s/ngsi-ld/v1/entities/%s/attrs", CANIS_MAJOR_ADDRESS, storeID))
 				.method("POST", requestBody)
 				.addHeader("Content-Type", "application/json")
 				.build();
@@ -148,16 +231,15 @@ public class StepDefinitions {
 	}
 
 
-	@When("The test-store is deleted.")
-	public void delete_test_store() throws Exception {
-		String accessToken = getOauthToken();
-		String dltToken = getDLTToken();
+	@When("Franzi deletes test store.")
+	public void franzi_deletes_test_store() throws Exception {
 
 		Request request = new Request.Builder()
 				.addHeader("NGSILD-Tenant", NGSILD_TENANT)
-				.addHeader("X-Auth-Token", accessToken)
-				.addHeader("DLT-Token", dltToken)
-				.url(String.format("http://%s/ngsi-ld/v1/entities/%s", PEP_PROXY_ADDRESS, String.format("urn:ngsi-ld:Building:%s", testCounter)))
+				.addHeader("Wallet-Type", "Vault")
+				.addHeader("Wallet-Address", "http://vault:8200/v1/ethereum/accounts/franzi")
+				.addHeader("Wallet-Token", VAULT_ROOT_TOKEN)
+				.url(String.format("http://%s/ngsi-ld/v1/entities/%s", CANIS_MAJOR_ADDRESS, String.format("urn:ngsi-ld:Building:%s", testCounter)))
 				.method("DELETE", null)
 				.addHeader("Content-Type", "application/json")
 				.build();
@@ -165,8 +247,7 @@ public class StepDefinitions {
 		Response response = okHttpClient.newCall(request).execute();
 		assertEquals(204, response.code(), "We expect the entity to be deleted.");
 
-		//TODO: deletion not supported by canismajor, yet. Needs to be decided if it should.
-		//addTxToExpectations(String.format("urn:ngsi-ld:Building:%s", testCounter));
+		//TODO: deletion not supported by canismajor, yet. Implement.
 	}
 
 	@NotNull
@@ -193,10 +274,9 @@ public class StepDefinitions {
 		return testStore;
 	}
 
-	@When("Another entity is created.")
+	@When("Mira creates another entity.")
 	public void create_another_entity() throws Exception {
-		String accessToken = getOauthToken();
-		String dltToken = getDLTToken();
+
 
 		Address address = new Address();
 		address.setStreetAddress("Bernhardstraße 16");
@@ -205,11 +285,11 @@ public class StepDefinitions {
 		address.setPostalCode("01069");
 
 		Entity testStore = getStore(String.format("urn:ngsi-ld:Building:%s-1", testCounter), address);
-		createEntity(accessToken, dltToken, testStore);
+		createEntity("Mira", testStore);
 
 	}
 
-	@Then("All non-destructive transactions should be in CanisMajor.")
+	@Then("All transactions should be in CanisMajor.")
 	public void assert_all_tx_stored() throws Exception {
 		assertFalse(expectedTxMap.isEmpty(), "We should have at least some expectations.");
 		expectedTxMap.forEach((k, v) -> {
@@ -245,27 +325,17 @@ public class StepDefinitions {
 				"Only one such transaction should exist."
 		);
 
-		Request request;
-		if (USE_NEW_API) {
-			request = new Request.Builder()
-					// we can only request by db id
-					.url(String.format("http://%s/entity/%s", CANIS_MAJOR_ADDRESS, String.format("urn:ngsi-ld:Building:%s", testCounter)))
-					.build();
+		Request request = new Request.Builder()
+				// we can only request by db id
+				.url(String.format("http://%s/entity/%s", CANIS_MAJOR_ADDRESS, String.format("urn:ngsi-ld:Building:%s", testCounter)))
+				.build();
 
-			OkHttpClient okHttpClient = new OkHttpClient();
-			Response response = okHttpClient.newCall(request).execute();
-			assertEquals(200, response.code(), "We expect a successful response.");
-			CMEntityResponse cmEntityResponse = OBJECT_MAPPER.readValue(response.body().string(), CMEntityResponse.class);
-			assertEquals(String.format("urn:ngsi-ld:Building:%s", testCounter), cmEntityResponse.getEntityId());
-		} else {
-			//TODO: this api has to be changed.
-//			long txId = entityResponses.get(0).getId();
-//
-//			request = new Request.Builder()
-//					// we can only request by db id
-//					.url(String.format("http://%s/entity/%s", CANIS_MAJOR_ADDRESS, txId))
-//					.build();
-		}
+		OkHttpClient okHttpClient = new OkHttpClient();
+		Response response = okHttpClient.newCall(request).execute();
+		assertEquals(200, response.code(), "We expect a successful response.");
+		CMEntityResponse cmEntityResponse = OBJECT_MAPPER.readValue(response.body().string(), CMEntityResponse.class);
+		assertEquals(String.format("urn:ngsi-ld:Building:%s", testCounter), cmEntityResponse.getEntityId());
+
 	}
 
 	@Then("Only one transaction should be persisted for the entity.")
@@ -304,22 +374,19 @@ public class StepDefinitions {
 		List<CMEntityResponse> filteredResponses = cmEntityResponse.getRecords().stream()
 				.filter(cmer -> cmer.getEntityId().equals(entityId))
 				.collect(Collectors.toList());
-		if (USE_NEW_API) {
-			return new EntityTransactions(entityId, (List<Object>) filteredResponses.stream().flatMap(cmer -> OBJECT_MAPPER.convertValue(cmer.getTxDetails(), List.class).stream()).collect(Collectors.toList()));
-		} else {
-			return new EntityTransactions(entityId, filteredResponses.stream().map(cmer -> cmer.getTxDetails()).collect(Collectors.toList()));
-		}
+		return new EntityTransactions(entityId, (List<Object>) filteredResponses.stream().flatMap(cmer -> OBJECT_MAPPER.convertValue(cmer.getTxDetails(), List.class).stream()).collect(Collectors.toList()));
 	}
 
 
-	private void createEntity(String accessToken, String dltToken, Entity entity) throws Exception {
+	private void createEntity(String ethAccount, Entity entity) throws Exception {
 		RequestBody requestBody = RequestBody.create(OBJECT_MAPPER.writeValueAsString(entity), MediaType.get("application/json"));
 
 		Request request = new Request.Builder()
 				.addHeader("NGSILD-Tenant", NGSILD_TENANT)
-				.addHeader("X-Auth-Token", accessToken)
-				.addHeader("DLT-Token", dltToken)
-				.url(String.format("http://%s/ngsi-ld/v1/entities/", PEP_PROXY_ADDRESS))
+				.addHeader("Wallet-Type", "Vault")
+				.addHeader("Wallet-Address", "http://vault:8200/v1/ethereum/accounts/" + ethAccount.toLowerCase(Locale.ROOT))
+				.addHeader("Wallet-Token", VAULT_ROOT_TOKEN)
+				.url(String.format("http://%s/ngsi-ld/v1/entities/", CANIS_MAJOR_ADDRESS))
 				.method("POST", requestBody)
 				.addHeader("Content-Type", "application/json")
 				.build();
@@ -337,38 +404,5 @@ public class StepDefinitions {
 		}
 	}
 
-	private String getDLTToken() throws Exception {
-		DLTTokenRequest dltTokenRequest = new DLTTokenRequest();
-		dltTokenRequest.setPublic_key(CANIS_MAJOR_PUBLIC_KEY);
-		dltTokenRequest.setPrivate_key(CANIS_MAJOR_PRIVATE_KEY);
-		RequestBody requestBody = RequestBody.create(OBJECT_MAPPER.writeValueAsString(dltTokenRequest), MediaType.get("application/json"));
 
-		Request request = new Request.Builder()
-				.url(String.format("http://%s/token", CANIS_MAJOR_ADDRESS))
-				.method("POST", requestBody)
-				.build();
-		OkHttpClient okHttpClient = new OkHttpClient();
-		Response response = okHttpClient.newCall(request).execute();
-		assertEquals(200, response.code(), "We expect a successful response.");
-		DLTTokenResponse dltTokenResponse = OBJECT_MAPPER.readValue(response.body().string(), DLTTokenResponse.class);
-
-		return dltTokenResponse.getDltToken();
-	}
-
-	private String getOauthToken() throws Exception {
-
-		RequestBody requestBody = RequestBody.create(String.format("username=%s&password=%s&grant_type=password", TEST_USERNAME, TEST_PASSWORD), MediaType.get("application/x-www-form-urlencoded"));
-
-		Request request = new Request.Builder()
-				.url(String.format("http://%s/oauth2/token", KEYROCK_ADDRESS))
-				.header("Authorization", KEYROCK_APP_AUTH)
-				.method("POST", requestBody)
-				.build();
-		OkHttpClient okHttpClient = new OkHttpClient();
-		Response response = okHttpClient.newCall(request).execute();
-		assertEquals(200, response.code(), "We expect a successful response.");
-		Oauth2Response oauth2Response = OBJECT_MAPPER.readValue(response.body().string(), Oauth2Response.class);
-
-		return oauth2Response.getAccess_token();
-	}
 }

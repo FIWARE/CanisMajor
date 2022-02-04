@@ -30,8 +30,6 @@
 
         <!-- cucumber token, see: https://reports.cucumber.io -->
         <cucumber.publish-token>CUCUMBER_PUBLISH_TOKEN</cucumber.publish-token>
-        <!-- test blockchain -->
-        <storagetype>merkle</storagetype>
     </properties>
 
     <dependencyManagement>

@@ -6,10 +6,6 @@ on:
 jobs:
   it:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        storagetype: ["iota", "ipfs","merkle"]
 
     steps:
     - uses: actions/checkout@v2
@@ -19,17 +15,24 @@ jobs:
         java-version: '17'
         java-package: jdk
 
+    - name: Build Vault
+      id: vault-build
+      run: |
+        docker build -f ./it/vault/Dockerfile ./it/vault -t vault-ethereum
+
     - name: Build CanisMajor
       id: canis-major-build
-      run: docker build . -t canis-major
+      run: |
+        mvn clean install jib:dockerBuild -DskipTests -Pdocker -Dimage.repository="fiware"
 
     - name: Run compose
       id: compose
       env:
-        CANISMAJOR_IMAGE: canis-major
+        CANISMAJOR_IMAGE: quay.io/fiware/canis-major
+        VAULT_IMAGE: vault-ethereum
       run: |
         cd it/docker-compose
-        docker-compose -f docker-compose-env.yaml -f docker-compose-${{ matrix.storagetype }}.yaml up -d
+        docker-compose -f docker-compose-env.yaml -f docker-compose-java.yaml up -d
         
     - name: Extract Branch Name
       run: echo "BRANCH=$(echo ${GITHUB_REF##*/})" >> $GITHUB_ENV
@@ -39,14 +42,14 @@ jobs:
       if: env.BRANCH == 'master'
       run: |
         cd it/
-        mvn clean install -Dstoragetype=${{ matrix.storagetype }} -Dcucumber.publish-token=${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
+        mvn clean install -Dcucumber.publish-token=${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
 
     - name: Run tests
       id: test-dev
       if: env.BRANCH != 'master'
       run: |
         cd it/
-        mvn clean install -Dstoragetype=${{ matrix.storagetype }} -Dcucumber.publish-token=${{ secrets.CUCUMBER_PUBLISH_TOKEN_DEV }}
+        mvn clean install -Dcucumber.publish-token=${{ secrets.CUCUMBER_PUBLISH_TOKEN_DEV }}
 
     - name: Collect logs
       if: ${{ failure() }}

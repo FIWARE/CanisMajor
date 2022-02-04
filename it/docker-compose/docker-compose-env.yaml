@@ -1,6 +1,20 @@
 version: "3.5"
 services:
 
+  # Hashicorp vault as a wallet
+  vault-server:
+    image: ${VAULT_IMAGE:-vault-ethereum}
+    hostname: vault
+    ports:
+      - "8200:8200"
+    environment:
+      VAULT_ADDR: "http://0.0.0.0:8200"
+      VAULT_DEV_ROOT_TOKEN_ID: "vault-plaintext-root-token"
+    cap_add:
+      - IPC_LOCK
+    networks:
+      - default
+
   # Fiware environment setup
   orion-ld:
     image: ${ORION_IMAGE:-quay.io/fiware/orion-ld:1.0.1}
@@ -112,7 +126,7 @@ services:
 
   # aei and eth
   aei-contract:
-    image: fiware/aei-contract:0.0.3-DLT
+    image: fiware/aei-contract:0.0.4-DLT
     hostname: aei-contract
     command: bash -c "truffle migrate"
     networks:
@@ -134,7 +148,7 @@ services:
       - default
     ports:
       - "8545:8545"
-    command: ganache-cli -l 8000000 --account '0x6e8f202ae50d774850d0678fb83a730e501ada8d2a6cda5851cdb42b27a4f45b, 100000000000000000000'
+    command: ganache-cli -l 8000000 --gasPrice 0 --account '0x22aabb811efca4e6f4748bd18a46b502fa85549df9fa07da649c0a148d7d5530, 100000000000000000000'
 
 volumes:
   contract-folder: ~
