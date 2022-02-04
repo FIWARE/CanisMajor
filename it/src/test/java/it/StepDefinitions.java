@@ -349,9 +349,9 @@ public class StepDefinitions {
 		verifyTransactionsForAccount(franziExpectedTxMap, "Franzi");
 	}
 
-	private void verifyTransactionsForAccount(Map<String, Integer> franziExpectedTxMap, String accountName) {
-		assertFalse(franziExpectedTxMap.isEmpty(), "We should have at least some expectations.");
-		franziExpectedTxMap.forEach((k, v) -> {
+	private void verifyTransactionsForAccount(Map<String, Integer> expectedMap, String accountName) {
+		assertFalse(expectedMap.isEmpty(), "We should have at least some expectations.");
+		expectedMap.forEach((k, v) -> {
 			List<TxDetails> entityResponses = new ArrayList<>();
 			// the entity should eventually be available in the blockchain
 			Awaitility.await().atMost(TX_AWAIT_MAX_S, TimeUnit.SECONDS).until(() -> {
@@ -472,6 +472,7 @@ public class StepDefinitions {
 				} else {
 					miraExpectedTxMap.put(id, 1);
 				}
+				break;
 			}
 			case "Franzi": {
 				if (franziExpectedTxMap.containsKey(id)) {
@@ -479,7 +480,7 @@ public class StepDefinitions {
 				} else {
 					franziExpectedTxMap.put(id, 1);
 				}
-
+				break;
 			}
 
 		}
