@@ -17,6 +17,7 @@ import it.pojo.EthereumPluginMount;
 import it.pojo.PluginConfig;
 import it.pojo.Property;
 import it.pojo.TestAccount;
+import it.pojo.TxDetails;
 import it.pojo.VaultAccount;
 import it.pojo.VaultPlugin;
 import okhttp3.MediaType;
@@ -60,8 +61,8 @@ public class StepDefinitions {
 	private static final String VAULT_ROOT_TOKEN = "vault-plaintext-root-token";
 
 	private static final Map<String, TestAccount> TEST_ACCOUNT_MAP = Map.of(
-			"Franzi", new TestAccount("franzi", "minimum symptom minute gloom tragic situate silver mechanic salad amused elite beef"),
-			"Mira", new TestAccount("mira", "ridge bargain sight table never risk isolate hold jaguar reflect curve globe awake witness reveal")
+			"Franzi", new TestAccount("franzi", "minimum symptom minute gloom tragic situate silver mechanic salad amused elite beef", "0xa508dD875f10C33C52a8abb20E16fc68E981F186"),
+			"Mira", new TestAccount("mira", "ridge bargain sight table never risk isolate hold jaguar reflect curve globe awake witness reveal", "0x34E5b3f990e55D0651B35c817bAfb89d2877cb95")
 	);
 
 	private static final int TX_AWAIT_MAX_S = 15;
@@ -72,6 +73,8 @@ public class StepDefinitions {
 
 
 	Map<String, Integer> expectedTxMap = new HashMap<>();
+	Map<String, Integer> miraExpectedTxMap = new HashMap<>();
+	Map<String, Integer> franziExpectedTxMap = new HashMap<>();
 
 	@Before
 	public void setup() throws Exception {
@@ -227,9 +230,38 @@ public class StepDefinitions {
 		OkHttpClient okHttpClient = new OkHttpClient();
 		Response response = okHttpClient.newCall(request).execute();
 		assertTrue(response.code() >= 200 && response.code() < 300, "We expect any kind of successful response.");
-		addTxToExpectations(storeID);
+		addTxToExpectations("Franzi",storeID);
 	}
 
+	@When("Mira updates the test store.")
+	public void mira_update_test_store() throws Exception {
+
+		Address address = new Address();
+		address.setStreetAddress("Hauptstraße 4");
+		address.setAdressLocality("Dresden");
+		address.setAddressRegion("Saxony");
+		address.setPostalCode("01189");
+
+		String storeID = String.format("urn:ngsi-ld:Building:%s", testCounter);
+
+		Entity testStore = getStore(storeID, address);
+
+		RequestBody requestBody = RequestBody.create(OBJECT_MAPPER.writeValueAsString(testStore), MediaType.get("application/json"));
+
+		Request request = new Request.Builder()
+				.addHeader("NGSILD-Tenant", NGSILD_TENANT)
+				.addHeader("Wallet-Type", "Vault")
+				.addHeader("Wallet-Address", "http://vault:8200/v1/ethereum/accounts/mira")
+				.addHeader("Wallet-Token", VAULT_ROOT_TOKEN)
+				.url(String.format("http://%s/ngsi-ld/v1/entities/%s/attrs", CANIS_MAJOR_ADDRESS, storeID))
+				.method("POST", requestBody)
+				.addHeader("Content-Type", "application/json")
+				.build();
+		OkHttpClient okHttpClient = new OkHttpClient();
+		Response response = okHttpClient.newCall(request).execute();
+		assertTrue(response.code() >= 200 && response.code() < 300, "We expect any kind of successful response.");
+		addTxToExpectations("Mira", storeID);
+	}
 
 	@When("Franzi deletes test store.")
 	public void franzi_deletes_test_store() throws Exception {
@@ -299,6 +331,36 @@ public class StepDefinitions {
 				EntityTransactions entityTransactions = getTransactionsForEntity(k);
 				if (!entityTransactions.getTxDetails().isEmpty()) {
 					entityResponses.addAll(entityTransactions.getTxDetails());
+					return true;
+				}
+				return false;
+			});
+			assertEquals(v, entityResponses.size(), String.format("%s transactions where expected for %s.", v, k));
+		});
+	}
+
+	@Then("All transactions for Mira are presisted.")
+	public void verify_mira_tx() throws Exception {
+		verifyTransactionsForAccount(miraExpectedTxMap, "Mira");
+	}
+
+	@Then("All transactions for Franzi are presisted.")
+	public void verify_franzi_tx() throws Exception {
+		verifyTransactionsForAccount(franziExpectedTxMap, "Franzi");
+	}
+
+	private void verifyTransactionsForAccount(Map<String, Integer> franziExpectedTxMap, String accountName) {
+		assertFalse(franziExpectedTxMap.isEmpty(), "We should have at least some expectations.");
+		franziExpectedTxMap.forEach((k, v) -> {
+			List<TxDetails> entityResponses = new ArrayList<>();
+			// the entity should eventually be available in the blockchain
+			Awaitility.await().atMost(TX_AWAIT_MAX_S, TimeUnit.SECONDS).until(() -> {
+				EntityTransactions entityTransactions = getTransactionsForEntity(k);
+				if (!entityTransactions.getTxDetails().isEmpty()) {
+					entityResponses.addAll(entityTransactions.getTxDetails().stream()
+							.map(ob -> OBJECT_MAPPER.convertValue(ob, TxDetails.class))
+							.filter(txd -> txd.getFrom().equalsIgnoreCase(TEST_ACCOUNT_MAP.get(accountName).getPublicKey()))
+							.collect(Collectors.toList()));
 					return true;
 				}
 				return false;
@@ -393,14 +455,33 @@ public class StepDefinitions {
 		OkHttpClient okHttpClient = new OkHttpClient();
 		Response response = okHttpClient.newCall(request).execute();
 		assertEquals(200, response.code(), "We expect a successful response.");
-		addTxToExpectations(entity.getId().toString());
+		addTxToExpectations(ethAccount, entity.getId().toString());
 	}
 
-	private void addTxToExpectations(String id) {
+	private void addTxToExpectations(String ethAccount, String id) {
 		if (expectedTxMap.containsKey(id)) {
 			expectedTxMap.put(id, expectedTxMap.get(id) + 1);
 		} else {
 			expectedTxMap.put(id, 1);
+		}
+
+		switch (ethAccount) {
+			case "Mira": {
+				if (miraExpectedTxMap.containsKey(id)) {
+					miraExpectedTxMap.put(id, miraExpectedTxMap.get(id) + 1);
+				} else {
+					miraExpectedTxMap.put(id, 1);
+				}
+			}
+			case "Franzi": {
+				if (franziExpectedTxMap.containsKey(id)) {
+					franziExpectedTxMap.put(id, franziExpectedTxMap.get(id) + 1);
+				} else {
+					franziExpectedTxMap.put(id, 1);
+				}
+
+			}
+
 		}
 	}
 

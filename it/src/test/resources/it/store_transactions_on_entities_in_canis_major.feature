@@ -18,6 +18,8 @@ Feature: Store transactions on entities in CanisMajor
     When Franzi creates the test-store.
     And  Mira creates another entity.
     Then All transactions should be in CanisMajor.
+    And All transactions for Mira are presisted.
+    And All transactions for Franzi are presisted.
 
   Scenario: When multiple changes happen at an entity, they are all persisted in CanisMajor.
     Given CanisMajor is running and available for requests.

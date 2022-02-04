@@ -9,4 +9,5 @@ public class TestAccount {
 
 	private final String name;
 	private final String mnemonic;
+	private final String publicKey;
 }
