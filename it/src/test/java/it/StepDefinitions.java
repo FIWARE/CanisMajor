@@ -234,20 +234,20 @@ public class StepDefinitions {
 	@When("Franzi deletes test store.")
 	public void franzi_deletes_test_store() throws Exception {
 
-		Request request = new Request.Builder()
-				.addHeader("NGSILD-Tenant", NGSILD_TENANT)
-				.addHeader("Wallet-Type", "Vault")
-				.addHeader("Wallet-Address", "http://vault:8200/v1/ethereum/accounts/franzi")
-				.addHeader("Wallet-Token", VAULT_ROOT_TOKEN)
-				.url(String.format("http://%s/ngsi-ld/v1/entities/%s", CANIS_MAJOR_ADDRESS, String.format("urn:ngsi-ld:Building:%s", testCounter)))
-				.method("DELETE", null)
-				.addHeader("Content-Type", "application/json")
-				.build();
-		OkHttpClient okHttpClient = new OkHttpClient();
-		Response response = okHttpClient.newCall(request).execute();
-		assertEquals(204, response.code(), "We expect the entity to be deleted.");
+//		Request request = new Request.Builder()
+//				.addHeader("NGSILD-Tenant", NGSILD_TENANT)
+//				.addHeader("Wallet-Type", "Vault")
+//				.addHeader("Wallet-Address", "http://vault:8200/v1/ethereum/accounts/franzi")
+//				.addHeader("Wallet-Token", VAULT_ROOT_TOKEN)
+//				.url(String.format("http://%s/ngsi-ld/v1/entities/%s", CANIS_MAJOR_ADDRESS, String.format("urn:ngsi-ld:Building:%s", testCounter)))
+//				.method("DELETE", null)
+//				.addHeader("Content-Type", "application/json")
+//				.build();
+//		OkHttpClient okHttpClient = new OkHttpClient();
+//		Response response = okHttpClient.newCall(request).execute();
+//		assertEquals(204, response.code(), "We expect the entity to be deleted.");
 
-		//TODO: deletion not supported by canismajor, yet. Implement.
+		//TODO: Deletion not yet supported by canismajor. Implement.
 	}
 
 	@NotNull
@@ -392,7 +392,7 @@ public class StepDefinitions {
 				.build();
 		OkHttpClient okHttpClient = new OkHttpClient();
 		Response response = okHttpClient.newCall(request).execute();
-		assertEquals(201, response.code(), "We expect a successful response.");
+		assertEquals(200, response.code(), "We expect a successful response.");
 		addTxToExpectations(entity.getId().toString());
 	}
 

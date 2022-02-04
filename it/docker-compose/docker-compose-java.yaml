@@ -4,7 +4,7 @@ services:
 
   canis-major:
     restart: always
-    image: ${CANISMAJOR_IMAGE:-quay.io/wi_stefan/canis-major:latest}
+    image: ${CANISMAJOR_IMAGE:-quay.io/fiware/canis-major}
     hostname: canis-major
     depends_on:
       - ganache-cli
@@ -13,7 +13,7 @@ services:
     environment:
       - MICRONAUT_SERVER_PORT=4000
       - MICRONAUT_HTTP_SERVICES_NGSI_URL=http://orion:1026
-      - GENERAL_DLT_ADDRESS=http://ganache-cli:8545
+      - ETHEREUM_DLT_ADDRESS=http://ganache-cli:8545
       - GENERAL_NGSI_TENANT=orion
     networks:
       - default
