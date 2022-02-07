@@ -4,7 +4,7 @@ services:
 
   canis-major:
     restart: always
-    image: ${CANISMAJOR_IMAGE:-quay.io/fiware/canis-major}
+    image: ${CANISMAJOR_IMAGE:-quay.io/fiware/canismajor}
     hostname: canis-major
     depends_on:
       - ganache-cli

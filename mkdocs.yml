@@ -13,10 +13,7 @@ extra_css:
         "https://www.fiware.org/style/fiware_readthedocs.css",
         "https://www.fiware.org/style/fiware_readthedocs_iot.css",
     ]
-# google_analytics: ["", ""]
 pages:
     - Home: index.md
-    - "Architecture": architecture.md
     - "Installation": installation.md
-    - "Usage": usage.md
     - "APIs": apis.md
