@@ -13,7 +13,7 @@ services:
     cap_add:
       - IPC_LOCK
     networks:
-      - default
+      - test-network
 
   # Fiware environment setup
   orion-ld:
@@ -27,7 +27,7 @@ services:
     depends_on:
       - mongo-db
     networks:
-      - default
+      - test-network
     ports:
       - "1026:1026"
     healthcheck:
@@ -43,7 +43,7 @@ services:
     ports:
       - "27017:27017" # localhost:27017
     networks:
-      - default
+      - test-network
     command: --nojournal
     healthcheck:
       test: |
@@ -53,11 +53,11 @@ services:
 
   # aei and eth
   aei-contract:
-    image: fiware/aei-contract:0.0.4-DLT
+    image: quay.io/wi_stefan/py-contract:0.0.2
     hostname: aei-contract
     command: bash -c "truffle migrate"
     networks:
-      - default
+      - test-network
     environment:
       - RPC_ENDPOINT=ganache-cli
       - RPC_PORT=8545
@@ -72,10 +72,14 @@ services:
     image: trufflesuite/ganache-cli:latest
     hostname: ganache-cli
     networks:
-      - default
+      - test-network
     ports:
       - "8545:8545"
     command: ganache-cli -l 8000000 --gasPrice 0 --account '0x22aabb811efca4e6f4748bd18a46b502fa85549df9fa07da649c0a148d7d5530, 100000000000000000000'
 
 volumes:
   contract-folder: ~
+
+networks:
+  test-network:
+    driver: bridge

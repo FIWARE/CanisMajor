@@ -14,6 +14,7 @@ import org.web3j.protocol.core.methods.response.EthCall;
 import org.web3j.protocol.core.methods.response.EthGetCode;
 import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
+import org.web3j.tx.RawTransactionManager;
 import org.web3j.tx.TransactionManager;
 import org.web3j.tx.exceptions.ContractCallException;
 import org.web3j.tx.exceptions.TxHashMismatchException;
@@ -50,10 +51,10 @@ public class SigningTransactionManager extends TransactionManager {
 	}
 
 	@Override
-	public EthSendTransaction sendEIP1559Transaction(long chainId, BigInteger maxPriorityFeePerGas, BigInteger maxFeePerGas, BigInteger gasLimit, String to, String data, BigInteger value, boolean constructor) throws IOException {
+	public EthSendTransaction sendTransactionEIP1559(BigInteger gasPremium, BigInteger feeCap, BigInteger gasLimit, String to, String data, BigInteger value, boolean constructor) throws IOException {
 		BigInteger nonce = getNonce();
 
-		RawTransaction rawTransaction = RawTransaction.createTransaction(chainId, nonce, gasLimit, to, value, data, maxPriorityFeePerGas, maxFeePerGas);
+		RawTransaction rawTransaction = RawTransaction.createEtherTransaction(nonce, gasLimit, to, value, gasPremium, feeCap);
 
 		return signAndSend(rawTransaction);
 	}

@@ -8,4 +8,5 @@ import org.web3j.crypto.RawTransaction;
 public interface TransactionMapper {
 
 	VaultTransaction rawTransactionToVaultTransaction(RawTransaction rawTransaction);
+
 }

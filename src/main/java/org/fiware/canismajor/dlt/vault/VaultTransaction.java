@@ -12,7 +12,7 @@ public class VaultTransaction {
 	private String name;
 	private String address;
 	private String to;
-	private String encoding = "utf8";
+	private String encoding = "hex";
 	private String amount;
 	private String nonce;
 	@JsonProperty("gas_limit")

@@ -55,7 +55,7 @@ iota:
 ethereum:
   enabled: true
   dltAddress: localhost:8545
-  contractAddress: "0xcd125237903865f39caf6443209c89bA70a4A385"
+  contractAddress: "0xE9632d32cC0F83437ac6312e1B35c90d60203C2d"
   gas: 3000000
   gasPrice: 0
 

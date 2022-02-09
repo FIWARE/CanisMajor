@@ -1,22 +1,19 @@
 package org.fiware.canismajor.dlt;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.fiware.aeicontract.Assets;
+import org.fiware.aeicontract.Timestamper;
 import org.fiware.canismajor.configuration.EthereumProperties;
-import org.fiware.canismajor.configuration.MerkleProperties;
-import org.fiware.canismajor.exception.SigningException;
 import org.fiware.canismajor.exception.TransactionException;
 import org.fiware.canismajor.mapping.TransactionMapper;
 import org.fiware.canismajor.model.EntityFragmentVO;
 import org.fiware.canismajor.model.EntityVO;
-import org.rebaze.integrity.tree.Tree;
-import org.rebaze.integrity.tree.TreeSession;
-import org.rebaze.integrity.tree.util.DefaultTreeSessionFactory;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.ECKeyPair;
+import org.web3j.crypto.Hash;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.RemoteFunctionCall;
@@ -26,9 +23,8 @@ import org.web3j.tx.gas.ContractGasProvider;
 import org.web3j.utils.Numeric;
 
 import javax.inject.Singleton;
+import java.math.BigInteger;
 import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
 
 @Slf4j
 @Singleton
@@ -40,7 +36,6 @@ public class EthereumService {
 	private final TransactionMapper transactionMapper;
 	private final ContractGasProvider contractGasProvider;
 	private final EthereumProperties ethereumProperties;
-	private final MerkleProperties merkleProperties;
 	private final SigningServiceFactory signingServiceFactory;
 
 	public boolean isAddress(String publicKey) {
@@ -53,9 +48,8 @@ public class EthereumService {
 
 	public TransactionReceipt createAsset(EntityVO entityVO, WalletInformation walletInformation) throws TransactionException {
 		try {
-			Assets assets = Assets.load(ethereumProperties.getContractAddress(), ethClient, getSigningTransactionManager(walletInformation), contractGasProvider);
-
-			RemoteFunctionCall<TransactionReceipt> txRFC = assets.createAsset(getAssetId(entityVO.id()), getMerkleTreeHash(entityVO));
+			Timestamper timestamper = Timestamper.load(ethereumProperties.getContractAddress(), ethClient, getSigningTransactionManager(walletInformation), contractGasProvider);
+			RemoteFunctionCall<TransactionReceipt> txRFC = timestamper.timestamp(getAssetId(entityVO.id()), getMerkleTreeHash(entityVO));
 			return txRFC.send();
 		} catch (JsonProcessingException e) {
 			throw new TransactionException(String.format("Was not able to create the merkle root hash for entity %s.", entityVO), e);
@@ -66,8 +60,8 @@ public class EthereumService {
 
 	public TransactionReceipt updateAsset(URI entityId, EntityFragmentVO entityFragmentVO, WalletInformation walletInformation) throws TransactionException {
 		try {
-			Assets assets = Assets.load(ethereumProperties.getContractAddress(), ethClient, getSigningTransactionManager(walletInformation), contractGasProvider);
-			RemoteFunctionCall<TransactionReceipt> txRFC = assets.updateAsset(getAssetId(entityId), getMerkleTreeHash(entityFragmentVO));
+			Timestamper timestamper = Timestamper.load(ethereumProperties.getContractAddress(), ethClient, getSigningTransactionManager(walletInformation), contractGasProvider);
+			RemoteFunctionCall<TransactionReceipt> txRFC = timestamper.timestamp(getAssetId(entityId), getMerkleTreeHash(entityFragmentVO));
 			return txRFC.send();
 		} catch (JsonProcessingException e) {
 			throw new TransactionException(String.format("Was not able to create the merkle root hash for entity fragment %s.", entityFragmentVO), e);
@@ -76,17 +70,17 @@ public class EthereumService {
 		}
 	}
 
-	private byte[] getAssetId(URI entityId) {
-		byte[] idArray = entityId.toString().getBytes();
-		return Arrays.copyOf(idArray, 32);
+	private BigInteger getAssetId(URI entityId) {
+
+		return Numeric.toBigInt(Hash.sha3String(entityId.toString()));
 	}
 
-	private String getMerkleTreeHash(Object object) throws JsonProcessingException {
+	private BigInteger getMerkleTreeHash(Object object) throws JsonProcessingException {
+		// sort to get a reproducible hash
+		objectMapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
 		String entityString = objectMapper.writeValueAsString(object);
-		TreeSession treeSession = new DefaultTreeSessionFactory().create();
-		treeSession.setDigestAlgorithm(merkleProperties.getHashMethod());
-		Tree entityTree = treeSession.createTreeBuilder().add(entityString.getBytes()).seal();
-		return entityTree.fingerprint();
+
+		return Numeric.toBigInt(Hash.sha3String(entityString));
 	}
 
 
