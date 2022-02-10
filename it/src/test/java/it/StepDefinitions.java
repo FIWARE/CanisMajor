@@ -309,7 +309,6 @@ public class StepDefinitions {
 	@When("Mira creates another entity.")
 	public void create_another_entity() throws Exception {
 
-
 		Address address = new Address();
 		address.setStreetAddress("Bernhardstraße 16");
 		address.setAdressLocality("Dresden");

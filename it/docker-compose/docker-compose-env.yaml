@@ -53,9 +53,8 @@ services:
 
   # aei and eth
   aei-contract:
-    image: quay.io/wi_stefan/py-contract:0.0.2
+    image: quay.io/wi_stefan/py-contract:latest
     hostname: aei-contract
-    command: bash -c "truffle migrate"
     networks:
       - test-network
     environment:
@@ -63,10 +62,6 @@ services:
       - RPC_PORT=8545
     depends_on:
       - ganache-cli
-    entrypoint: /entrypoints/contract-entrypoint.sh
-    volumes:
-      - ./entrypoints:/entrypoints
-      - contract-folder:/contract-data
 
   ganache-cli:
     image: trufflesuite/ganache-cli:latest
