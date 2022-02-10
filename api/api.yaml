@@ -16,19 +16,6 @@ tags:
   - name: Entity
     description: Endpoints the get transaction information about entities.
 paths:
-  '/version':
-    get:
-      tags:
-        - Ops
-      description: Provide the current version of CanisMajor.
-      operationId: getVersion
-      responses:
-        '200':
-          description: Successfully returend the version.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Version'
   '/health':
     get:
       tags:
@@ -282,21 +269,6 @@ components:
           description: The base64 encoded key to be used with the configured DLT
       required:
         - dlt-token
-    Version:
-      type: object
-      description: Information about the version of the running service.
-      properties:
-        name:
-          type: string
-          description: Name of the component, should be CanisMajor
-          example: "canismajor"
-        version:
-          type: string
-          description: Version of the component, should be semver-compliant.
-          example: "0.0.1"
-      required:
-        - name
-        - version
     georelEnum:
       type: string
       enum:
