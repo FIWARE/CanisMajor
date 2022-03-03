@@ -29,3 +29,28 @@ Feature: Store transactions on entities in CanisMajor
     And Franzi updates the test store.
     And Franzi deletes test store.
     Then All transactions should be in CanisMajor.
+
+  Scenario: When updates without wallet-information happen, the default account should be used.
+    Given CanisMajor is running and available for requests.
+    And Vault is configured as a signing endpoint.
+    And Default account is registered in vault.
+    When Anonymous user creates a delivery.
+    And Anonymous user updates a delivery.
+    Then All transactions should be in CanisMajor.
+    And All transactions for Default are presisted.
+
+  Scenario: When updates with and without account happen, the default or the correct account should be used.
+    Given CanisMajor is running and available for requests.
+    And Vault is configured as a signing endpoint.
+    And Default account is registered in vault.
+    And Mira is registered in vault.
+    And Franzi is registered in vault.
+    When Anonymous user creates a delivery.
+    And Franzi creates the test-store.
+    And Franzi updates the test store.
+    And Mira updates the test store.
+    And Anonymous user updates a delivery.
+    Then All transactions should be in CanisMajor.
+    And All transactions for Default are presisted.
+    And All transactions for Franzi are presisted.
+    And All transactions for Mira are presisted.

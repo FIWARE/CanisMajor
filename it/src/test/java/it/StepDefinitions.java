@@ -61,6 +61,7 @@ public class StepDefinitions {
 	private static final String VAULT_ROOT_TOKEN = "vault-plaintext-root-token";
 
 	private static final Map<String, TestAccount> TEST_ACCOUNT_MAP = Map.of(
+			"Default", new TestAccoutn("default", "label butter chaos blush mind north kit drill position phone decline urge claw mammal risk", "0x82AC43A26ae509eEf217330C7d862F822fF0CECB"),
 			"Franzi", new TestAccount("franzi", "minimum symptom minute gloom tragic situate silver mechanic salad amused elite beef", "0xa508dD875f10C33C52a8abb20E16fc68E981F186"),
 			"Mira", new TestAccount("mira", "ridge bargain sight table never risk isolate hold jaguar reflect curve globe awake witness reveal", "0x34E5b3f990e55D0651B35c817bAfb89d2877cb95")
 	);
@@ -75,6 +76,8 @@ public class StepDefinitions {
 	Map<String, Integer> expectedTxMap = new HashMap<>();
 	Map<String, Integer> miraExpectedTxMap = new HashMap<>();
 	Map<String, Integer> franziExpectedTxMap = new HashMap<>();
+	Map<String, Integer> defaultExpectedTxMap = new HashMap<>();
+
 
 	@Before
 	public void setup() throws Exception {
@@ -160,6 +163,21 @@ public class StepDefinitions {
 		}
 	}
 
+	@Given("Default account is registered in vault.")
+	public void register_default_account_in_vault() throws Exception {
+		RequestBody accountRegistrationRequest = RequestBody.create(OBJECT_MAPPER.writeValueAsString(new VaultAccount(TEST_ACCOUNT_MAP.get("Default").getMnemonic())), MediaType.get("application/json"));
+
+		Request registrationRequest = new Request.Builder()
+				.addHeader("X-Vault-Token", VAULT_ROOT_TOKEN)
+				.url(String.format("http://%s/v1/ethereum/accounts/default", VAULT_ADDRESS))
+				.method("PUT", accountRegistrationRequest)
+				.addHeader("Content-Type", "application/json")
+				.build();
+		OkHttpClient okHttpClient = new OkHttpClient();
+		Response registrationResponse = okHttpClient.newCall(registrationRequest).execute();
+		assertEquals(200, registrationResponse.code(), "The account should be successfully put into vault.");
+	}
+
 	@Given("Franzi is registered in vault.")
 	public void register_franzi_in_vault() throws Exception {
 		RequestBody accountRegistrationRequest = RequestBody.create(OBJECT_MAPPER.writeValueAsString(new VaultAccount(TEST_ACCOUNT_MAP.get("Franzi").getMnemonic())), MediaType.get("application/json"));
@@ -188,6 +206,34 @@ public class StepDefinitions {
 		OkHttpClient okHttpClient = new OkHttpClient();
 		Response registrationResponse = okHttpClient.newCall(registrationRequest).execute();
 		assertEquals(200, registrationResponse.code(), "The account should be successfully put into vault.");
+	}
+
+	@When("Anonymous user creates a delivery.")
+	public void create_delivery() throws Exception {
+		Entity delivery = getDelivery(String.format("urn:ngsi-ld:Delivery:%s", testCounter), "awaiting_timeslot_confirmation");
+
+		createEntity("Default", delivery);
+	}
+
+	@When("Anonymous user updates a delivery.")
+	public void update_delivery() throws Exception {
+
+		String deliveryID = String.format("urn:ngsi-ld:Delivery:%s", testCounter);
+		Entity delivery = getDelivery(deliveryID, "timeslot_confirmed");
+
+		RequestBody requestBody = RequestBody.create(OBJECT_MAPPER.writeValueAsString(delivery), MediaType.get("application/json"));
+
+		Request request = new Request.Builder()
+				.addHeader("NGSILD-Tenant", NGSILD_TENANT)
+				.url(String.format("http://%s/ngsi-ld/v1/entities/%s/attrs", CANIS_MAJOR_ADDRESS, deliveryID))
+				.method("POST", requestBody)
+				.addHeader("Content-Type", "application/json")
+				.build();
+		OkHttpClient okHttpClient = new OkHttpClient();
+		Response response = okHttpClient.newCall(request).execute();
+		assertTrue(response.code() >= 200 && response.code() < 300, "We expect any kind of successful response.");
+		addTxToExpectations("Default", deliveryID);
+
 	}
 
 	@When("Franzi creates the test-store.")
@@ -230,7 +276,7 @@ public class StepDefinitions {
 		OkHttpClient okHttpClient = new OkHttpClient();
 		Response response = okHttpClient.newCall(request).execute();
 		assertTrue(response.code() >= 200 && response.code() < 300, "We expect any kind of successful response.");
-		addTxToExpectations("Franzi",storeID);
+		addTxToExpectations("Franzi", storeID);
 	}
 
 	@When("Mira updates the test store.")
@@ -282,6 +328,44 @@ public class StepDefinitions {
 		//TODO: Deletion not yet supported by canismajor. Implement.
 	}
 
+	private Entity getDelivery(String id, String status) {
+
+		Property nameProperty = new Property();
+		nameProperty.setType("Property");
+		nameProperty.setValue(id);
+
+		Property allowedTimeslotProperty = new Property();
+		allowedTimeslotProperty.setType("Property");
+		allowedTimeslotProperty.setValue("");
+
+		Property requestedTimeslotProperty = new Property();
+		requestedTimeslotProperty.setType("Property");
+		requestedTimeslotProperty.setValue("2021-12-25T12:30:00+00:00");
+
+		Property deliveryMethodProperty = new Property();
+		deliveryMethodProperty.setType("Property");
+		deliveryMethodProperty.setValue("airdrop");
+
+		Property statusProperty = new Property();
+		statusProperty.setType("Property");
+		statusProperty.setValue(status);
+
+
+		Map<String, Object> propertyMap = new HashMap<>();
+		propertyMap.put("name", nameProperty);
+		propertyMap.put("allowedTimeslot", allowedTimeslotProperty);
+		propertyMap.put("requestedTimeslot", requestedTimeslotProperty);
+		propertyMap.put("deliveryMethod", deliveryMethodProperty);
+		propertyMap.put("status", statusProperty);
+
+		Entity delivery = new Entity();
+		delivery.setId(URI.create(id));
+		delivery.setType("Delivery");
+		delivery.setPropertyMap(propertyMap);
+		return delivery;
+
+	}
+
 	@NotNull
 	private Entity getStore(String id, Address address) {
 		Property categoryProperty = new Property();
@@ -317,7 +401,6 @@ public class StepDefinitions {
 
 		Entity testStore = getStore(String.format("urn:ngsi-ld:Building:%s-1", testCounter), address);
 		createEntity("Mira", testStore);
-
 	}
 
 	@Then("All transactions should be in CanisMajor.")
@@ -336,6 +419,11 @@ public class StepDefinitions {
 			});
 			assertEquals(v, entityResponses.size(), String.format("%s transactions where expected for %s.", v, k));
 		});
+	}
+
+	@Then("All transactions for Default are presisted.")
+	public void verify_default_tx() throws Exception {
+		verifyTransactionsForAccount(defaultExpectedTxMap, "Default");
 	}
 
 	@Then("All transactions for Mira are presisted.")
@@ -438,19 +526,29 @@ public class StepDefinitions {
 		return new EntityTransactions(entityId, (List<Object>) filteredResponses.stream().flatMap(cmer -> OBJECT_MAPPER.convertValue(cmer.getTxDetails(), List.class).stream()).collect(Collectors.toList()));
 	}
 
-
 	private void createEntity(String ethAccount, Entity entity) throws Exception {
 		RequestBody requestBody = RequestBody.create(OBJECT_MAPPER.writeValueAsString(entity), MediaType.get("application/json"));
+		Request request;
+		if (ethAccount == "Default") {
+			request = new Request.Builder()
+					.addHeader("NGSILD-Tenant", NGSILD_TENANT)
+					.url(String.format("http://%s/ngsi-ld/v1/entities/", CANIS_MAJOR_ADDRESS))
+					.method("POST", requestBody)
+					.addHeader("Content-Type", "application/json")
+					.build();
+		} else {
+			request = new Request.Builder()
+					.addHeader("NGSILD-Tenant", NGSILD_TENANT)
+					.addHeader("Wallet-Type", "Vault")
+					.addHeader("Wallet-Address", "http://vault:8200/v1/ethereum/accounts/" + ethAccount.toLowerCase(Locale.ROOT))
+					.addHeader("Wallet-Token", VAULT_ROOT_TOKEN)
+					.url(String.format("http://%s/ngsi-ld/v1/entities/", CANIS_MAJOR_ADDRESS))
+					.method("POST", requestBody)
+					.addHeader("Content-Type", "application/json")
+					.build();
+		}
 
-		Request request = new Request.Builder()
-				.addHeader("NGSILD-Tenant", NGSILD_TENANT)
-				.addHeader("Wallet-Type", "Vault")
-				.addHeader("Wallet-Address", "http://vault:8200/v1/ethereum/accounts/" + ethAccount.toLowerCase(Locale.ROOT))
-				.addHeader("Wallet-Token", VAULT_ROOT_TOKEN)
-				.url(String.format("http://%s/ngsi-ld/v1/entities/", CANIS_MAJOR_ADDRESS))
-				.method("POST", requestBody)
-				.addHeader("Content-Type", "application/json")
-				.build();
+
 		OkHttpClient okHttpClient = new OkHttpClient();
 		Response response = okHttpClient.newCall(request).execute();
 		assertEquals(200, response.code(), "We expect a successful response.");
@@ -465,6 +563,14 @@ public class StepDefinitions {
 		}
 
 		switch (ethAccount) {
+			case "Default": {
+				if (defaultExpectedTxMap.containsKey(id)) {
+					defaultExpectedTxMap.put(id, defaultExpectedTxMap.get(id) + 1);
+				} else {
+					defaultExpectedTxMap.put(id, 1);
+				}
+				break;
+			}
 			case "Mira": {
 				if (miraExpectedTxMap.containsKey(id)) {
 					miraExpectedTxMap.put(id, miraExpectedTxMap.get(id) + 1);
