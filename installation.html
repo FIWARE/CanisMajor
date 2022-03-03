@@ -52,10 +52,6 @@
                     <li class="toctree-l1"><a class="reference internal" href="index.html">Home</a>
                     </li>
                 </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a>
-                    </li>
-                </ul>
                 <ul class="current">
                     <li class="toctree-l1 current"><a class="reference internal current" href="installation.html">Installation</a>
     <ul class="current">
@@ -63,11 +59,7 @@
                     </li>
                 </ul>
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="apis.html">APIs</a>
+                    <li class="toctree-l1"><a class="" href="apis.md">APIs</a>
                     </li>
                 </ul>
       </div>
@@ -106,234 +98,10 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="installation-guide">Installation Guide</h1>
-<p>This section describes installing CanisMajor Blockchain Adaptor:</p>
-<h1 id="requirements">Requirements</h1>
-<p>In order to execute CanisMajor, it is needed to have previously installed the following software:
- - NodeJS 12
- - ORM Database (SQL, Postgres)</p>
-<p># Installation</p>
-<p>The following steps need to be performed to get CanisMajor up and running:</p>
-<ol>
-<li>Download the software, using GitHub.</li>
-</ol>
-<pre><code class="language-sh">    git clone https://github.com/fiware/canismajor
-</code></pre>
-<ol>
-<li>Install all required libraries using npm.</li>
-</ol>
-<pre><code class="language-sh">    cd canismajor
-    npm install
-</code></pre>
-<ol>
-<li>Database Init/Migration</li>
-</ol>
-<pre><code class="language-sh">    DB_USERNAME=${DB_USERNAME} \
-    DB_PASSWORD=${DB_PASSWORD} \
-    DB_NAME=${DB_NAME} \
-    DB_HOST=${DB_HOST} \
-    DB_PORT=${DB_PORT} \
-    npm run create &amp;&amp; npm run migrate
-</code></pre>
-<ol>
-<li>Configure the installation</li>
-</ol>
-<pre><code class="language-sh">    - DB_NAME
-    - DB_HOST
-    - DB_PORT
-    - DB_DILECT
-    - DB_USERNAME
-    - DB_PASSWORD
-    - CM_PORT
-    - TRANSCTION_TIMEOUT
-    - DLT_TYPE  // eth or iota
-    - IOTA_ENDPOINT // iota config
-
-    // eth config
-    - RPC_ENDPOINT
-    - DEFAULT_GAS
-    - DEFAULT_GAS_PRICE
-    - AEI_CONTRACT_MODE
-    - CONTRACT_ADDRESS
-
-    // storage config
-    - STORAGE_TYPE // iota, ipfs or merkletree
-    - IPFS_HOST
-    - IPFS_PORT
-    - IPFS_PROTOCOL
-    - IPFS_AUTH_CODE
-    - IOTAMAM_HOST
-    - IOTAMAM_MODE
-</code></pre>
-<table>
-<thead>
-<tr>
-<th>ENV Variable</th>
-<th align="center">Description</th>
-<th align="right">Example</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>DB_NAME</td>
-<td align="center">Name of the Database</td>
-<td align="right">cm</td>
-</tr>
-<tr>
-<td>DB_HOST</td>
-<td align="center">Database HOST name</td>
-<td align="right">localhost</td>
-</tr>
-<tr>
-<td>DB_PORT</td>
-<td align="center">Database PORT number</td>
-<td align="right">3306</td>
-</tr>
-<tr>
-<td>DB_DILECT</td>
-<td align="center">Database Dilect (sequlize ORM) can be mysql, postgres</td>
-<td align="right">mysql</td>
-</tr>
-<tr>
-<td>DB_USERNAME</td>
-<td align="center">Database User Name</td>
-<td align="right">root</td>
-</tr>
-<tr>
-<td>DB_PASSWORD</td>
-<td align="center">Database Password</td>
-<td align="right">root</td>
-</tr>
-<tr>
-<td>TRANSCTION_TIMEOUT</td>
-<td align="center">Transaction timeout</td>
-<td align="right">1000</td>
-</tr>
-<tr>
-<td>DLT_TYPE</td>
-<td align="center">Ledger or Blockchain Type (Can be eth or iota)</td>
-<td align="right">eth</td>
-</tr>
-<tr>
-<td>IOTA_ENDPOINT (optional)</td>
-<td align="center">IOTA Endpoint (required) when the DLT_TYPE=iota</td>
-<td align="right">'https://nodes.devnet.iota.org:443'</td>
-</tr>
-<tr>
-<td>RPC_ENDPOINT</td>
-<td align="center">Endpoint of the ethereum client</td>
-<td align="right">'http://127.0.0.1:8545'</td>
-</tr>
-<tr>
-<td>DEFAULT_GAS</td>
-<td align="center">Default GAS usage of the Eth Smart Contract</td>
-<td align="right">300000</td>
-</tr>
-<tr>
-<td>AEI_CONTRACT_MODE</td>
-<td align="center">AEI contract enabled or not</td>
-<td align="right">true</td>
-</tr>
-<tr>
-<td>CONTRACT_ADDRESS</td>
-<td align="center">Contract Address of the deployed smart contract</td>
-<td align="right">0xcd125237903865f39caf6443209c89bA70a4A385</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Storage Configuration</strong>   </p>
-<p><strong><em>ipfs</em></strong></p>
-<table>
-<thead>
-<tr>
-<th>ENV Variable</th>
-<th align="center">Description</th>
-<th align="right">Example</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>STORAGE_TYPE</td>
-<td align="center">Storage type to store the payload (can be ipfs, iota or merkletree)</td>
-<td align="right">ipfs</td>
-</tr>
-<tr>
-<td>IPFS_HOST</td>
-<td align="center">IPFS host name</td>
-<td align="right">ipfs.infura.io</td>
-</tr>
-<tr>
-<td>IPFS_PORT</td>
-<td align="center">IPFS port number</td>
-<td align="right">5001</td>
-</tr>
-<tr>
-<td>IPFS_PROTOCOL</td>
-<td align="center">IPFS protocol</td>
-<td align="right">https</td>
-</tr>
-<tr>
-<td>IPFS_AUTH_CODE (optional)</td>
-<td align="center">Bearer Auth code</td>
-<td align="right">" "</td>
-</tr>
-</tbody>
-</table>
-<p><strong><em>IOTAMaM</em></strong></p>
-<table>
-<thead>
-<tr>
-<th>ENV Variable</th>
-<th align="center">Description</th>
-<th align="right">Example</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>STORAGE_TYPE</td>
-<td align="center">Storage type to store the payload (can be ipfs, iota or merkletree)</td>
-<td align="right">iota</td>
-</tr>
-<tr>
-<td>IOTAMAM_HOST</td>
-<td align="center">IOTAMaM Host Name</td>
-<td align="right">https://nodes.devnet.iota.org</td>
-</tr>
-<tr>
-<td>IOTAMAM_MODE</td>
-<td align="center">IOTAMaM mode (can be public or private)</td>
-<td align="right">public</td>
-</tr>
-</tbody>
-</table>
-<p><strong><em>Merkle Tree</em></strong></p>
-<table>
-<thead>
-<tr>
-<th>ENV Variable</th>
-<th align="center">Description</th>
-<th align="right">Example</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>STORAGE_TYPE</td>
-<td align="center">Storage type to store the payload (can be ipfs, iota or merkletree)</td>
-<td align="right">merkletree</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Configuration diagram</strong> </p>
-<p><img alt="config" src="https://raw.githubusercontent.com/FIWARE-Blockchain/tutorials.Step-by-Step/master/docs/config.png" /></p>
-<p>there configuration can be also mentioned in src/configuration/config.js</p>
-<ol>
-<li>Running the CanisMajor</li>
-</ol>
-<pre><code class="language-sh">    npm start
-</code></pre>
-<p>or in development mode:</p>
-<pre><code class="language-sh">    npm run dev
-</code></pre>
+                <h1 id="run">Run</h1>
+<p>To run CanisMajor via docker, use: <code>docker run quay.io/fiware/canismajor</code>
+A full setup, including the context broker, a development-mock <a href="https://hub.docker.com/r/trufflesuite/ganache-cli/">eth-node</a>, the used <a href="https://github.com/FIWARE-Blockchain/AEIContract">contract</a>
+and <a href="https://github.com/hashicorp/vault">Vault</a> as a wallet can be setup via: <code>docker-compose -f it/docker-compose/docker-compose-env.yaml -f it/docker-compose/docker-compose-java.yaml up</code></p>
               
             </div>
           </div>
@@ -341,10 +109,8 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="usage.html" class="btn btn-neutral float-right" title="Usage">Next <span class="icon icon-circle-arrow-right"></span></a>
       
-      
-        <a href="architecture.html" class="btn btn-neutral" title="Architecture"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -374,10 +140,8 @@
         </span>
     
     
-      <span><a href="architecture.html" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="index.html" style="color: #fcfcfc">&laquo; Previous</a></span>
     
-    
-      <span><a href="usage.html" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

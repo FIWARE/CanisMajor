@@ -51,11 +51,13 @@
                 <ul class="current">
                     <li class="toctree-l1 current"><a class="reference internal current" href="index.html">Home</a>
     <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#testing">Testing</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#adrs">ADRs</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#license">License</a>
+    </li>
     </ul>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a>
                     </li>
                 </ul>
                 <ul>
@@ -63,11 +65,7 @@
                     </li>
                 </ul>
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="apis.html">APIs</a>
+                    <li class="toctree-l1"><a class="" href="apis.md">APIs</a>
                     </li>
                 </ul>
       </div>
@@ -106,12 +104,31 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="canismajor-fiware-blockchain-adaptor">CanisMajor - FIWARE Blockchain Adaptor</h1>
-<p>CanisMajor is a blockchain adaptor that supports various DLT (Ethereum Client,IOTA, FABRIC chaincode (soon)),
-the adaptor aims to submit the data to DLT and works with NGSI-LD and NGSI-V2 as well.</p>
-<p>The adaptor is not be recommended to work for public-permissionless blockchains (specially tokens, cryptocurrencies).</p>
-<p>CanisMajor Adaptor recommend using AEI contract Model for the Ethereum Clients.
-AEI (Asset,Event, Identity) Smart Contract is written in Solidity using ERC721 standard (NFT).</p>
+                <h1 id="canismajor-fiware-dlt-adaptor">CanisMajor - FIWARE DLT Adaptor</h1>
+<p><img alt="Current Architecture" src="https://github.com/FIWARE/CanisMajor/raw/master/docs/images/canis-major-overview.svg" /></p>
+<p>In order to persist transactions inside the blockchain, a client has to send information about its transactions(e.g. create/update/delete entity) to CanisMajor. 
+The request should include information about the Wallet(e.g. Keystore) to be used for signing the transaction. Please check the <a href="https://github.com/FIWARE/CanisMajor/tree/master/api/api.yaml">API</a>(tag <code>NGIS-LD</code>) on how to 
+send the transactions and provide the Wallet-Information. CanisMajor will create a <a href="https://en.wikipedia.org/wiki/Merkle_tree">Merkle-Tree</a> from the send informations 
+and include it as data into the transaction for the Blockchain. In order to properly sign the transaction, CanisMajor uses the provided Wallet-Information and delegates the
+signing to the client's Wallet. The signed transaction is then put into the Oketh-compatible blockchain.</p>
+<p>The current implementation of CanisMajor does not provide a direct integration into the Client-ContextBroker request flow. The client has to make a second call to CanisMajor
+in order to persist it through CanisMajor. As a temporary proxy-solution, a fork of the <a href="https://github.com/FIWARE-Blockchain/fiware-pep-proxy">Wilma PEP Proxy</a> can be used. 
+Additional proxy integrations are planned, but not yet realized.</p>
+<h2 id="testing">Testing</h2>
+<p>Run unit-tests via: <code>mvn clean test</code></p>
+<p>A set of integration tests(using <a href="https://cucumber.io/">cucumber</a>) is available under <a href="https://github.com/FIWARE/CanisMajor/tree/master/it">it/</a>). 
+To run them use:</p>
+<pre><code class="language-shell">    cd it
+    docker-compose -f docker-compose/docker-compose-env.yaml -f docker-compose/docker-compose-java.yaml up
+    mvn clean test
+</code></pre>
+<h2 id="adrs">ADRs</h2>
+<ul>
+<li><a href="https://github.com/FIWARE/CanisMajor/tree/master/docs/adrs/delegate-signatur.md">Delegate transaction signing to the client</a></li>
+</ul>
+<h2 id="license">License</h2>
+<p>CanisMajor is licensed under the Apache License, Version 2.0. See <a href="https://github.com/fiware/CanisMajor/blob/master/LICENSE">LICENSE</a> for the full license text.</p>
+<p>© 2021 FIWARE Foundation e.V.</p>
               
             </div>
           </div>
@@ -119,7 +136,7 @@ AEI (Asset,Event, Identity) Smart Contract is written in Solidity using ERC721 s
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="architecture.html" class="btn btn-neutral float-right" title="Architecture">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="installation.html" class="btn btn-neutral float-right" title="Installation">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
     </div>
@@ -151,7 +168,7 @@ AEI (Asset,Event, Identity) Smart Contract is written in Solidity using ERC721 s
     
     
     
-      <span><a href="architecture.html" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="installation.html" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
@@ -170,5 +187,5 @@ AEI (Asset,Event, Identity) Smart Contract is written in Solidity using ERC721 s
 
 <!--
 MkDocs version : 1.2.3
-Build Date UTC : 2022-01-20 08:41:53.337694+00:00
+Build Date UTC : 2022-03-03 12:46:38.331586+00:00
 -->
