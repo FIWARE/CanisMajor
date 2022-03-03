@@ -2,7 +2,7 @@ FROM golang:1.17-alpine as builder
 RUN apk add --update alpine-sdk
 RUN apk update && apk add git openssh gcc musl-dev linux-headers
 
-RUN git clone https://github.com/wistefan/vault-ethereum.git
+RUN git clone https://github.com/immutability-io/vault-ethereum.git
 
 WORKDIR /go/vault-ethereum
 
