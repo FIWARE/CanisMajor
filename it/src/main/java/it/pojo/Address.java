@@ -3,7 +3,7 @@ package it.pojo;
 import lombok.Data;
 
 @Data
-public class Address {
+public class Address { 
 
 	private String streetAddress;
 	private String addressRegion;

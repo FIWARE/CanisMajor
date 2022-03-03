@@ -42,19 +42,18 @@ public class EntityRepository {
 			return new EntityTransactionListVO();
 		}
 
-		Map<String, List<TransactionReceiptVO>> entityTxMap = entityVOS.get().stream().collect(
-				Collectors.toMap(
-						txReceiptMapper::getEntityIdFromTX,
-						evo -> {
-							List<TransactionReceiptVO> txList = new ArrayList<>();
-							txList.add(txReceiptMapper.entityVoToTransactionReceiptVo(evo));
-							return txList;
-						},
+		Map<String, List<TransactionReceiptVO>> entityTxMap = entityVOS.get().stream()
+				.map(this::extractReceipts)
+				.flatMap(map -> map.entrySet().stream())
+				.collect(Collectors.toMap(
+						entry -> entry.getKey(),
+						entry -> entry.getValue(),
 						(txList1, txList2) -> {
 							txList1.addAll(txList2);
 							return txList1;
 						}
 				));
+
 		EntityTransactionListVO entityTransactionVOS = new EntityTransactionListVO();
 		entityTransactionVOS.setRecords(
 				entityTxMap
@@ -66,6 +65,21 @@ public class EntityRepository {
 		entityTransactionVOS.setOffset(0l);
 		entityTransactionVOS.setLimit(1000l);
 		return entityTransactionVOS;
+	}
+
+	private Map<String, List<TransactionReceiptVO>> extractReceipts(EntityVO entityVO) {
+		return txReceiptMapper.getEntityIdsFromTX(entityVO).stream().collect(Collectors.toMap(
+				id -> id,
+				id -> {
+					List<TransactionReceiptVO> txList = new ArrayList<>();
+					txList.add(txReceiptMapper.entityVoToTransactionReceiptVo(entityVO));
+					return txList;
+				},
+				(txList1, txList2) -> {
+					txList1.addAll(txList2);
+					return txList1;
+				}
+		));
 	}
 
 	public EntityTransactionVO getEntityTransactions(URI entityId) throws NGSIConnectException {

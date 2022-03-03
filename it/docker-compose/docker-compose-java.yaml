@@ -19,7 +19,7 @@ services:
       - DEFAULT_VAULT_ACCOUNT_ENABLED=true
       - DEFAULT_VAULT_ACCOUNT_USERNAME=default
       - DEFAULT_VAULT_ACCOUNT_TOKEN=vault-plaintext-root-token
-      - DEFAULT_VAULT_ACCOUNT_VAULT_ADDRESS=http://localhost:8200/v1/ethereum/accounts/default
+      - DEFAULT_VAULT_ACCOUNT_VAULT_ADDRESS=http://vault:8200/v1/ethereum/accounts/default
     networks:
       - test-network
     ports:

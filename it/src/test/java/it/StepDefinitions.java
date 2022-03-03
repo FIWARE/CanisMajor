@@ -72,12 +72,10 @@ public class StepDefinitions {
 	// we start at a random point, to be able to run multiple times in local testing.
 	private int testCounter = (int) (Math.random() * 10000);
 
-
 	Map<String, Integer> expectedTxMap = new HashMap<>();
 	Map<String, Integer> miraExpectedTxMap = new HashMap<>();
 	Map<String, Integer> franziExpectedTxMap = new HashMap<>();
 	Map<String, Integer> defaultExpectedTxMap = new HashMap<>();
-
 
 	@Before
 	public void setup() throws Exception {
@@ -233,7 +231,25 @@ public class StepDefinitions {
 		Response response = okHttpClient.newCall(request).execute();
 		assertTrue(response.code() >= 200 && response.code() < 300, "We expect any kind of successful response.");
 		addTxToExpectations("Default", deliveryID);
+	}
 
+	@When("Anonymous upserts multiple deliveries.")
+	public void upsert_delivery() throws Exception {
+		String deliveryID_1 = String.format("urn:ngsi-ld:Delivery:%s-1", testCounter);
+		String deliveryID_2 = String.format("urn:ngsi-ld:Delivery:%s-2", testCounter);
+		Entity delivery_1 = getDelivery(deliveryID_1, "timeslot_confirmed");
+		Entity delivery_2 = getDelivery(deliveryID_2, "cancelled");
+		RequestBody requestBody = RequestBody.create(OBJECT_MAPPER.writeValueAsString(List.of(delivery_1, delivery_2)), MediaType.get("application/json"));
+		Request request = new Request.Builder()
+				.addHeader("NGSILD-Tenant", NGSILD_TENANT)
+				.url(String.format("http://%s/ngsi-ld/v1/entityOperations/upsert", CANIS_MAJOR_ADDRESS))
+				.method("POST", requestBody)
+				.addHeader("Content-Type", "application/json")
+				.build();
+		OkHttpClient okHttpClient = new OkHttpClient();
+		Response response = okHttpClient.newCall(request).execute();
+		assertTrue(response.code() >= 200 && response.code() < 300, "We expect any kind of successful response.");
+		addTxToExpectations("Default", deliveryID_1);
 	}
 
 	@When("Franzi creates the test-store.")
@@ -307,25 +323,6 @@ public class StepDefinitions {
 		Response response = okHttpClient.newCall(request).execute();
 		assertTrue(response.code() >= 200 && response.code() < 300, "We expect any kind of successful response.");
 		addTxToExpectations("Mira", storeID);
-	}
-
-	@When("Franzi deletes test store.")
-	public void franzi_deletes_test_store() throws Exception {
-
-//		Request request = new Request.Builder()
-//				.addHeader("NGSILD-Tenant", NGSILD_TENANT)
-//				.addHeader("Wallet-Type", "Vault")
-//				.addHeader("Wallet-Address", "http://vault:8200/v1/ethereum/accounts/franzi")
-//				.addHeader("Wallet-Token", VAULT_ROOT_TOKEN)
-//				.url(String.format("http://%s/ngsi-ld/v1/entities/%s", CANIS_MAJOR_ADDRESS, String.format("urn:ngsi-ld:Building:%s", testCounter)))
-//				.method("DELETE", null)
-//				.addHeader("Content-Type", "application/json")
-//				.build();
-//		OkHttpClient okHttpClient = new OkHttpClient();
-//		Response response = okHttpClient.newCall(request).execute();
-//		assertEquals(204, response.code(), "We expect the entity to be deleted.");
-
-		//TODO: Deletion not yet supported by canismajor. Implement.
 	}
 
 	private Entity getDelivery(String id, String status) {

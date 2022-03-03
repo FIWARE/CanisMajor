@@ -14,7 +14,6 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Mapper(componentModel = "jsr330")
 public interface TxReceiptMapper {
@@ -57,17 +56,13 @@ public interface TxReceiptMapper {
 		entityVO.observationSpace(null);
 		entityVO.operationSpace(null);
 
-		List<RelationshipVO> relationshipVOS = entityIdList.stream().map(id -> {
-			RelationshipVO relationshipVO = new RelationshipVO();
-			relationshipVO.setObject(id);
-			relationshipVO.setType(RelationshipVO.Type.RELATIONSHIP);
-			return relationshipVO;
-		}).collect(Collectors.toList());
-
+		PropertyVO relationShipProperty = new PropertyVO();
+		relationShipProperty.setType(PropertyVO.Type.PROPERTY);
+		relationShipProperty.setValue(entityIdList);
 
 		Map<String, Object> additionalProperties = new HashMap<>();
 		additionalProperties.put(TX_RECEIPTS_KEY, transactionReceiptToPropertyVO(transactionReceipt));
-		additionalProperties.put(REF_ENTITY_KEY, relationshipVOS);
+		additionalProperties.put(REF_ENTITY_KEY, relationShipProperty);
 		entityVO.setAdditionalProperties(additionalProperties);
 		return entityVO;
 	}
@@ -90,8 +85,22 @@ public interface TxReceiptMapper {
 		return OBJECT_MAPPER.convertValue(txReceipt, TransactionReceiptVO.class);
 	}
 
-	default String getEntityIdFromTX(EntityVO vo) {
-		return getValueFromProperty(REF_ENTITY_KEY, vo.getAdditionalProperties());
+	default List<String> getEntityIdsFromTX(EntityVO vo) {
+		if (!(vo.getAdditionalProperties().get(REF_ENTITY_KEY) instanceof Map<?, ?>)) {
+			throw new MappingException(String.format("Did not receive a valid property %s for mapping. Was: %s", REF_ENTITY_KEY, vo));
+		}
+		Map property = ((Map) vo.getAdditionalProperties().get(REF_ENTITY_KEY));
+
+		switch ((String) property.get("type")) {
+			case PropertyVO.Type.PROPERTY_VALUE: {
+				return (List<String>) property.get("value");
+			}
+			case RelationshipVO.Type.RELATIONSHIP_VALUE: {
+				return List.of((String) property.get("object"));
+			}
+			default:
+				throw new MappingException(String.format("Invalid type %s of property %s.", property.get("type"), vo));
+		}
 	}
 
 	private <T> T getValueFromProperty(String propertyName, Map<String, Object> propertiesMap) {
