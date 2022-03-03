@@ -1,0 +1,63 @@
+micronaut:
+  application:
+    name: ${project.artifactId}
+
+  server:
+    port: 8080
+
+  metrics:
+    enabled: true
+    export:
+      prometheus:
+        step: PT2s
+        descriptions: false
+
+  http:
+    services:
+      read-timeout: 30s
+      ngsi:
+        path: ngsi-ld/v1
+        url: http://localhost:1026
+        read-timeout: 30
+---
+endpoints:
+  metrics:
+    enabled: true
+  health:
+    enabled: true
+
+loggers:
+  levels:
+    ROOT: TRACE
+    io:
+      micronaut:
+        http:
+          client: TRACE
+---
+
+datasources:
+  default:
+    url: jdbc:h2:mem:devDb;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
+    driverClassName: org.h2.Driver
+    username: sa
+    password: ''
+    schema-generate: CREATE_DROP
+    dialect: H2
+
+---
+
+general:
+  ngsiTenant: orion-ld
+
+defaultVaultAccount:
+  enabled: true
+  username: canisMajor
+  token: superSecretToken
+  vaultAddress: http://localhost:8200/v1/ethereum/accounts/canisMajor
+
+ethereum:
+  enabled: true
+  dltAddress: localhost:8545
+  contractAddress: "0x476059cd57800db8eb88f67c2aa38a6fcf8251e0"
+  gas: 3000000
+  gasPrice: 0

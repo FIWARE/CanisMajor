@@ -1,0 +1,80 @@
+version: "3.5"
+services:
+
+  # Hashicorp vault as a wallet
+  vault-server:
+    image: ${VAULT_IMAGE:-vault-ethereum}
+    hostname: vault
+    ports:
+      - "8200:8200"
+    environment:
+      VAULT_ADDR: "http://0.0.0.0:8200"
+      VAULT_DEV_ROOT_TOKEN_ID: "vault-plaintext-root-token"
+    cap_add:
+      - IPC_LOCK
+    networks:
+      - test-network
+
+  # Fiware environment setup
+  orion-ld:
+    image: ${ORION_IMAGE:-quay.io/fiware/orion-ld:1.0.1}
+    hostname: orion
+    # sometimes the initial startup fails due to a weird timescale behaviour
+    restart: always
+    environment:
+      - ORIONLD_MONGO_HOST=mongo-db
+      - ORIONLD_LOG_LEVEL=DEBUG
+    depends_on:
+      - mongo-db
+    networks:
+      - test-network
+    ports:
+      - "1026:1026"
+    healthcheck:
+      test: curl --fail -s http://orion:1026/version || exit 1
+      interval: 30s
+      retries: 15
+
+  mongo-db:
+    image: mongo:4.0
+    hostname: mongo-db
+    expose:
+      - "27017"
+    ports:
+      - "27017:27017" # localhost:27017
+    networks:
+      - test-network
+    command: --nojournal
+    healthcheck:
+      test: |
+        host=`hostname --ip-address || echo '127.0.0.1'`;
+        mongo --quiet $host/test --eval 'quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)' && echo 0 || echo 1
+      interval: 30s
+
+  # aei and eth
+  aei-contract:
+    image: quay.io/wi_stefan/py-contract:latest
+    hostname: aei-contract
+    networks:
+      - test-network
+    environment:
+      - RPC_ENDPOINT=ganache-cli
+      - RPC_PORT=8545
+    depends_on:
+      - ganache-cli
+
+  ganache-cli:
+    image: trufflesuite/ganache-cli:latest
+    hostname: ganache-cli
+    networks:
+      - test-network
+    ports:
+      - "8545:8545"
+    command: ganache-cli -l 8000000 --gasPrice 0 --account '0x22aabb811efca4e6f4748bd18a46b502fa85549df9fa07da649c0a148d7d5530, 100000000000000000000'
+
+volumes:
+  contract-folder: ~
+
+networks:
+  test-network:
+    driver: bridge

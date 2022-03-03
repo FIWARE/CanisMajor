@@ -1,16 +1,11 @@
-# CanisMajor - FIWARE DLT Adaptor
-
 [![FIWARE Blockchain](https://nexus.lab.fiware.org/repository/raw/public/badges/chapters/third-party.svg)](https://www.fiware.org/developers/catalogue/)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/4661/badge)](https://bestpractices.coreinfrastructure.org/projects/4661)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Docker badge](https://img.shields.io/docker/pulls/singhhp10691/canismajor.svg)](https://hub.docker.com/r/singhhp10691/canismajor/)
-[![publish mkdocs](https://github.com/FIWARE/CanisMajor/actions/workflows/documentation.yml/badge.svg)](https://github.com/FIWARE/CanisMajor/actions/workflows/documentation.yml)
-[![Node.js CI](https://github.com/FIWARE/CanisMajor/actions/workflows/node.js.yml/badge.svg)](https://github.com/FIWARE/CanisMajor/actions/workflows/node.js.yml)
-[![CodeQL](https://github.com/FIWARE/CanisMajor/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/FIWARE/CanisMajor/actions/workflows/codeql-analysis.yml)
-[![publish docker](https://github.com/FIWARE/CanisMajor/actions/workflows/docker.yml/badge.svg?branch=master)](https://github.com/FIWARE/CanisMajor/actions/workflows/docker.yml)
+[![Container Repository on Quay](https://img.shields.io/badge/quay.io-FIWARE-green "Container Repository on Quay")](https://quay.io/repository/fiware/canismajor?tab=tags)
+-------
+# CanisMajor - FIWARE DLT Adaptor
 
-CanisMajor is a blockchain adaptor that supports various DLT, the adaptor aims to submit the data to DLT in Powered By FIWARE Architecture.
-The adaptor will not be recommended to work for public-permissionless blockchains (specially tokens, cryptocurrencies).
+CanisMajor is a blockchain adaptor that supports persistence and verification of [NGSI-LD](https://docbox.etsi.org/isg/cim/open/Latest%20release%20NGSI-LD%20API%20for%20public%20comment.pdf) Entity-Transactions(e.g. create/delete/update- operations) in blockchains. 
 
 
 This project is a part of [FIWARE](https://github.com/fiware). For more check the FIWARE catalog entry for (..).
@@ -18,29 +13,41 @@ This project is a part of [FIWARE](https://github.com/fiware). For more check th
 | :books: [Documentation](https://fiware.github.io/CanisMajor/) | :mortar_board: [Academy](https://github.com/fiware/tutorials.Step-by-Step) | :whale: [Docker Hub](https://hub.docker.com/r/singhhp10691/canismajor) | :dart: [Roadmap](https://github.com/fiware/CanisMajor/blob/master/roadmap.md) |
 | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------- | --------------------------------------------------------------------------- |
 
+## Overview
 
-# Architecture
+![Current Architecture](./docs/images/canis-major-overview.svg)
 
-A stable solution to use CanisMajor as a proxy which is more suitable and will be mature in future.
-## CanisMajor As a PROXY Architecture
-![CanisMajor Publish/Notify Architecture](https://github.com/fiware/CanisMajor/blob/master/docs/images/architecture.png)
+In order to persist transactions inside the blockchain, a client has to send information about its transactions(e.g. create/update/delete entity) to CanisMajor. 
+The request should include information about the Wallet(e.g. Keystore) to be used for signing the transaction. Please check the [API](./api/api.yaml)(tag `NGIS-LD`) on how to 
+send the transactions and provide the Wallet-Information. CanisMajor will create a [Merkle-Tree](https://en.wikipedia.org/wiki/Merkle_tree) from the send informations 
+and include it as data into the transaction for the Blockchain. In order to properly sign the transaction, CanisMajor uses the provided Wallet-Information and delegates the
+signing to the client's Wallet. The signed transaction is then put into the Oketh-compatible blockchain.
+
+The current implementation of CanisMajor does not provide a direct integration into the Client-ContextBroker request flow. The client has to make a second call to CanisMajor
+in order to persist it through CanisMajor. As a temporary proxy-solution, a fork of the [Wilma PEP Proxy](https://github.com/FIWARE-Blockchain/fiware-pep-proxy) can be used. 
+Additional proxy integrations are planned, but not yet realized.
+
+## Testing 
+
+Run unit-tests via: ```mvn clean test```
+
+A set of integration tests(using [cucumber](https://cucumber.io/)) is available under [it/](./it). 
+To run them use:
+```shell
+    cd it
+    docker-compose -f docker-compose/docker-compose-env.yaml -f docker-compose/docker-compose-java.yaml up
+    mvn clean test
+```
 
 
-## Supported DLT Clients
-- [x] Ethereum 
-- [x] IOTA
-- [ ] FABRIC Chaincode
 
+## ADRs
 
-### Installation guide, Configuration and Usage
-
-Information about how to use the CanisMajor can be found in [CanisMajor Documentation](https://fiware.github.io/CanisMajor/).
+* [Delegate transaction signing to the client](docs/adrs/delegate-signatur.md)
 
 
 ## License
 
-CanisMajor is licensed under the Apache License, Version 2.0. See
-[LICENSE](https://github.com/fiware/CanisMajor/blob/master/LICENSE) for the full
-license text.
+CanisMajor is licensed under the Apache License, Version 2.0. See [LICENSE](https://github.com/fiware/CanisMajor/blob/master/LICENSE) for the full license text.
 
 © 2021 FIWARE Foundation e.V.

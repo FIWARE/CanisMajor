@@ -1,0 +1,26 @@
+version: "3.5"
+services:
+  ## CanisMajor setup
+
+  canis-major:
+    restart: always
+    image: ${CANISMAJOR_IMAGE:-quay.io/fiware/canis-major}
+    hostname: canis-major
+    depends_on:
+      - ganache-cli
+    expose:
+      - "4000"
+    environment:
+      - MICRONAUT_SERVER_PORT=4000
+      - MICRONAUT_HTTP_SERVICES_NGSI_URL=http://orion:1026
+      - ETHEREUM_CONTRACT_ADDRESS=0x476059cd57800db8eb88f67c2aa38a6fcf8251e0
+      - ETHEREUM_DLT_ADDRESS=ganache-cli:8545
+      - GENERAL_NGSI_TENANT=orion
+      - DEFAULT_VAULT_ACCOUNT_ENABLED=true
+      - DEFAULT_VAULT_ACCOUNT_USERNAME=default
+      - DEFAULT_VAULT_ACCOUNT_TOKEN=vault-plaintext-root-token
+      - DEFAULT_VAULT_ACCOUNT_VAULT_ADDRESS=http://vault:8200/v1/ethereum/accounts/default
+    networks:
+      - test-network
+    ports:
+      - 4000:4000
