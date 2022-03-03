@@ -46,5 +46,5 @@ jobs:
         if: env.WORKFLOW_CONCLUSION == 'failure'
         uses: thollander/actions-comment-pull-request@1.0.2
         with:
-          message: "Please apply one of the following labels to the PR: 'patch', 'minor', 'major'. For more information see: https://github.com/FIWARE/endpoint-auth-service/CONTRIBUTING.md"
+          message: "Please apply one of the following labels to the PR: 'patch', 'minor', 'major'."
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

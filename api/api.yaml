@@ -1,0 +1,733 @@
+openapi: 3.0.3
+info:
+  description: 'Spec for the CanisMajor DLT adaptor'
+  version: 0.0.1
+  title: CanisMajor - FIWARE DLT Adaptor
+  contact:
+    email: stefan.wiedemann@fiware.org
+externalDocs:
+  description: Implementation on github.
+  url: 'https://github.com/FIWARE/CanisMajor'
+tags:
+  - name: Ops
+    description: Methods to provide some ops-related infos
+  - name: NGSI-LD
+    description: All supported NGSI-LD endpoints.
+  - name: Entity
+    description: Endpoints the get transaction information about entities.
+paths:
+  '/health':
+    get:
+      tags:
+        - Ops
+      description: Provide the current health status of CanisMajor.
+      operationId: getHealth
+      responses:
+        '200':
+          description: Service is up and running.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+        '503':
+          description: Service is not available.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+
+  '/ngsi-ld/v1/entities/':
+    post:
+      tags:
+        - NGSI-LD
+      parameters:
+        - $ref: '#/components/parameters/link'
+        - $ref: '#/components/parameters/walletType'
+        - $ref: '#/components/parameters/walletToken'
+        - $ref: '#/components/parameters/walletAddress'
+      description: Entity creation requests.
+      operationId: createNgsiLDEntity
+      requestBody:
+        content:
+          application/ld+json:
+            schema:
+              $ref: '#/components/schemas/Entity'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Entity'
+      responses:
+        '200':
+          description: NGSI-LD Entity creation persisted in the blockchain.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionReceipt'
+        '400':
+          description: Did not receive a valid NGSI-LD Entity.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '403':
+          description: No valid token was provided.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '409':
+          description: Entity already exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+  '/ngsi-ld/v1/entities/{entityId}/attrs':
+    post:
+      tags:
+        - NGSI-LD
+      parameters:
+        - $ref: '#/components/parameters/link'
+        - $ref: '#/components/parameters/entityId'
+        - $ref: '#/components/parameters/walletType'
+        - $ref: '#/components/parameters/walletToken'
+        - $ref: '#/components/parameters/walletAddress'
+      description: EntityUpdate requests.
+      operationId: postUpdateNgsiLDEntity
+      requestBody:
+        content:
+          application/ld+json:
+            schema:
+              $ref: '#/components/schemas/EntityFragment'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EntityFragment'
+      responses:
+        '200':
+          description: NGSI-LD Entity creation persisted in the blockchain.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionReceipt'
+        '400':
+          description: Did not receive a valid NGSI-LD Entity.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '403':
+          description: No valid token was provided.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '409':
+          description: Entity already exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+  '/ngsi-ld/v1/entityOperations/upsert':
+    post:
+      tags:
+        - NGSI-LD
+      parameters:
+        - $ref: '#/components/parameters/walletType'
+        - $ref: '#/components/parameters/walletToken'
+        - $ref: '#/components/parameters/walletAddress'
+      description: Batch updated or replace multiple entities at once.
+      operationId: upsertEntities
+      requestBody:
+        content:
+          application/ld+json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Entity'
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Entity'
+      responses:
+        '200':
+          description: NGSI-LD Entity creation persisted in the blockchain.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionReceipt'
+        '400':
+          description: Did not receive a valid NGSI-LD Entity.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '403':
+          description: No valid token was provided.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '409':
+          description: Entity already exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+  '/entity':
+    get:
+      tags:
+        - Entity
+      description: Get entities where transactions exist.
+      operationId: getEntitiesWithTransactions
+      responses:
+        '200':
+          description: All entities with there transactions.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityTransactionList'
+  '/entity/{entityId}':
+    get:
+      tags:
+        - Entity
+      parameters:
+        - $ref: '#/components/parameters/entityId'
+      description: Get all transactions for a given entity
+      operationId: getEntityWithTransactions
+      responses:
+        '200':
+          description: Entity with transactions.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityTransaction'
+        '404':
+          description: No such entity exists.
+components:
+  parameters:
+    entityType:
+      name: entityType
+      in: path
+      required: true
+      schema:
+        type: string
+    link:
+      name: Link
+      description: Link header to be used as described in the json-ld spec.
+      in: header
+      required: false
+      schema:
+        type: string
+    dltToken:
+      name: dlt-token
+      description: Header to contain the dlt-token
+      in: header
+      required: true
+      schema:
+        type: string
+    entityId:
+      name: entityId
+      description: ID of an NGSI-LD entity
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uri
+    walletType:
+      name: Wallet-Type
+      description: Type of the wallet to be used for signing the transactions.
+      in: header
+      required: false
+      schema:
+        type: string
+        enum:
+          - vault
+    walletAddress:
+      name: Wallet-Address
+      description: |
+        Address of the wallet to be used for signing the transactions. 
+        If required, it should include path information
+      example: http://my-vault.org/v1/ethereum/accounts/bob
+      in: header
+      required: false
+      schema:
+        type: string
+        format: url
+    walletToken:
+      name: Wallet-Token
+      description: |
+        Token to be used when contacting the wallet. Type of the token depends on the 
+        wallet type.
+      in: header
+      required: false
+      schema:
+        type: string
+  schemas:
+    MetaData:
+      type: object
+      properties:
+        abi:
+          type: array
+          items:
+            type: string
+        contractAddress:
+          type: string
+    Configuration:
+      type: object
+      description: Configuration used by CanisMajor
+      properties:
+        entityType:
+          type: string
+        contextMapping:
+          type: string
+        metadata:
+          $ref: '#/components/schemas/MetaData'
+      required:
+        - entityType
+        - contextMapping
+    HealthStatus:
+      type: object
+      description: Status of the running service
+      properties:
+        status:
+          type: string
+          description: Current status, e.g. UP or DOWN
+          example: "UP"
+      required:
+        - staus
+    TokenKeys:
+      type: object
+      description: Secret information to be used for token generation.
+      properties:
+        private_key:
+          type: string
+          description: Private key to be used for token generation
+        public_key:
+          type: string
+          description: Public key to be used for token generation
+      required:
+        - private_key
+        - public_key
+    DLTToken:
+      type: object
+      description: Token to be used for authentication at the DTL
+      properties:
+        dlt-token:
+          type: string
+          description: The base64 encoded key to be used with the configured DLT
+      required:
+        - dlt-token
+    georelEnum:
+      type: string
+      enum:
+        - equals
+        - disjoint
+        - intersects
+        - within
+        - contains
+        - overlaps
+        - ^near;((maxDistance==\d+)|(minDistance==\d+))$
+    georel:
+      type: string
+    geometryEnum:
+      type: string
+    geometryType:
+      type: string
+    positionDefinition:
+      description: A single position
+      type: array
+      minItems: 2
+      maxItems: 2
+      items:
+        type: number
+      additionalProperties: false
+    positionArrayDefinition:
+      description: An array of positions
+      type: array
+      items:
+        $ref: '#/components/schemas/positionDefinition'
+    lineStringDefinition:
+      description: An array of two or more positions
+      type: array
+      items:
+        $ref: '#/components/schemas/positionDefinition'
+      minItems: 2
+    linearRingDefinition:
+      description: An array of four positions where the first equals the last
+      type: array
+      items:
+        $ref: '#/components/schemas/positionDefinition'
+      minItems: 4
+    polygonDefinition:
+      description: An array of linear rings
+      type: array
+      items:
+        $ref: '#/components/schemas/linearRingDefinition'
+    coordinates:
+      oneOf:
+        - $ref: '#/components/schemas/positionDefinition'
+        - $ref: '#/components/schemas/positionArrayDefinition'
+        - $ref: '#/components/schemas/polygonDefinition'
+        - $ref: '#/components/schemas/lineStringDefinition'
+    Point:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - Point
+        coordinates:
+          $ref: '#/components/schemas/positionDefinition'
+    MultiPoint:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - MultiPoint
+        coordinates:
+          $ref: '#/components/schemas/positionArrayDefinition'
+    Polygon:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - Polygon
+        coordinates:
+          $ref: '#/components/schemas/polygonDefinition'
+    LineString:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - LineString
+        coordinates:
+          $ref: '#/components/schemas/lineStringDefinition'
+    MultiLineString:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - MultiLineString
+        coordinates:
+          type: array
+          items:
+            $ref: '#/components/schemas/lineStringDefinition'
+    MultiPolygon:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - MultiPolygon
+        coordinates:
+          type: array
+          items:
+            $ref: '#/components/schemas/polygonDefinition'
+    Geometry:
+      description: ' Avalid GeoJSON geometry object'
+      oneOf:
+        - $ref: '#/components/schemas/Point'
+        - $ref: '#/components/schemas/MultiPoint'
+        - $ref: '#/components/schemas/Polygon'
+        - $ref: '#/components/schemas/LineString'
+        - $ref: '#/components/schemas/MultiLineString'
+        - $ref: '#/components/schemas/MultiPolygon'
+    observedAt:
+      type: string
+      format: date-time
+    createdAt:
+      type: string
+      format: date-time
+    modifiedAt:
+      type: string
+      format: date-time
+    datasetId:
+      type: string
+      format: uri
+    instanceId:
+      type: string
+      format: uri
+    ProblemDetails:
+      type: object
+      description: Information about the occured error.
+      properties:
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+        detail:
+          type: string
+      required:
+        - type
+    GeoProperty:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - GeoProperty
+        value:
+          type: object
+        observedAt:
+          $ref: '#/components/schemas/observedAt'
+        createdAt:
+          $ref: '#/components/schemas/createdAt'
+        modifiedAt:
+          $ref: '#/components/schemas/modifiedAt'
+        datasetId:
+          $ref: '#/components/schemas/datasetId'
+        instanceId:
+          $ref: '#/components/schemas/instanceId'
+        unitCode:
+          type: string
+      required:
+        - type
+        - value
+      additionalProperties:
+        oneOf:
+          - $ref: '#/components/schemas/Geometry'
+          - $ref: '#/components/schemas/Property'
+          - $ref: '#/components/schemas/Relationship'
+    LdContext:
+      type: object
+    Property:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - Property
+        value:
+          oneOf:
+            - type: string
+            - type: number
+            - type: boolean
+            - type: object
+            - type: array
+              items:
+                oneOf:
+                  - type: string
+                  - type: number
+                  - type: boolean
+                  - type: object
+        observedAt:
+          $ref: '#/components/schemas/observedAt'
+        createdAt:
+          $ref: '#/components/schemas/createdAt'
+        modifiedAt:
+          $ref: '#/components/schemas/modifiedAt'
+        datasetId:
+          $ref: '#/components/schemas/datasetId'
+        instanceId:
+          $ref: '#/components/schemas/instanceId'
+        unitCode:
+          type: string
+      required:
+        - type
+        - value
+      additionalProperties:
+        oneOf:
+          - $ref: '#/components/schemas/Property'
+          - $ref: '#/components/schemas/Relationship'
+    Relationship:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - Relationship
+        object:
+          type: string
+          format: uri
+        observedAt:
+          $ref: '#/components/schemas/observedAt'
+        createdAt:
+          $ref: '#/components/schemas/createdAt'
+        modifiedAt:
+          $ref: '#/components/schemas/modifiedAt'
+        datasetId:
+          $ref: '#/components/schemas/datasetId'
+        instanceId:
+          $ref: '#/components/schemas/instanceId'
+      required:
+        - type
+        - object
+      additionalProperties:
+        oneOf:
+          - $ref: '#/components/schemas/Property'
+          - $ref: '#/components/schemas/Relationship'
+    Name:
+      type: string
+      pattern: '^((\d|[a-zA-Z]|_)+(:(\d|[a-zA-Z]|_)+)?(#\d+)?)$'
+      minLength: 1
+      description: NGSI-LD Name
+    EntityFragment:
+      type: object
+      properties:
+        '@context':
+          $ref: '#/components/schemas/LdContext'
+        location:
+          $ref: '#/components/schemas/GeoProperty'
+        observationSpace:
+          $ref: '#/components/schemas/GeoProperty'
+        operationSpace:
+          $ref: '#/components/schemas/GeoProperty'
+        id:
+          type: string
+          format: uri
+        type:
+          $ref: '#/components/schemas/Name'
+        createdAt:
+          $ref: '#/components/schemas/createdAt'
+        modifiedAt:
+          $ref: '#/components/schemas/modifiedAt'
+      additionalProperties:
+        oneOf:
+          - $ref: '#/components/schemas/Property'
+          - $ref: '#/components/schemas/Relationship'
+          - $ref: '#/components/schemas/GeoProperty'
+    Entity:
+      type: object
+      properties:
+        '@context':
+          $ref: '#/components/schemas/LdContext'
+        location:
+          $ref: '#/components/schemas/GeoProperty'
+        observationSpace:
+          $ref: '#/components/schemas/GeoProperty'
+        operationSpace:
+          $ref: '#/components/schemas/GeoProperty'
+        id:
+          type: string
+          format: uri
+        type:
+          $ref: '#/components/schemas/Name'
+        createdAt:
+          $ref: '#/components/schemas/createdAt'
+        modifiedAt:
+          $ref: '#/components/schemas/modifiedAt'
+      additionalProperties:
+        oneOf:
+          - $ref: '#/components/schemas/Property'
+          - $ref: '#/components/schemas/Relationship'
+          - $ref: '#/components/schemas/GeoProperty'
+    Log:
+      type: object
+      properties:
+        removed:
+          type: boolean
+        logIndex:
+          type: integer
+          format: int64
+        transactionIndex:
+          type: integer
+          format: int64
+        transactionHash:
+          type: string
+        blockHash:
+          type: string
+        blockNumber:
+          type: integer
+          format: int64
+        address:
+          type: string
+        data:
+          type: string
+        type:
+          type: string
+        topics:
+          type: array
+          items:
+            type: string
+        transactionIndexRaw:
+          type: string
+        blockNumberRaw:
+          type: string
+        logIndexRaw:
+          type: string
+    TransactionReceipt:
+      type: object
+      properties:
+        transactionHash:
+          type: string
+        blockHash:
+          type: string
+        blockNumber:
+          type: integer
+          format: int64
+        cumulativeGasUsed:
+          type: integer
+          format: int64
+        gasUsed:
+          type: integer
+          format: int64
+        status:
+          type: string
+        from:
+          type: string
+        to:
+          type: string
+        logs:
+          type: array
+          items:
+            $ref: '#/components/schemas/Log'
+        logsBloom:
+          type: string
+        transactionIndexRaw:
+          type: string
+        blockNumberRaw:
+          type: string
+        cumulativeGasUsedRaw:
+          type: string
+        statusOK:
+          type: boolean
+        gasUsedRaw:
+          type: string
+    EntityTransaction:
+      type: object
+      properties:
+        entityId:
+          type: string
+          format: uri
+        txDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransactionReceipt'
+    EntityTransactionList:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int64
+        limit:
+          type: integer
+          format: int64
+        count:
+          type: integer
+          format: int64
+        records:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityTransaction'
