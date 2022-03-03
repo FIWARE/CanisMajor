@@ -61,7 +61,7 @@ public class StepDefinitions {
 	private static final String VAULT_ROOT_TOKEN = "vault-plaintext-root-token";
 
 	private static final Map<String, TestAccount> TEST_ACCOUNT_MAP = Map.of(
-			"Default", new TestAccoutn("default", "label butter chaos blush mind north kit drill position phone decline urge claw mammal risk", "0x82AC43A26ae509eEf217330C7d862F822fF0CECB"),
+			"Default", new TestAccount("default", "label butter chaos blush mind north kit drill position phone decline urge claw mammal risk", "0x82AC43A26ae509eEf217330C7d862F822fF0CECB"),
 			"Franzi", new TestAccount("franzi", "minimum symptom minute gloom tragic situate silver mechanic salad amused elite beef", "0xa508dD875f10C33C52a8abb20E16fc68E981F186"),
 			"Mira", new TestAccount("mira", "ridge bargain sight table never risk isolate hold jaguar reflect curve globe awake witness reveal", "0x34E5b3f990e55D0651B35c817bAfb89d2877cb95")
 	);
