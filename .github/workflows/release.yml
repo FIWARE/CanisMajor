@@ -48,8 +48,8 @@ jobs:
           image: init-iptables
           tags: ${{ github.sha }} ${{ needs.generate-version.outputs.version }}
           dockerfiles: |
-            ./src/it/vault/Dockerfile
-          context: ./src/it/vault
+            ./it/vault/Dockerfile
+          context: ./it/vault
 
       - name: Push To quay.io
         id: push-to-quay
