@@ -12,7 +12,9 @@ import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
 import java.net.URI;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "jsr330")
 public interface TxReceiptMapper {
@@ -46,12 +48,38 @@ public interface TxReceiptMapper {
 		return entityVO;
 	}
 
+	default EntityVO transactionReceiptToEntityVO(TransactionReceipt transactionReceipt, List<URI> entityIdList) {
+		EntityVO entityVO = new EntityVO();
+		entityVO.setAtContext(CONTEXT);
+		entityVO.setId(URI.create(String.format(ID_TEMPLATE, transactionReceipt.getTransactionHash())));
+		entityVO.setType(ENTITY_TYPE);
+		entityVO.location(null);
+		entityVO.observationSpace(null);
+		entityVO.operationSpace(null);
+
+		List<RelationshipVO> relationshipVOS = entityIdList.stream().map(id -> {
+			RelationshipVO relationshipVO = new RelationshipVO();
+			relationshipVO.setObject(id);
+			relationshipVO.setType(RelationshipVO.Type.RELATIONSHIP);
+			return relationshipVO;
+		}).collect(Collectors.toList());
+
+
+		Map<String, Object> additionalProperties = new HashMap<>();
+		additionalProperties.put(TX_RECEIPTS_KEY, transactionReceiptToPropertyVO(transactionReceipt));
+		additionalProperties.put(REF_ENTITY_KEY, relationshipVOS);
+		entityVO.setAdditionalProperties(additionalProperties);
+		return entityVO;
+	}
+
 	default PropertyVO transactionReceiptToPropertyVO(TransactionReceipt transactionReceipt) {
 		PropertyVO propertyVO = new PropertyVO();
 		propertyVO.setValue(transactionReceipt);
 		propertyVO.setType(PropertyVO.Type.PROPERTY);
 		return propertyVO;
 	}
+
+	TransactionReceiptVO transactionReceiptToTransactionReceiptVO(TransactionReceipt transactionReceipt);
 
 	default TransactionReceiptVO entityVoToTransactionReceiptVo(EntityVO entityVO) {
 		if (!entityVO.type().equals(ENTITY_TYPE)) {

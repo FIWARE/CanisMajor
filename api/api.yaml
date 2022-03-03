@@ -56,8 +56,12 @@ paths:
             schema:
               $ref: '#/components/schemas/Entity'
       responses:
-        '201':
-          description: NGSI-LD Entity created.
+        '200':
+          description: NGSI-LD Entity creation persisted in the blockchain.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionReceipt'
         '400':
           description: Did not receive a valid NGSI-LD Entity.
           content:
@@ -103,24 +107,85 @@ paths:
             schema:
               $ref: '#/components/schemas/EntityFragment'
       responses:
-        '204':
-          description: All attributes where apended successfully.
-        '207':
-          description: Only attributes in the response body where appended.
+        '200':
+          description: NGSI-LD Entity creation persisted in the blockchain.
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: string
+                $ref: '#/components/schemas/TransactionReceipt'
         '400':
-          description: Did not receive a valid NGSI-LD Entity-Fragement.
+          description: Did not receive a valid NGSI-LD Entity.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
-        '404':
-          description: No such entity exists.
+        '403':
+          description: No valid token was provided.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '409':
+          description: Entity already exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+  '/ngsi-ld/v1/entityOperations/upsert':
+    post:
+      tags:
+        - NGSI-LD
+      parameters:
+        - $ref: '#/components/parameters/walletType'
+        - $ref: '#/components/parameters/walletToken'
+        - $ref: '#/components/parameters/walletAddress'
+      description: Batch updated or replace multiple entities at once.
+      operationId: upsertEntities
+      requestBody:
+        content:
+          application/ld+json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Entity'
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Entity'
+      responses:
+        '200':
+          description: NGSI-LD Entity creation persisted in the blockchain.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionReceipt'
+        '400':
+          description: Did not receive a valid NGSI-LD Entity.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '403':
+          description: No valid token was provided.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '409':
+          description: Entity already exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '422':
+          description: Unprocessable Entity
           content:
             application/json:
               schema:
