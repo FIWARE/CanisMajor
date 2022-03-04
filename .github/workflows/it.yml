@@ -24,7 +24,6 @@ jobs:
       id: compose
       env:
         CANISMAJOR_IMAGE: quay.io/fiware/canis-major
-        VAULT_IMAGE: vault-ethereum
       run: |
         cd it/docker-compose
         docker-compose -f docker-compose-env.yaml -f docker-compose-java.yaml up -d
