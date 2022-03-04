@@ -70,6 +70,7 @@ public class NGSILDController implements NgsiLdApi {
 			TransactionReceipt transactionReceipt = ethereumService.persistBatchOperation(entityVOs, toWalletInformation(walletType, walletToken, walletAddress));
 			List<URI> entityIDs = entityVOs.stream().map(EntityVO::id).toList();
 			executorService.submit(() -> entitiesApi.createEntity(generalProperties.getNgsiTenant(), receiptMapper.transactionReceiptToEntityVO(transactionReceipt, entityIDs)));
+
 			return HttpResponse.ok(receiptMapper.transactionReceiptToTransactionReceiptVO(transactionReceipt));
 		} catch (TransactionException e) {
 			log.warn("Was not able to submit transaction.", e);
