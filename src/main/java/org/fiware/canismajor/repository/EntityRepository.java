@@ -15,6 +15,7 @@ import org.fiware.ngsi.model.EntityListVO;
 import org.fiware.ngsi.model.EntityVO;
 
 import javax.inject.Singleton;
+import javax.swing.*;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,8 +47,8 @@ public class EntityRepository {
 				.map(this::extractReceipts)
 				.flatMap(map -> map.entrySet().stream())
 				.collect(Collectors.toMap(
-						entry -> entry.getKey(),
-						entry -> entry.getValue(),
+						Map.Entry::getKey,
+						Map.Entry::getValue,
 						(txList1, txList2) -> {
 							txList1.addAll(txList2);
 							return txList1;
@@ -60,7 +61,7 @@ public class EntityRepository {
 						.entrySet()
 						.stream()
 						.map(entry -> new EntityTransactionVO().entityId(URI.create(entry.getKey())).txDetails(entry.getValue()))
-						.collect(Collectors.toList()));
+						.toList());
 		entityTransactionVOS.setCount((long) entityTransactionVOS.records().size());
 		entityTransactionVOS.setOffset(0l);
 		entityTransactionVOS.setLimit(1000l);
@@ -92,7 +93,7 @@ public class EntityRepository {
 							optionalEntityListVO.get()
 									.stream()
 									.map(txReceiptMapper::entityVoToTransactionReceiptVo)
-									.collect(Collectors.toList())
+									.toList()
 					);
 		} else {
 			Optional<EntityVO> optionalEntityVO = executeRequest(

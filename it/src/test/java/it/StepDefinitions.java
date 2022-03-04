@@ -61,7 +61,7 @@ public class StepDefinitions {
 	private static final String VAULT_ROOT_TOKEN = "vault-plaintext-root-token";
 
 	private static final Map<String, TestAccount> TEST_ACCOUNT_MAP = Map.of(
-			"Default", new TestAccount("default", "label butter chaos blush mind north kit drill position phone decline urge claw mammal risk", "0x82AC43A26ae509eEf217330C7d862F822fF0CECB"),
+			"Default", new TestAccount("default", "label butter chaos blush mind north kit drill position phone decline urge claw mammal risk", "0xd9fe663797b75d0b3897d55d35e0b4e72307a63f"),
 			"Franzi", new TestAccount("franzi", "minimum symptom minute gloom tragic situate silver mechanic salad amused elite beef", "0xa508dD875f10C33C52a8abb20E16fc68E981F186"),
 			"Mira", new TestAccount("mira", "ridge bargain sight table never risk isolate hold jaguar reflect curve globe awake witness reveal", "0x34E5b3f990e55D0651B35c817bAfb89d2877cb95")
 	);
@@ -159,21 +159,6 @@ public class StepDefinitions {
 		if (configResponse.code() < 200 || configResponse.code() > 299) {
 			fail("The plugin should be configured succeesfully.");
 		}
-	}
-
-	@Given("Default account is registered in vault.")
-	public void register_default_account_in_vault() throws Exception {
-		RequestBody accountRegistrationRequest = RequestBody.create(OBJECT_MAPPER.writeValueAsString(new VaultAccount(TEST_ACCOUNT_MAP.get("Default").getMnemonic())), MediaType.get("application/json"));
-
-		Request registrationRequest = new Request.Builder()
-				.addHeader("X-Vault-Token", VAULT_ROOT_TOKEN)
-				.url(String.format("http://%s/v1/ethereum/accounts/default", VAULT_ADDRESS))
-				.method("PUT", accountRegistrationRequest)
-				.addHeader("Content-Type", "application/json")
-				.build();
-		OkHttpClient okHttpClient = new OkHttpClient();
-		Response registrationResponse = okHttpClient.newCall(registrationRequest).execute();
-		assertEquals(200, registrationResponse.code(), "The account should be successfully put into vault.");
 	}
 
 	@Given("Franzi is registered in vault.")

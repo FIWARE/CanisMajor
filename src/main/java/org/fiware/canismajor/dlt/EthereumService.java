@@ -6,7 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.fiware.aeicontract.Timestamper;
+import org.fiware.canismajor.configuration.DefaultAccountProperties;
 import org.fiware.canismajor.configuration.EthereumProperties;
+import org.fiware.canismajor.exception.SigningException;
 import org.fiware.canismajor.exception.TransactionException;
 import org.fiware.canismajor.mapping.TransactionMapper;
 import org.fiware.canismajor.model.EntityFragmentVO;
@@ -18,6 +20,7 @@ import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.RemoteFunctionCall;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
+import org.web3j.tx.RawTransactionManager;
 import org.web3j.tx.TransactionManager;
 import org.web3j.tx.gas.ContractGasProvider;
 import org.web3j.utils.Numeric;
@@ -39,6 +42,7 @@ public class EthereumService {
 	private final ContractGasProvider contractGasProvider;
 	private final EthereumProperties ethereumProperties;
 	private final SigningServiceFactory signingServiceFactory;
+	private final DefaultAccountProperties defaultAccountProperties;
 
 	public boolean isAddress(String publicKey) {
 		return WalletUtils.isValidAddress(publicKey);
@@ -99,7 +103,17 @@ public class EthereumService {
 
 
 	public TransactionManager getSigningTransactionManager(WalletInformation walletInformation) {
-		return new SigningTransactionManager(transactionMapper, objectMapper, signingServiceFactory.createSigningService(walletInformation), ethClient);
+		switch (walletInformation.walletType()) {
+			case VAULT -> {
+				return new SigningTransactionManager(transactionMapper, objectMapper, signingServiceFactory.createSigningService(walletInformation), ethClient);
+			}
+			case DEFAULT -> {
+				if(!defaultAccountProperties.isEnabled()) {
+					throw new SigningException("Signing with a default account is not enabled. Please provide wallet-information or contact the administrator.");
+				}
+				log.warn("Transaction will be signed with the default account. This is not recommended, since it might impose a security risk.");
+				return new RawTransactionManager(ethClient, Credentials.create(defaultAccountProperties.getPrivateKey()));
+			} default -> throw new SigningException(String.format("Did not receive valid wallet-information. Type is: %s", walletInformation.walletType()));
+		}
 	}
-
 }
