@@ -24,6 +24,8 @@ import java.net.URI;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -34,13 +36,15 @@ public class NGSILDController implements NgsiLdApi {
 	private final EthereumService ethereumService;
 	private final EntitiesApiClient entitiesApi;
 	private final TxReceiptMapper receiptMapper;
+	// persisting the tx in the broker asynchronous prevents the request from getting killed due to timeout.
+	private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 	private final GeneralProperties generalProperties;
 
 	@Override
 	public HttpResponse<TransactionReceiptVO> createNgsiLDEntity(@Nullable String link, @Nullable String walletType, @Nullable String walletToken, @Nullable String walletAddress, EntityVO entityVO) {
 		try {
 			TransactionReceipt transactionReceipt = ethereumService.persistEntityCreation(entityVO, toWalletInformation(walletType, walletToken, walletAddress));
-			entitiesApi.createEntity(generalProperties.getNgsiTenant(), receiptMapper.transactionReceiptToEntityVO(transactionReceipt, entityVO.id()));
+			executorService.submit(() -> entitiesApi.createEntity(generalProperties.getNgsiTenant(), receiptMapper.transactionReceiptToEntityVO(transactionReceipt, entityVO.id())));
 			return HttpResponse.ok(receiptMapper.transactionReceiptToTransactionReceiptVO(transactionReceipt));
 		} catch (TransactionException e) {
 			log.warn("Was not able to submit transaction.", e);
@@ -52,7 +56,7 @@ public class NGSILDController implements NgsiLdApi {
 	public HttpResponse<TransactionReceiptVO> postUpdateNgsiLDEntity(URI entityId, @Nullable String link, @Nullable String walletType, @Nullable String walletToken, @Nullable String walletAddress, EntityFragmentVO entityFragmentVO) {
 		try {
 			TransactionReceipt transactionReceipt = ethereumService.persistEntityUpdate(entityId, entityFragmentVO, toWalletInformation(walletType, walletToken, walletAddress));
-			entitiesApi.createEntity(generalProperties.getNgsiTenant(), receiptMapper.transactionReceiptToEntityVO(transactionReceipt, entityId));
+			executorService.submit(() -> entitiesApi.createEntity(generalProperties.getNgsiTenant(), receiptMapper.transactionReceiptToEntityVO(transactionReceipt, entityId)));
 			return HttpResponse.ok(receiptMapper.transactionReceiptToTransactionReceiptVO(transactionReceipt));
 		} catch (TransactionException e) {
 			log.warn("Was not able to submit transaction.", e);
@@ -65,7 +69,7 @@ public class NGSILDController implements NgsiLdApi {
 		try {
 			TransactionReceipt transactionReceipt = ethereumService.persistBatchOperation(entityVOs, toWalletInformation(walletType, walletToken, walletAddress));
 			List<URI> entityIDs = entityVOs.stream().map(EntityVO::id).toList();
-			entitiesApi.createEntity(generalProperties.getNgsiTenant(), receiptMapper.transactionReceiptToEntityVO(transactionReceipt, entityIDs));
+			executorService.submit(() -> entitiesApi.createEntity(generalProperties.getNgsiTenant(), receiptMapper.transactionReceiptToEntityVO(transactionReceipt, entityIDs)));
 			return HttpResponse.ok(receiptMapper.transactionReceiptToTransactionReceiptVO(transactionReceipt));
 		} catch (TransactionException e) {
 			log.warn("Was not able to submit transaction.", e);

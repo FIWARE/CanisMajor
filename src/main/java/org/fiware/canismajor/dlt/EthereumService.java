@@ -44,14 +44,6 @@ public class EthereumService {
 	private final SigningServiceFactory signingServiceFactory;
 	private final DefaultAccountProperties defaultAccountProperties;
 
-	public boolean isAddress(String publicKey) {
-		return WalletUtils.isValidAddress(publicKey);
-	}
-
-	public Credentials toAccount(String privateKey) {
-		return Credentials.create(ECKeyPair.create(Numeric.hexStringToByteArray(privateKey)));
-	}
-
 	public TransactionReceipt persistEntityCreation(EntityVO entityVO, WalletInformation walletInformation) throws TransactionException {
 		try {
 			Timestamper timestamper = Timestamper.load(ethereumProperties.getContractAddress(), ethClient, getSigningTransactionManager(walletInformation), contractGasProvider);
