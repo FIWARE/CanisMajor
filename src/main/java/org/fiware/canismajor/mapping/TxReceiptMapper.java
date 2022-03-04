@@ -93,7 +93,12 @@ public interface TxReceiptMapper {
 
 		switch ((String) property.get("type")) {
 			case PropertyVO.Type.PROPERTY_VALUE: {
-				return (List<String>) property.get("value");
+				if (property.get("value") instanceof List) {
+					return (List<String>) property.get("value");
+				} else {
+					return List.of((String) property.get("value"));
+				}
+
 			}
 			case RelationshipVO.Type.RELATIONSHIP_VALUE: {
 				return List.of((String) property.get("object"));
