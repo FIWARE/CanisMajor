@@ -44,6 +44,7 @@ public class EthereumService {
 	private final SigningServiceFactory signingServiceFactory;
 	private final DefaultAccountProperties defaultAccountProperties;
 
+
 	public TransactionReceipt persistEntityCreation(EntityVO entityVO, WalletInformation walletInformation) throws TransactionException {
 		try {
 			Timestamper timestamper = Timestamper.load(ethereumProperties.getContractAddress(), ethClient, getSigningTransactionManager(walletInformation), contractGasProvider);
