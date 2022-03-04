@@ -15,11 +15,6 @@ jobs:
         java-version: '17'
         java-package: jdk
 
-    - name: Build Vault
-      id: vault-build
-      run: |
-        docker build -f ./it/vault/Dockerfile ./it/vault -t vault-ethereum
-
     - name: Build CanisMajor
       id: canis-major-build
       run: |
@@ -29,7 +24,6 @@ jobs:
       id: compose
       env:
         CANISMAJOR_IMAGE: quay.io/fiware/canis-major
-        VAULT_IMAGE: vault-ethereum
       run: |
         cd it/docker-compose
         docker-compose -f docker-compose-env.yaml -f docker-compose-java.yaml up -d

@@ -1,11 +1,11 @@
 package org.fiware.canismajor.dlt;
 
-import io.micronaut.http.annotation.Get;
 import lombok.Getter;
 
 public enum WalletType {
 
-	VAULT("Vault");
+	VAULT("Vault"),
+	DEFAULT("Default");
 
 	@Getter
 	private final String value;

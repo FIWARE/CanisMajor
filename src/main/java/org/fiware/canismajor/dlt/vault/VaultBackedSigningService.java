@@ -44,6 +44,8 @@ public class VaultBackedSigningService extends SigningService {
 	}
 
 	@Override
+	// walletinformation is validated in service creation, thus can be used without rechecking
+	@SuppressWarnings("java:S3655")
 	public String getAccountAddress() {
 		HttpRequest<Object> addressRequest = HttpRequest.create(HttpMethod.GET, walletInformation.walletAddress().get().toString()).header(X_VAULT_TOKEN_HEADER_NAME, walletInformation.walletToken().get());
 		try {
@@ -61,6 +63,8 @@ public class VaultBackedSigningService extends SigningService {
 	}
 
 	@Override
+	// walletinformation is validated in service creation, thus can be used without rechecking
+	@SuppressWarnings("java:S3655")
 	public String signTransaction(String transaction) {
 		HttpRequest<Object> signingRequest = HttpRequest.create(HttpMethod.POST, walletInformation.walletAddress().get() + "/sign-tx").header(X_VAULT_TOKEN_HEADER_NAME, walletInformation.walletToken().get()).body(transaction);
 		try {

@@ -16,10 +16,9 @@ services:
       - ETHEREUM_CONTRACT_ADDRESS=0x476059cd57800db8eb88f67c2aa38a6fcf8251e0
       - ETHEREUM_DLT_ADDRESS=ganache-cli:8545
       - GENERAL_NGSI_TENANT=orion
-      - DEFAULT_VAULT_ACCOUNT_ENABLED=true
-      - DEFAULT_VAULT_ACCOUNT_USERNAME=default
-      - DEFAULT_VAULT_ACCOUNT_TOKEN=vault-plaintext-root-token
-      - DEFAULT_VAULT_ACCOUNT_VAULT_ADDRESS=http://vault:8200/v1/ethereum/accounts/default
+      - DEFAULT_ACCOUNT_ENABLED=true
+      # default key derived from the mnemonic in the test definition
+      - DEFAULT_ACCOUNT_PRIVATE_KEY=0x82AC43A26ae509eEf217330C7d862F822fF0CECB
     networks:
       - test-network
     ports:
