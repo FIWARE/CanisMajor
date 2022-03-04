@@ -6,7 +6,6 @@ import io.micronaut.http.annotation.Controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.fiware.canismajor.api.NgsiLdApi;
-import org.fiware.canismajor.configuration.DefaultVaultProperties;
 import org.fiware.canismajor.configuration.GeneralProperties;
 import org.fiware.canismajor.dlt.EthereumService;
 import org.fiware.canismajor.dlt.WalletInformation;
@@ -36,7 +35,6 @@ public class NGSILDController implements NgsiLdApi {
 	private final EntitiesApiClient entitiesApi;
 	private final TxReceiptMapper receiptMapper;
 	private final GeneralProperties generalProperties;
-	private final DefaultVaultProperties defaultVaultProperties;
 
 	@Override
 	public HttpResponse<TransactionReceiptVO> createNgsiLDEntity(@Nullable String link, @Nullable String walletType, @Nullable String walletToken, @Nullable String walletAddress, EntityVO entityVO) {
@@ -66,7 +64,7 @@ public class NGSILDController implements NgsiLdApi {
 	public HttpResponse<TransactionReceiptVO> upsertEntities(@Nullable String walletType, @Nullable String walletToken, @Nullable String walletAddress, List<EntityVO> entityVOs) {
 		try {
 			TransactionReceipt transactionReceipt = ethereumService.persistBatchOperation(entityVOs, toWalletInformation(walletType, walletToken, walletAddress));
-			List<URI> entityIDs = entityVOs.stream().map(EntityVO::id).collect(Collectors.toList());
+			List<URI> entityIDs = entityVOs.stream().map(EntityVO::id).toList();
 			entitiesApi.createEntity(generalProperties.getNgsiTenant(), receiptMapper.transactionReceiptToEntityVO(transactionReceipt, entityIDs));
 			return HttpResponse.ok(receiptMapper.transactionReceiptToTransactionReceiptVO(transactionReceipt));
 		} catch (TransactionException e) {
@@ -82,10 +80,8 @@ public class NGSILDController implements NgsiLdApi {
 
 			if (optionalWalletAddress.isPresent() && optionalWalletToken.isPresent()) {
 				return new WalletInformation(WalletType.getByValue(walletType), Optional.ofNullable(walletToken), Optional.of(new URL(optionalWalletAddress.get())));
-			} else if (defaultVaultProperties.isEnabled()) {
-				return new WalletInformation(WalletType.VAULT, Optional.ofNullable(defaultVaultProperties.getToken()), Optional.ofNullable(defaultVaultProperties.getVaultAddress()));
 			} else {
-				throw new IllegalArgumentException("Did not receive valid wallet-information and no default wallet is configured.");
+				return new WalletInformation(WalletType.DEFAULT, Optional.empty(), Optional.empty());
 			}
 		} catch (MalformedURLException e) {
 			throw new IllegalArgumentException("%s is not a valid walletAddress");

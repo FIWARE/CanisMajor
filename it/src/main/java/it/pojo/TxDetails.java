@@ -7,7 +7,7 @@ import lombok.Data;
 public class TxDetails {
 
 	private String transactionHash;
-	private String blockHash;;
+	private String blockHash;
 	private String status;
 	private String from;
 	private String to;

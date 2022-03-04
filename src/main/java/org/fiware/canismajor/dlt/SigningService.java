@@ -4,7 +4,7 @@ public abstract class SigningService {
 
 	protected final WalletInformation walletInformation;
 
-	public SigningService(WalletInformation walletInformation) throws InvalidWalletInformationException {
+	protected SigningService(WalletInformation walletInformation) throws InvalidWalletInformationException {
 		this.walletInformation = walletInformation;
 		validateWalletInformation();
 	}

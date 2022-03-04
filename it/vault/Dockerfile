@@ -14,8 +14,8 @@ RUN mkdir -p /build/bin \
 
 FROM vault:1.9.3
 
-RUN mkdir -p /home/vault/plugins
+RUN mkdir -p /plugins
 
 COPY config.json /vault/config/config.json
-COPY --from=builder /build/bin/vault-ethereum /home/vault/plugins/vault-ethereum
-COPY --from=builder /build/bin/SHA256SUMS /home/vault/plugins/SHA256SUMS
+COPY --from=builder /build/bin/vault-ethereum /plugins/vault-ethereum
+COPY --from=builder /build/bin/SHA256SUMS /plugins/SHA256SUMS

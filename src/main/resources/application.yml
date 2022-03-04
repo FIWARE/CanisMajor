@@ -49,11 +49,9 @@ datasources:
 general:
   ngsiTenant: orion-ld
 
-defaultVaultAccount:
-  enabled: true
-  username: canisMajor
-  token: superSecretToken
-  vaultAddress: http://localhost:8200/v1/ethereum/accounts/canisMajor
+defaultAccount:
+  enabled: false
+  privateKey: "0xMyPrivateKey"
 
 ethereum:
   enabled: true
