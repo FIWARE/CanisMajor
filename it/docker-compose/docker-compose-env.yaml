@@ -3,7 +3,7 @@ services:
 
   # Hashicorp vault as a wallet
   vault-server:
-    image: ${VAULT_IMAGE:-vault-ethereum}
+    image: ${VAULT_IMAGE:-quay.io/fiware/vault-ethereum:1.0.1}
     hostname: vault
     ports:
       - "8200:8200"

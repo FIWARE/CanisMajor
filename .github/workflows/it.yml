@@ -15,11 +15,6 @@ jobs:
         java-version: '17'
         java-package: jdk
 
-    - name: Build Vault
-      id: vault-build
-      run: |
-        docker build -f ./it/vault/Dockerfile ./it/vault -t vault-ethereum
-
     - name: Build CanisMajor
       id: canis-major-build
       run: |
