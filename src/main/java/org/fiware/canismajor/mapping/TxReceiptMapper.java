@@ -1,8 +1,12 @@
 package org.fiware.canismajor.mapping;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micronaut.data.exceptions.MappingException;
+import org.fiware.canismajor.dlt.QueryInfo;
+import org.fiware.canismajor.dlt.RetrievalQueryInfo;
 import org.fiware.canismajor.model.TransactionReceiptVO;
 import org.fiware.ngsi.model.EntityVO;
 import org.fiware.ngsi.model.PropertyVO;
@@ -26,6 +30,28 @@ public interface TxReceiptMapper {
 	String CONTEXT = "https://raw.githubusercontent.com/smart-data-models/dataModel.DistributedLedgerTech/master/context.jsonld";
 	String TX_RECEIPTS_KEY = "TxReceipts";
 	String REF_ENTITY_KEY = "refEntity";
+
+	default EntityVO transactionReceiptToEntityVO(TransactionReceipt transactionReceipt, URI entityId, RetrievalQueryInfo queryInfo) {
+		EntityVO entityVO = transactionReceiptToEntityVO(transactionReceipt, entityId);
+
+		PropertyVO propertyVO = new PropertyVO();
+		propertyVO.setType(PropertyVO.Type.PROPERTY);
+		propertyVO.setValue(queryInfo);
+
+		entityVO.getAdditionalProperties().put("retrievalQuery", propertyVO);
+		return entityVO;
+	}
+
+	default EntityVO transactionReceiptToEntityVO(TransactionReceipt transactionReceipt, URI entityId, QueryInfo queryInfo) {
+		EntityVO entityVO = transactionReceiptToEntityVO(transactionReceipt, entityId);
+
+		PropertyVO propertyVO = new PropertyVO();
+		propertyVO.setType(PropertyVO.Type.PROPERTY);
+		propertyVO.setValue(queryInfo);
+
+		entityVO.getAdditionalProperties().put("retrievalQuery", propertyVO);
+		return entityVO;
+	}
 
 	default EntityVO transactionReceiptToEntityVO(TransactionReceipt transactionReceipt, URI entityId) {
 		EntityVO entityVO = new EntityVO();

@@ -86,6 +86,44 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
+    get:
+      tags:
+        - NGSI-LD
+      parameters:
+        - $ref: '#/components/parameters/id'
+        - $ref: '#/components/parameters/idPattern'
+        - $ref: '#/components/parameters/type'
+        - $ref: '#/components/parameters/attrs'
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/georel'
+        - $ref: '#/components/parameters/geometry'
+        - $ref: '#/components/parameters/coordinates'
+        - $ref: '#/components/parameters/geoproperty'
+        - $ref: '#/components/parameters/csf'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/options'
+        - $ref: '#/components/parameters/link'
+        - $ref: '#/components/parameters/walletType'
+        - $ref: '#/components/parameters/walletToken'
+        - $ref: '#/components/parameters/walletAddress'
+        - $ref: '#/components/parameters/relatedEntity'
+      description: Retrieve a set of entities which matches a specific query from an NGSI-LD system
+      operationId: queryEntities
+      responses:
+        '200':
+          description: NGSI-LD Entity query persisted in the blockchain.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionReceipt'
+        '400':
+          description: Bad request
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
   '/ngsi-ld/v1/entities/{entityId}/attrs':
     post:
       tags:
@@ -135,6 +173,34 @@ paths:
           description: Unprocessable Entity
           content:
             application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+  '/ngsi-ld/v1/entities/{entityId}':
+    get:
+      description: Retrieve an specific Entity from an NGSI-LD system. It's possible to specify the Entity attributes to be retrieved by using query parameters
+      operationId: retrieveEntityById
+      tags:
+        - NGSI-LD
+      parameters:
+        - $ref: '#/components/parameters/entityId'
+        - $ref: '#/components/parameters/attrs'
+        - $ref: '#/components/parameters/parameters-type'
+        - $ref: '#/components/parameters/options'
+        - $ref: '#/components/parameters/link'
+        - $ref: '#/components/parameters/walletType'
+        - $ref: '#/components/parameters/walletToken'
+        - $ref: '#/components/parameters/walletAddress'
+      responses:
+        '200':
+          description: NGSI-LD Entity query persisted in the blockchain.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionReceipt'
+        '400':
+          description: Bad request
+          content:
+            application/ld+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
   '/ngsi-ld/v1/entityOperations/upsert':
@@ -222,12 +288,123 @@ paths:
           description: No such entity exists.
 components:
   parameters:
+    id:
+      name: id
+      description: Comma separated list of URIs to be retrieved
+      in: query
+      required: false
+      schema:
+        type: string
+    idPattern:
+      name: idPattern
+      description: Regular expression that must be matched by Entity ids
+      in: query
+      required: false
+      schema:
+        type: string
+        format: regexp
+    type:
+      name: type
+      description: Comma separated list of Entity type names to be retrieved
+      in: query
+      required: false
+      schema:
+        type: string
+        minLength: 1
+    attrs:
+      name: attrs
+      description: Comma separated list of attribute names (properties or relationships) to be retrieved
+      in: query
+      required: false
+      schema:
+        type: string
+        minLength: 1
+    q:
+      name: q
+      description: Query
+      in: query
+      required: false
+      schema:
+        type: string
+        minLength: 1
+    georel:
+      name: georel
+      description: Geo-relationship
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/georel'
+    geometry:
+      name: geometry
+      description: Geometry
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/geometryEnum'
+    coordinates:
+      name: coordinates
+      description: Coordinates serialized as a string
+      in: query
+      required: false
+      schema:
+        type: string
+        minLength: 1
+    geoproperty:
+      name: geoproperty
+      description: The name of the property that contains the geo-spatial data that will be used to resolve the geoquery
+      in: query
+      required: false
+      schema:
+        type: string
+        minLength: 1
+    csf:
+      name: csf
+      description: Context Source Filter
+      in: query
+      required: false
+      schema:
+        type: string
+        minLength: 1
+    limit:
+      name: limit
+      description: Pagination limit
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+    offset:
+      name: offset
+      description: Pagination offset
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 0
+    options:
+      name: options
+      description: Options dictionary
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - keyValues
+          - sysAttrs
     entityType:
       name: entityType
       in: path
       required: true
       schema:
         type: string
+    parameters-type:
+      name: type
+      description: Entity Type
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/Name'
     link:
       name: Link
       description: Link header to be used as described in the json-ld spec.
@@ -247,6 +424,14 @@ components:
       description: ID of an NGSI-LD entity
       in: path
       required: true
+      schema:
+        type: string
+        format: uri
+    relatedEntity:
+      name: Related-Entity
+      description: ID of an NGSI-LD entity to related the query to, f.e. a user
+      in: header
+      required: false
       schema:
         type: string
         format: uri
