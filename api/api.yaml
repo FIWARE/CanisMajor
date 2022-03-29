@@ -890,6 +890,8 @@ components:
           type: boolean
         gasUsedRaw:
           type: string
+        additionalInformation:
+          type: object
     EntityTransaction:
       type: object
       properties:
