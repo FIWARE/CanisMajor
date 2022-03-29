@@ -20,6 +20,7 @@ import it.pojo.TestAccount;
 import it.pojo.TxDetails;
 import it.pojo.VaultAccount;
 import it.pojo.VaultPlugin;
+import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -280,6 +281,75 @@ public class StepDefinitions {
 		addTxToExpectations("Franzi", storeID);
 	}
 
+	@When("Mira retrieves the test store.")
+	public void mira_get_test_store() throws Exception {
+
+		String storeID = String.format("urn:ngsi-ld:Building:%s", testCounter);
+		HttpUrl httpUrl = HttpUrl.parse(String.format("http://%s/ngsi-ld/v1/entities/%s", CANIS_MAJOR_ADDRESS, storeID))
+				.newBuilder()
+				.addEncodedQueryParameter("attrs", "address")
+				.addEncodedQueryParameter("type", "Building")
+				.build();
+		Request request = new Request.Builder()
+				.addHeader("NGSILD-Tenant", NGSILD_TENANT)
+				.addHeader("Wallet-Type", "Vault")
+				.addHeader("Wallet-Address", "http://vault:8200/v1/ethereum/accounts/mira")
+				.addHeader("Wallet-Token", VAULT_ROOT_TOKEN)
+				.url(httpUrl)
+				.get()
+				.build();
+		OkHttpClient okHttpClient = new OkHttpClient();
+		Response response = okHttpClient.newCall(request).execute();
+		assertTrue(response.code() >= 200 && response.code() < 300, "We expect any kind of successful response.");
+		addTxToExpectations("Mira", storeID);
+	}
+
+	@When("Mira queries for unicorns.")
+	public void mira_queries_unicorns_to_default() throws Exception {
+		HttpUrl httpUrl = HttpUrl.parse(String.format("http://%s/ngsi-ld/v1/entities", CANIS_MAJOR_ADDRESS))
+				.newBuilder()
+				.addEncodedQueryParameter("attrs", "color")
+				.addEncodedQueryParameter("type", "Unicorn")
+				.addEncodedQueryParameter("q", "color=rainbow")
+				.build();
+		Request request = new Request.Builder()
+				.addHeader("NGSILD-Tenant", NGSILD_TENANT)
+				.addHeader("Wallet-Type", "Vault")
+				.addHeader("Wallet-Address", "http://vault:8200/v1/ethereum/accounts/mira")
+				.addHeader("Wallet-Token", VAULT_ROOT_TOKEN)
+				.url(httpUrl)
+				.get()
+				.build();
+
+		OkHttpClient okHttpClient = new OkHttpClient();
+		Response response = okHttpClient.newCall(request).execute();
+		assertTrue(response.code() >= 200 && response.code() < 300, "We expect any kind of successful response.");
+		addTxToExpectations("Mira", "urn:ngsi-ld:requestor:default");
+	}
+	@When("Mira queries for unicorns, providing a user id.")
+	public void mira_queries_unicorns_to_mira() throws Exception {
+		HttpUrl httpUrl = HttpUrl.parse(String.format("http://%s/ngsi-ld/v1/entities", CANIS_MAJOR_ADDRESS))
+				.newBuilder()
+				.addEncodedQueryParameter("attrs", "color")
+				.addEncodedQueryParameter("type", "Unicorn")
+				.addEncodedQueryParameter("q", "color=rainbow")
+				.build();
+		Request request = new Request.Builder()
+				.addHeader("NGSILD-Tenant", NGSILD_TENANT)
+				.addHeader("Wallet-Type", "Vault")
+				.addHeader("Wallet-Address", "http://vault:8200/v1/ethereum/accounts/mira")
+				.addHeader("Wallet-Token", VAULT_ROOT_TOKEN)
+				.addHeader("Related-Entity", "urn:ngsi-ld:requestor:mira")
+				.url(httpUrl)
+				.get()
+				.build();
+
+		OkHttpClient okHttpClient = new OkHttpClient();
+		Response response = okHttpClient.newCall(request).execute();
+		assertTrue(response.code() >= 200 && response.code() < 300, "We expect any kind of successful response.");
+		addTxToExpectations("Mira", "urn:ngsi-ld:requestor:mira");
+	}
+
 	@When("Mira updates the test store.")
 	public void mira_update_test_store() throws Exception {
 
@@ -309,6 +379,7 @@ public class StepDefinitions {
 		assertTrue(response.code() >= 200 && response.code() < 300, "We expect any kind of successful response.");
 		addTxToExpectations("Mira", storeID);
 	}
+
 
 	private Entity getDelivery(String id, String status) {
 
