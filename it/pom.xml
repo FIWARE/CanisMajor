@@ -12,6 +12,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+        <!-- jackson -->
+        <version.com.fasterxml.jackson.core.jackson-databind>2.13.2</version.com.fasterxml.jackson.core.jackson-databind>
+
         <!-- cucumber -->
         <version.io.cucumber>7.0.0</version.io.cucumber>
 
@@ -64,9 +67,20 @@
             <version>${version.com.squareup.okhttp3}</version>
         </dependency>
         <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${version.com.fasterxml.jackson.core.jackson-databind}</version>
+        </dependency>
+        <dependency>
             <groupId>org.openapitools</groupId>
             <artifactId>jackson-databind-nullable</artifactId>
             <version>${version.org.openapitools.jackson-databind-nullable}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- lazy dev -->
