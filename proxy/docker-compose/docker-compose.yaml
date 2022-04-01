@@ -3,7 +3,7 @@ services:
 
   ## envoy with an already embeded cm-forward-filter
   cm-forward-proxy:
-    image: ${ENVOY_IMAGE:-quay.io/fiware/cm-forward-proxy}
+    image: ${ENVOY_IMAGE:-quay.io/fiware/cm-forward-proxy:1.3.0-PRE-40}
     hostname: envoy
     # required for writing the intial config and iptable to match
     user: root
@@ -97,6 +97,7 @@ services:
     depends_on:
       - ganache-cli
 
+  # eth api 
   ganache-cli:
     image: trufflesuite/ganache-cli:latest
     hostname: ganache-cli
@@ -106,6 +107,21 @@ services:
       test-network:
         ipv4_address: 10.5.0.7
     command: ganache-cli -l 8000000 --gasPrice 0 --account '0x22aabb811efca4e6f4748bd18a46b502fa85549df9fa07da649c0a148d7d5530, 100000000000000000000'
+
+  # Hashicorp vault as a wallet
+  vault-server:
+    image: ${VAULT_IMAGE:-quay.io/fiware/vault-ethereum:1.0.1}
+    hostname: vault
+    ports:
+      - 8200:8200
+    environment:
+      VAULT_ADDR: "http://0.0.0.0:8200"
+      VAULT_DEV_ROOT_TOKEN_ID: "vault-plaintext-root-token"
+    cap_add:
+      - IPC_LOCK
+    networks:
+      test-network:
+        ipv4_address: 10.5.0.8
 
 networks:
   test-network:

@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -55,6 +56,7 @@ public class StepDefinitions {
 	}
 
 	private static final String CANIS_MAJOR_ADDRESS = "localhost:4000";
+	// depending on the test setup, this can either go directly to canis-major or to a broker(and beeing intercepted)
 	private static final String VAULT_ADDRESS = "localhost:8200";
 
 
@@ -67,6 +69,9 @@ public class StepDefinitions {
 	);
 
 	private static final int TX_AWAIT_MAX_S = 15;
+
+	// address to be used for accessing the broker. Practicaly a switch between the proxy-mode and direct canis-major access.
+	private String ngsiAddress = "10.5.0.5:1026";
 
 	// we use testCount for the tests, so that we dont need to empty the blockchain all the time
 	// we start at a random point, to be able to run multiple times in local testing.
@@ -81,6 +86,12 @@ public class StepDefinitions {
 	public void setup() throws Exception {
 		testCounter++;
 		expectedTxMap = new HashMap<>();
+		try {
+			ngsiAddress = Optional.ofNullable(System.getenv("NGSI_ADDRESS")).orElse(ngsiAddress);
+		} catch (Exception e) {
+			// always use the default, if nothing is set
+		}
+
 	}
 
 	@Given("CanisMajor is running and available for requests.")
@@ -208,7 +219,7 @@ public class StepDefinitions {
 
 		Request request = new Request.Builder()
 				.addHeader("NGSILD-Tenant", NGSILD_TENANT)
-				.url(String.format("http://%s/ngsi-ld/v1/entities/%s/attrs", CANIS_MAJOR_ADDRESS, deliveryID))
+				.url(String.format("http://%s/ngsi-ld/v1/entities/%s/attrs", ngsiAddress, deliveryID))
 				.method("POST", requestBody)
 				.addHeader("Content-Type", "application/json")
 				.build();
@@ -227,7 +238,7 @@ public class StepDefinitions {
 		RequestBody requestBody = RequestBody.create(OBJECT_MAPPER.writeValueAsString(List.of(delivery_1, delivery_2)), MediaType.get("application/json"));
 		Request request = new Request.Builder()
 				.addHeader("NGSILD-Tenant", NGSILD_TENANT)
-				.url(String.format("http://%s/ngsi-ld/v1/entityOperations/upsert", CANIS_MAJOR_ADDRESS))
+				.url(String.format("http://%s/ngsi-ld/v1/entityOperations/upsert", ngsiAddress))
 				.method("POST", requestBody)
 				.addHeader("Content-Type", "application/json")
 				.build();
@@ -270,7 +281,7 @@ public class StepDefinitions {
 				.addHeader("Wallet-Type", "Vault")
 				.addHeader("Wallet-Address", "http://vault:8200/v1/ethereum/accounts/franzi")
 				.addHeader("Wallet-Token", VAULT_ROOT_TOKEN)
-				.url(String.format("http://%s/ngsi-ld/v1/entities/%s/attrs", CANIS_MAJOR_ADDRESS, storeID))
+				.url(String.format("http://%s/ngsi-ld/v1/entities/%s/attrs", ngsiAddress, storeID))
 				.method("POST", requestBody)
 				.addHeader("Content-Type", "application/json")
 				.build();
@@ -300,7 +311,7 @@ public class StepDefinitions {
 				.addHeader("Wallet-Type", "Vault")
 				.addHeader("Wallet-Address", "http://vault:8200/v1/ethereum/accounts/mira")
 				.addHeader("Wallet-Token", VAULT_ROOT_TOKEN)
-				.url(String.format("http://%s/ngsi-ld/v1/entities/%s/attrs", CANIS_MAJOR_ADDRESS, storeID))
+				.url(String.format("http://%s/ngsi-ld/v1/entities/%s/attrs", ngsiAddress, storeID))
 				.method("POST", requestBody)
 				.addHeader("Content-Type", "application/json")
 				.build();
@@ -514,7 +525,7 @@ public class StepDefinitions {
 		if (ethAccount == "Default") {
 			request = new Request.Builder()
 					.addHeader("NGSILD-Tenant", NGSILD_TENANT)
-					.url(String.format("http://%s/ngsi-ld/v1/entities/", CANIS_MAJOR_ADDRESS))
+					.url(String.format("http://%s/ngsi-ld/v1/entities/", ngsiAddress))
 					.method("POST", requestBody)
 					.addHeader("Content-Type", "application/json")
 					.build();
@@ -524,7 +535,7 @@ public class StepDefinitions {
 					.addHeader("Wallet-Type", "Vault")
 					.addHeader("Wallet-Address", "http://vault:8200/v1/ethereum/accounts/" + ethAccount.toLowerCase(Locale.ROOT))
 					.addHeader("Wallet-Token", VAULT_ROOT_TOKEN)
-					.url(String.format("http://%s/ngsi-ld/v1/entities/", CANIS_MAJOR_ADDRESS))
+					.url(String.format("http://%s/ngsi-ld/v1/entities/", ngsiAddress))
 					.method("POST", requestBody)
 					.addHeader("Content-Type", "application/json")
 					.build();
@@ -533,7 +544,10 @@ public class StepDefinitions {
 
 		OkHttpClient okHttpClient = new OkHttpClient();
 		Response response = okHttpClient.newCall(request).execute();
-		assertEquals(200, response.code(), "We expect a successful response.");
+
+
+		assertTrue(response.code() >= 200 && response.code() < 300, "We expect a successful response.");
+
 		addTxToExpectations(ethAccount, entity.getId().toString());
 	}
 
