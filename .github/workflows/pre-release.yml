@@ -55,8 +55,8 @@ jobs:
           image: cm-forward-proxy
           tags: ${{ github.sha }} ${{ needs.generate-version.outputs.version }}
           dockerfiles: |
-            ./proxy/cm-foward-filter/Dockerfile-envoy
-          context: ./proxy/cm-foward-filter
+            ./proxy/cm-forward-filter/Dockerfile-envoy
+          context: ./proxy/cm-forward-filter
 
       - name: Push To quay.io
         id: push-to-quay
