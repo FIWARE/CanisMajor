@@ -18,15 +18,14 @@ In order to run the whole service in a local environment, a docker-compose setup
 > in order to intercept requests and forward them to the proxy. If the OS does not support that, you 
 > need to configure that individually.
 
-
 ## Setup
-
 
 The development-setup runs on a dedicated network with fixed ip-addresse to allow the iptables-manipulations defined in [iptables.sh](./docker-compose/iptables.sh).
 This script can be used to setup the iptables to redirect everything that is send to 1026 on that networks ip-range to 15001. This will redirect the traffic
 intended for the broker to envoy. It also includes a rule to RETURN everything from the root-userspace, in order to jump out of envoy and
-not potentially harm the whole host. If those configurations do not fit your needs, you need to setup up such behaviour differently
-depending on your system.
+not potentially harm the whole host. To not build infinite loops, CanisMajor is also run as root in this setup, so that the persistence of Transaction-Receipts will not 
+also forwarded to CanisMajor. If those configurations do not fit your needs, you need to setup up such behaviour differently
+depending on your system. 
 
 The setup includes the following components:
 
@@ -70,14 +69,18 @@ A request scenario will use the following path:
 3. The proxy will(in parallel):
    a. forward the request to CanisMajor
    b. passthrough the request to the broker
+> :bulb: In strict-mode, these calls will happen sequentially. The request is put on hold until CanisMajor reports success. 
+> In any error case, the request will be aborted with HTTP-Code [502 (BadGateway)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/502).   
+> This behaviour ensures that every transaction is tracked by CanisMajor, but also (drastically) increases the latency, since every request has to wait
+> for the blockchain to fulfill the transaction. 
 
-4. The proxy will passthrough the response to orion
+5. The proxy will pass-through the response to orion
 
-5. CanisMajor persists the request in the blockchain
+6. CanisMajor persists the request in the blockchain
 
-6. CanisMajor stores the transaction receipt in the broker
+7. CanisMajor stores the transaction receipt in the broker
 
-7. Check with:
+8. Check with:
 ```console
     curl --request GET 'http://10.5.0.4:4000/entity/urn:ngsi-ld:AirQualityObserved:Porto-AmbientObserved-28079004-2016-03-18T17:00:00'    
 ```
