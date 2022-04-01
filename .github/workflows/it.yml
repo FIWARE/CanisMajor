@@ -74,7 +74,7 @@ jobs:
     - name: Build proxy
       id: forward-proxy
       run: |
-        docker build ./proxy/cm-forward-filter/Dockerfile-envoy -t cm-forward-proxy
+        docker build -f ./proxy/cm-forward-filter/Dockerfile-envoy ./proxy/cm-forward-filter -t cm-forward-proxy
 
     - name: Run compose
       id: compose
