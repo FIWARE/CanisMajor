@@ -30,6 +30,7 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Callable;
 
 @Slf4j
 @Singleton
@@ -47,22 +48,26 @@ public class EthereumService {
 
 	public TransactionReceipt persistEntityCreation(EntityVO entityVO, WalletInformation walletInformation) throws TransactionException {
 		try {
-			Timestamper timestamper = Timestamper.load(ethereumProperties.getContractAddress(), ethClient, getSigningTransactionManager(walletInformation), contractGasProvider);
-			RemoteFunctionCall<TransactionReceipt> txRFC = timestamper.timestamp(getAssetId(entityVO.id()), getMerkleTreeHash(entityVO));
-			return sendTransaction(txRFC, 0);
-		} catch (JsonProcessingException e) {
-			throw new TransactionException(String.format("Was not able to create the merkle root hash for entity %s.", entityVO), e);
+			return sendTransaction(() -> {
+				try {
+					Timestamper timestamper = Timestamper.load(ethereumProperties.getContractAddress(), ethClient, getSigningTransactionManager(walletInformation), contractGasProvider);
+					RemoteFunctionCall<TransactionReceipt> txRFC = timestamper.timestamp(getAssetId(entityVO.id()), getMerkleTreeHash(entityVO));
+					return txRFC.send();
+				} catch (JsonProcessingException e) {
+					throw new TransactionException(String.format("Was not able to create the merkle root hash for entity %s.", entityVO), e);
+				}
+			}, 0);
 		} catch (Exception e) {
 			throw new TransactionException(String.format("Was not able to send transaction for entity %s.", entityVO), e);
 		}
 	}
 
-	private TransactionReceipt sendTransaction(RemoteFunctionCall<TransactionReceipt> txRFC, int count) throws Exception{
+	private TransactionReceipt sendTransaction(Callable<TransactionReceipt> txRFC, int count) throws Exception {
 		try {
-			return txRFC.send();
+			return txRFC.call();
 		} catch (Exception e) {
 			// retry to solve race conditions within one account
-			if(e instanceof RuntimeException && count < 10) {
+			if (e instanceof RuntimeException && count < 10) {
 				log.warn("Catched exception.", e);
 				return sendTransaction(txRFC, count++);
 			}
@@ -72,11 +77,15 @@ public class EthereumService {
 
 	public TransactionReceipt persistEntityUpdate(URI entityId, EntityFragmentVO entityFragmentVO, WalletInformation walletInformation) throws TransactionException {
 		try {
-			Timestamper timestamper = Timestamper.load(ethereumProperties.getContractAddress(), ethClient, getSigningTransactionManager(walletInformation), contractGasProvider);
-			RemoteFunctionCall<TransactionReceipt> txRFC = timestamper.timestamp(getAssetId(entityId), getMerkleTreeHash(entityFragmentVO));
-			return sendTransaction(txRFC, 0);
-		} catch (JsonProcessingException e) {
-			throw new TransactionException(String.format("Was not able to create the merkle root hash for entity fragment %s.", entityFragmentVO), e);
+			return sendTransaction(() -> {
+				try {
+					Timestamper timestamper = Timestamper.load(ethereumProperties.getContractAddress(), ethClient, getSigningTransactionManager(walletInformation), contractGasProvider);
+					RemoteFunctionCall<TransactionReceipt> txRFC = timestamper.timestamp(getAssetId(entityId), getMerkleTreeHash(entityFragmentVO));
+					return txRFC.send();
+				} catch (JsonProcessingException e) {
+					throw new TransactionException(String.format("Was not able to create the merkle root hash for entity fragment %s.", entityFragmentVO), e);
+				}
+			}, 0);
 		} catch (Exception e) {
 			throw new TransactionException(String.format("Was not able to send transaction for entity fragment %s.", entityFragmentVO), e);
 		}
@@ -84,12 +93,16 @@ public class EthereumService {
 
 	public TransactionReceipt persistBatchOperation(List<EntityVO> entities, WalletInformation walletInformation) throws TransactionException {
 		try {
-			Timestamper timestamper = Timestamper.load(ethereumProperties.getContractAddress(), ethClient, getSigningTransactionManager(walletInformation), contractGasProvider);
-			// we generate a random uuid to connect the update to, since we do not want to create multiple transactions for one update
-			RemoteFunctionCall<TransactionReceipt> txRFC = timestamper.timestamp(getAssetId(URI.create(UUID.randomUUID().toString())), getMerkleTreeHash(entities));
-			return sendTransaction(txRFC, 0);
-		} catch (JsonProcessingException e) {
-			throw new TransactionException(String.format("Was not able to create the merkle root hash for entity list %s.", entities), e);
+			return sendTransaction(() -> {
+				try {
+					Timestamper timestamper = Timestamper.load(ethereumProperties.getContractAddress(), ethClient, getSigningTransactionManager(walletInformation), contractGasProvider);
+					// we generate a random uuid to connect the update to, since we do not want to create multiple transactions for one update
+					RemoteFunctionCall<TransactionReceipt> txRFC = timestamper.timestamp(getAssetId(URI.create(UUID.randomUUID().toString())), getMerkleTreeHash(entities));
+					return txRFC.send();
+				} catch (JsonProcessingException e) {
+					throw new TransactionException(String.format("Was not able to create the merkle root hash for entity list %s.", entities), e);
+				}
+			}, 0);
 		} catch (Exception e) {
 			throw new TransactionException(String.format("Was not able to send transaction for for entity list %s.", entities), e);
 		}
@@ -114,12 +127,13 @@ public class EthereumService {
 				return new SigningTransactionManager(transactionMapper, objectMapper, signingServiceFactory.createSigningService(walletInformation), ethClient);
 			}
 			case DEFAULT -> {
-				if(!defaultAccountProperties.isEnabled()) {
+				if (!defaultAccountProperties.isEnabled()) {
 					throw new SigningException("Signing with a default account is not enabled. Please provide wallet-information or contact the administrator.");
 				}
 				log.warn("Transaction will be signed with the default account. This is not recommended, since it might impose a security risk.");
 				return new RawTransactionManager(ethClient, Credentials.create(defaultAccountProperties.getPrivateKey()));
-			} default -> throw new SigningException(String.format("Did not receive valid wallet-information. Type is: %s", walletInformation.walletType()));
+			}
+			default -> throw new SigningException(String.format("Did not receive valid wallet-information. Type is: %s", walletInformation.walletType()));
 		}
 	}
 }
