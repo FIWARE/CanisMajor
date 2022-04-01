@@ -42,8 +42,7 @@ jobs:
         id: out
         run: echo "::set-output name=version::$(echo ${VERSION}-PRE-${{ steps.pr_number.outputs.nr }})"
 
-  cm-foward-proxy:
-
+  cm-forward-proxy:
     needs: [ "generate-version" ]
     runs-on: ubuntu-latest
     steps:
