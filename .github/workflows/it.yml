@@ -141,7 +141,7 @@ jobs:
         ENVOY_IMAGE: cm-forward-proxy
       run: |
         cd proxy/docker-compose/
-        sudo iptables.sh
+        sudo ./iptables.sh
         # workaround to enable strict mode, without changing the base
         sed -i 's/false/true/g' initial-config/ossm-extension/listener.yaml
         docker-compose up -d
