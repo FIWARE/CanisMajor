@@ -1,7 +1,6 @@
 version: "3.5"
 services:
   ## CanisMajor setup
-
   canis-major:
     restart: always
     image: ${CANISMAJOR_IMAGE:-quay.io/fiware/canis-major}

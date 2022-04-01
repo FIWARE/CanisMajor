@@ -42,6 +42,82 @@ jobs:
         id: out
         run: echo "::set-output name=version::$(echo ${VERSION}-PRE-${{ steps.pr_number.outputs.nr }})"
 
+  cm-foward-proxy:
+
+    needs: [ "generate-version" ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build Image
+        id: build-image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: cm-forward-proxy
+          tags: ${{ github.sha }} ${{ needs.generate-version.outputs.version }}
+          dockerfiles: |
+            ./proxy/cm-foward-filter/Dockerfile-envoy
+          context: ./proxy/cm-foward-filter
+
+      - name: Push To quay.io
+        id: push-to-quay
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ steps.build-image.outputs.image }}
+          tags: ${{ steps.build-image.outputs.tags }}
+          registry: ${{ env.REGISTRY }}/${{ env.REPOSITORY }}
+          username: ${{ secrets.QUAY_USERNAME }}
+          password: ${{ secrets.QUAY_PASSWORD }}
+
+  ossm-extension:
+
+    needs: [ "generate-version" ]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set extension version
+        run: |
+          sed -i 's/${cm-forward-filter.version}/${{ needs.generate-version.outputs.version }}/g' ./proxy/ossm-extension/manifest.yaml
+          cat ./proxy/ossm-extension/manifest.yaml
+
+      - name: Build Image
+        id: build-image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: cm-forward-filter-extension
+          tags: ${{ github.sha }} ${{ needs.generate-version.outputs.version }}
+          dockerfiles: |
+            ./proxy/cm-forward-filter/Dockerfile-envoy
+          context: .
+      
+      - name: Push To quay.io
+        id: push-to-quay
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ steps.build-image.outputs.image }}
+          tags: ${{ steps.build-image.outputs.tags }}
+          registry: ${{ env.REGISTRY }}/${{ env.REPOSITORY }}
+          username: ${{ secrets.QUAY_USERNAME }}
+          password: ${{ secrets.QUAY_PASSWORD }}
+
+  cm-forward-filter:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build wasm
+        run: |
+          docker run -v $(pwd)/proxy/cm-foward-filter:/cm-foward-filter --workdir /cm-foward-filter tinygo/tinygo tinygo build -o cm-foward-filter.wasm -target=wasi ./main.go     
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: cm-foward-filter
+          path: proxy/cm-foward-filter/cm-foward-filter.wasm
+
   vault-ethereum:
 
     needs: [ "generate-version" ]
@@ -91,7 +167,7 @@ jobs:
           mvn clean install deploy -Pdocker -DskipTests -Dimage.tag=${{ needs.generate-version.outputs.version }} -Dimage.registry="${{ env.REGISTRY }}" -Dimage.repository="${{ env.REPOSITORY }}"
 
   git-release:
-    needs: ["generate-version","canis-major", "vault-ethereum"]
+    needs: ["generate-version","canis-major", "vault-ethereum", "cm-forward-proxy", "ossm-extension", "cm-forward-filter"]
     runs-on: ubuntu-latest
 
     steps:

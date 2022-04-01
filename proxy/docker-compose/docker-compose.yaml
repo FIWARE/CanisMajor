@@ -1,0 +1,119 @@
+version: "3.5"
+services:
+
+  ## envoy with an already embeded cm-forward-filter
+  cm-forward-proxy:
+    image: ${ENVOY_IMAGE:-quay.io/fiware/cm-forward-proxy}
+    hostname: envoy
+    # required for writing the intial config and iptable to match
+    user: root
+    networks:
+      test-network:
+        ipv4_address: 10.5.0.3
+    expose:
+      - "15001"
+    ports:
+      - 15001:15001
+    entrypoint: ./initial-config/init.sh
+    volumes:
+      - envoy-config:/etc/envoy
+      - ./initial-config:/initial-config
+ 
+  ## CanisMajor setup
+  canis-major:
+    restart: always
+    image: ${CANISMAJOR_IMAGE:-quay.io/fiware/canis-major}
+    hostname: canis-major
+    ## required to prevent iptables routing everything in circles(e.g. for canismajor updates to orion being re-routed to canis-major)
+    user: root
+    depends_on:
+      - ganache-cli
+    expose:
+      - "4000"
+    ports:
+      - 4000:4000
+    networks:
+      test-network:
+        ipv4_address: 10.5.0.4
+    environment:
+      - MICRONAUT_SERVER_PORT=4000
+      - MICRONAUT_HTTP_SERVICES_NGSI_URL=http://orion:1026
+      - ETHEREUM_CONTRACT_ADDRESS=0x476059cd57800db8eb88f67c2aa38a6fcf8251e0
+      - ETHEREUM_DLT_ADDRESS=ganache-cli:8545
+      - GENERAL_NGSI_TENANT=orion
+      - DEFAULT_ACCOUNT_ENABLED=true
+      # default key derived from the mnemonic in the test definition
+      - DEFAULT_ACCOUNT_PRIVATE_KEY=0x82AC43A26ae509eEf217330C7d862F822fF0CECB
+
+  # Fiware environment setup
+  orion-ld:
+    image: ${ORION_IMAGE:-quay.io/fiware/orion-ld:1.0.1}
+    hostname: orion
+    # sometimes the initial startup fails due to a weird timescale behaviour
+    restart: always
+    environment:
+      - ORIONLD_MONGO_HOST=mongo-db
+      - ORIONLD_LOG_LEVEL=DEBUG
+    depends_on:
+      - mongo-db
+    networks:
+      test-network:
+        ipv4_address: 10.5.0.5
+    expose:
+      - "1026"
+    ports:
+      - 1026:1026
+    healthcheck:
+      test: curl --fail -s http://orion:1026/version || exit 1
+      interval: 30s
+      retries: 15
+
+  mongo-db:
+    image: mongo:4.0
+    hostname: mongo-db
+    expose:
+      - "27017"
+    ports:
+      - 27017:27017
+    networks:
+      test-network:
+        ipv4_address: 10.5.0.6
+    command: --nojournal
+    healthcheck:
+      test: |
+        host=`hostname --ip-address || echo '127.0.0.1'`;
+        mongo --quiet $host/test --eval 'quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)' && echo 0 || echo 1
+      interval: 30s
+  
+  # aei and eth
+  aei-contract:
+    image: quay.io/wi_stefan/py-contract:latest
+    hostname: aei-contract
+    networks:
+      - test-network
+    environment:
+      - RPC_ENDPOINT=ganache-cli
+      - RPC_PORT=8545
+    depends_on:
+      - ganache-cli
+
+  ganache-cli:
+    image: trufflesuite/ganache-cli:latest
+    hostname: ganache-cli
+    ports:
+      - 8545:8545
+    networks:
+      test-network:
+        ipv4_address: 10.5.0.7
+    command: ganache-cli -l 8000000 --gasPrice 0 --account '0x22aabb811efca4e6f4748bd18a46b502fa85549df9fa07da649c0a148d7d5530, 100000000000000000000'
+
+networks:
+  test-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
+
+volumes:
+  map-folder: ~
+  envoy-config: ~
