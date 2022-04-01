@@ -49,7 +49,7 @@ public class EthereumService {
 		try {
 			Timestamper timestamper = Timestamper.load(ethereumProperties.getContractAddress(), ethClient, getSigningTransactionManager(walletInformation), contractGasProvider);
 			RemoteFunctionCall<TransactionReceipt> txRFC = timestamper.timestamp(getAssetId(entityVO.id()), getMerkleTreeHash(entityVO));
-			return txRFC.send();
+			return sendTransaction(txRFC, 0);
 		} catch (JsonProcessingException e) {
 			throw new TransactionException(String.format("Was not able to create the merkle root hash for entity %s.", entityVO), e);
 		} catch (Exception e) {
@@ -57,11 +57,24 @@ public class EthereumService {
 		}
 	}
 
+	private TransactionReceipt sendTransaction(RemoteFunctionCall<TransactionReceipt> txRFC, int count) throws Exception{
+		try {
+			return txRFC.send();
+		} catch (Exception e) {
+			// retry to solve race conditions within one account
+			if(e instanceof RuntimeException && count < 10) {
+				log.warn("Catched exception.", e);
+				return sendTransaction(txRFC, count++);
+			}
+			throw e;
+		}
+	}
+
 	public TransactionReceipt persistEntityUpdate(URI entityId, EntityFragmentVO entityFragmentVO, WalletInformation walletInformation) throws TransactionException {
 		try {
 			Timestamper timestamper = Timestamper.load(ethereumProperties.getContractAddress(), ethClient, getSigningTransactionManager(walletInformation), contractGasProvider);
 			RemoteFunctionCall<TransactionReceipt> txRFC = timestamper.timestamp(getAssetId(entityId), getMerkleTreeHash(entityFragmentVO));
-			return txRFC.send();
+			return sendTransaction(txRFC, 0);
 		} catch (JsonProcessingException e) {
 			throw new TransactionException(String.format("Was not able to create the merkle root hash for entity fragment %s.", entityFragmentVO), e);
 		} catch (Exception e) {
@@ -74,7 +87,7 @@ public class EthereumService {
 			Timestamper timestamper = Timestamper.load(ethereumProperties.getContractAddress(), ethClient, getSigningTransactionManager(walletInformation), contractGasProvider);
 			// we generate a random uuid to connect the update to, since we do not want to create multiple transactions for one update
 			RemoteFunctionCall<TransactionReceipt> txRFC = timestamper.timestamp(getAssetId(URI.create(UUID.randomUUID().toString())), getMerkleTreeHash(entities));
-			return txRFC.send();
+			return sendTransaction(txRFC, 0);
 		} catch (JsonProcessingException e) {
 			throw new TransactionException(String.format("Was not able to create the merkle root hash for entity list %s.", entities), e);
 		} catch (Exception e) {
