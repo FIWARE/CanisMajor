@@ -1,0 +1,45 @@
+resources:
+  - "@type": type.googleapis.com/envoy.config.listener.v3.Listener
+    name: envoy_listener
+    address:
+      socket_address:
+        address: 0.0.0.0
+        port_value: 15001
+    traffic_direction: INBOUND
+    listener_filters:
+      - name: envoy.filters.listener.original_dst
+    filter_chains:
+      - name: http_chain
+        filters:
+          - name: envoy.filters.network.http_connection_manager
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+              stat_prefix: ingress_http
+              codec_type: AUTO
+              route_config:
+                name: local_route
+                virtual_hosts:
+                  - name: cm
+                    domains:
+                      - "10.5.0.5:1026"
+                    routes:
+                      - match:
+                          prefix: "/"
+                        route:
+                          cluster: orion
+              http_filters:
+                - name: envoy.filters.http.wasm
+                  typed_config:
+                    "@type": type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm
+                    config:
+                      configuration:
+                        "@type": "type.googleapis.com/google.protobuf.StringValue"
+                        value: |
+                          {"canisMajorCluster":"canis-major", "strict": false}
+                      vm_config:
+                        runtime: "envoy.wasm.runtime.v8"
+                        code:
+                          local:
+                            filename: "/cm-forward-filter/cm-forward-filter.wasm"
+                - name: envoy.filters.http.router
+                  typed_config: { }

@@ -1,0 +1,13 @@
+FROM tinygo/tinygo as build
+
+COPY ./go.mod /cm-forward-filter/go.mod
+COPY ./go.sum /cm-forward-filter/go.sum
+COPY ./main.go /cm-forward-filter/main.go
+
+WORKDIR /cm-forward-filter
+RUN tinygo build -o cm-forward-filter.wasm -target=wasi ./main.go
+
+FROM envoyproxy/envoy:v1.20.2
+
+COPY --from=build /cm-forward-filter/cm-forward-filter.wasm /cm-forward-filter/cm-forward-filter.wasm
+RUN chmod a+rx /cm-forward-filter/cm-forward-filter.wasm
