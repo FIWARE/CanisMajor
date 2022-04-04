@@ -25,6 +25,7 @@ type PluginConfiguration struct {
 	Strict         bool
 }
 
+// default config for the plugin
 var defaultPluginConfig PluginConfiguration = PluginConfiguration{CanisMajorName: "canis-major", RequestTimeout: 5000}
 
 type (
@@ -83,9 +84,7 @@ func readConfiguration() {
 	}
 
 	proxywasm.LogInfof("Config: %v", string(data))
-
 	parseConfigFromJson(string(data))
-
 }
 
 /**
@@ -120,6 +119,9 @@ func parseConfigFromJson(jsonString string) {
 
 }
 
+/**
+* Handle requests and store the headers in its context.
+ */
 func (ctx *httpContext) OnHttpRequestHeaders(numHeaders int, endOfStream bool) types.Action {
 	ctx.hs, _ = proxywasm.GetHttpRequestHeaders()
 	proxywasm.LogInfof("Got headers: %v", ctx.hs)
@@ -168,6 +170,9 @@ func (ctx *httpContext) OnHttpRequestBody(bodySize int, endOfStream bool) types.
 	}
 }
 
+/**
+* Handle errors from the request handling. This differs depending on the configuration.
+ */
 func handleError(message string) types.Action {
 	proxywasm.LogErrorf(message)
 	if config.Strict {
