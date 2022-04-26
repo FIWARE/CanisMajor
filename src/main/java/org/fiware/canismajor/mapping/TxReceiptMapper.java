@@ -1,12 +1,17 @@
 package org.fiware.canismajor.mapping;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micronaut.data.exceptions.MappingException;
+import org.fiware.canismajor.dlt.QueryInfo;
+import org.fiware.canismajor.dlt.RetrievalQueryInfo;
 import org.fiware.canismajor.model.TransactionReceiptVO;
 import org.fiware.ngsi.model.EntityVO;
 import org.fiware.ngsi.model.PropertyVO;
 import org.fiware.ngsi.model.RelationshipVO;
+import org.graalvm.compiler.nodes.calc.IntegerDivRemNode;
 import org.mapstruct.Mapper;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
@@ -14,6 +19,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Mapper(componentModel = "jsr330")
 public interface TxReceiptMapper {
@@ -26,6 +32,29 @@ public interface TxReceiptMapper {
 	String CONTEXT = "https://raw.githubusercontent.com/smart-data-models/dataModel.DistributedLedgerTech/master/context.jsonld";
 	String TX_RECEIPTS_KEY = "TxReceipts";
 	String REF_ENTITY_KEY = "refEntity";
+	String RETRIEVAL_QUERY_KEY = "retrievalQuery";
+
+	default EntityVO transactionReceiptToEntityVO(TransactionReceipt transactionReceipt, URI entityId, RetrievalQueryInfo queryInfo) {
+		EntityVO entityVO = transactionReceiptToEntityVO(transactionReceipt, entityId);
+
+		PropertyVO propertyVO = new PropertyVO();
+		propertyVO.setType(PropertyVO.Type.PROPERTY);
+		propertyVO.setValue(queryInfo);
+
+		entityVO.getAdditionalProperties().put(RETRIEVAL_QUERY_KEY, propertyVO);
+		return entityVO;
+	}
+
+	default EntityVO transactionReceiptToEntityVO(TransactionReceipt transactionReceipt, URI entityId, QueryInfo queryInfo) {
+		EntityVO entityVO = transactionReceiptToEntityVO(transactionReceipt, entityId);
+
+		PropertyVO propertyVO = new PropertyVO();
+		propertyVO.setType(PropertyVO.Type.PROPERTY);
+		propertyVO.setValue(queryInfo);
+
+		entityVO.getAdditionalProperties().put(RETRIEVAL_QUERY_KEY, propertyVO);
+		return entityVO;
+	}
 
 	default EntityVO transactionReceiptToEntityVO(TransactionReceipt transactionReceipt, URI entityId) {
 		EntityVO entityVO = new EntityVO();
@@ -80,9 +109,17 @@ public interface TxReceiptMapper {
 		if (!entityVO.type().equals(ENTITY_TYPE)) {
 			throw new MappingException(String.format("Did not receive a valid entity of type transaction for mapping. Was: %s", entityVO));
 		}
-		Object txReceipt = getValueFromProperty(TX_RECEIPTS_KEY, entityVO.getAdditionalProperties());
+		Object txReceipt = getValueFromProperty(TX_RECEIPTS_KEY, entityVO.getAdditionalProperties())
+				.orElseThrow(() -> new MappingException(String.format("Did not receive a valid property %s for mapping. Was: %s", TX_RECEIPTS_KEY, entityVO.getAdditionalProperties())));
+
 		OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		return OBJECT_MAPPER.convertValue(txReceipt, TransactionReceiptVO.class);
+		TransactionReceiptVO transactionReceiptVO = OBJECT_MAPPER.convertValue(txReceipt, TransactionReceiptVO.class);
+
+		Optional<Object> optionalAdditionalInformation = getValueFromProperty(RETRIEVAL_QUERY_KEY, entityVO.getAdditionalProperties());
+		if(optionalAdditionalInformation.isPresent()) {
+			transactionReceiptVO.setAdditionalInformation(optionalAdditionalInformation.get());
+		}
+		return transactionReceiptVO;
 	}
 
 	default List<String> getEntityIdsFromTX(EntityVO vo) {
@@ -108,18 +145,18 @@ public interface TxReceiptMapper {
 		}
 	}
 
-	private <T> T getValueFromProperty(String propertyName, Map<String, Object> propertiesMap) {
+	private <T> Optional<T> getValueFromProperty(String propertyName, Map<String, Object> propertiesMap) {
 		if (!(propertiesMap.get(propertyName) instanceof Map<?, ?>)) {
-			throw new MappingException(String.format("Did not receive a valid property %s for mapping. Was: %s", propertyName, propertiesMap));
+			return Optional.empty();
 		}
 		Map property = ((Map) propertiesMap.get(propertyName));
 
 		switch ((String) property.get("type")) {
 			case PropertyVO.Type.PROPERTY_VALUE: {
-				return (T) property.get("value");
+				return Optional.ofNullable((T) property.get("value"));
 			}
 			case RelationshipVO.Type.RELATIONSHIP_VALUE: {
-				return (T) property.get("object");
+				return Optional.ofNullable((T) property.get("object"));
 			}
 			default:
 				throw new MappingException(String.format("Invalid type %s of property %s.", property.get("type"), propertiesMap));

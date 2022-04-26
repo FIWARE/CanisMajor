@@ -13,6 +13,7 @@ import org.fiware.canismajor.exception.TransactionException;
 import org.fiware.canismajor.mapping.TransactionMapper;
 import org.fiware.canismajor.model.EntityFragmentVO;
 import org.fiware.canismajor.model.EntityVO;
+import org.h2.command.ddl.CreateTable;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.ECKeyPair;
 import org.web3j.crypto.Hash;
@@ -82,6 +83,35 @@ public class EthereumService {
 		}
 	}
 
+	public TransactionReceipt persistEntityGet(URI entityId, RetrievalQueryInfo queryInfo, WalletInformation walletInformation) throws TransactionException {
+		try {
+			Timestamper timestamper = Timestamper.load(ethereumProperties.getContractAddress(), ethClient, getSigningTransactionManager(walletInformation), contractGasProvider);
+			RemoteFunctionCall<TransactionReceipt> txRFC = timestamper.timestamp(getAssetId(entityId), getMerkleTreeHash(queryInfo));
+			return txRFC.send();
+		} catch (JsonProcessingException e) {
+			throw new TransactionException(String.format("Was not able to create the merkle root hash for query %s.", queryInfo), e);
+		} catch (Exception e) {
+			throw new TransactionException(String.format("Was not able to send transaction for query %s.", queryInfo), e);
+		}
+	}
+
+	public TransactionReceipt persistQuery(QueryInfo queryInfo, WalletInformation walletInformation) throws TransactionException {
+		try {
+			Timestamper timestamper = Timestamper.load(ethereumProperties.getContractAddress(), ethClient, getSigningTransactionManager(walletInformation), contractGasProvider);
+			// we dont have a specific entity to build the id, thus we generate a random one.
+			RemoteFunctionCall<TransactionReceipt> txRFC = timestamper.timestamp(generateRandomId(), getMerkleTreeHash(queryInfo));
+			return txRFC.send();
+		} catch (JsonProcessingException e) {
+			throw new TransactionException(String.format("Was not able to create the merkle root hash for query %s.", queryInfo), e);
+		} catch (Exception e) {
+			throw new TransactionException(String.format("Was not able to send transaction for query %s.", queryInfo), e);
+		}
+	}
+
+	private BigInteger generateRandomId() {
+		return Numeric.toBigInt(Hash.sha3String(UUID.randomUUID().toString()));
+	}
+
 	private BigInteger getAssetId(URI entityId) {
 		return Numeric.toBigInt(Hash.sha3String(entityId.toString()));
 	}
@@ -101,12 +131,13 @@ public class EthereumService {
 				return new SigningTransactionManager(transactionMapper, objectMapper, signingServiceFactory.createSigningService(walletInformation), ethClient);
 			}
 			case DEFAULT -> {
-				if(!defaultAccountProperties.isEnabled()) {
+				if (!defaultAccountProperties.isEnabled()) {
 					throw new SigningException("Signing with a default account is not enabled. Please provide wallet-information or contact the administrator.");
 				}
 				log.warn("Transaction will be signed with the default account. This is not recommended, since it might impose a security risk.");
 				return new RawTransactionManager(ethClient, Credentials.create(defaultAccountProperties.getPrivateKey()));
-			} default -> throw new SigningException(String.format("Did not receive valid wallet-information. Type is: %s", walletInformation.walletType()));
+			}
+			default -> throw new SigningException(String.format("Did not receive valid wallet-information. Type is: %s", walletInformation.walletType()));
 		}
 	}
 }
