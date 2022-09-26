@@ -1,0 +1,7 @@
+schemaVersion: 1
+name: CanisMajor forward filter.
+description: Http-Filter to handle NGSI-LD calls and forward them to CanisMajor.
+version: ${cm-forward-filter.version}
+phase: UNSPECIFIED_PHASE
+priority: 0
+module: cm-forward-filter.wasm
