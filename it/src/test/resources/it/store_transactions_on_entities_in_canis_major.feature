@@ -21,6 +21,19 @@ Feature: Store transactions on entities in CanisMajor
     And All transactions for Mira are presisted.
     And All transactions for Franzi are presisted.
 
+  Scenario: When changes and queries happen, they are all persisted in CanisMajor.
+    Given CanisMajor is running and available for requests.
+    And Vault is configured as a signing endpoint.
+    And Mira is registered in vault.
+    And Franzi is registered in vault.
+    When Franzi creates the test-store.
+    And Mira updates the test store.
+    And Mira retrieves the test store.
+    And Mira queries for unicorns.
+    And Mira queries for unicorns, providing a user id.
+    Then All transactions should be in CanisMajor.
+    And All transactions for Mira are presisted.
+
   Scenario: When multiple changes happen at an entity, they are all persisted in CanisMajor.
     Given CanisMajor is running and available for requests.
     And Vault is configured as a signing endpoint.
