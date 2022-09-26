@@ -1,0 +1,39 @@
+resources:
+  - "@type": type.googleapis.com/envoy.config.cluster.v3.Cluster
+    name: canis-major
+    type: STRICT_DNS
+    connect_timeout: 1s
+    lb_policy: ROUND_ROBIN
+    load_assignment:
+      cluster_name: canis-major
+      endpoints:
+        - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    protocol: TCP
+                    address: canis-major
+                    port_value: 4000
+  
+  - "@type": type.googleapis.com/envoy.config.cluster.v3.Cluster
+    name: orion
+    type: STRICT_DNS
+    connect_timeout: 1s
+    lb_policy: ROUND_ROBIN
+    load_assignment:
+      cluster_name: orion
+      endpoints:
+        - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    protocol: TCP
+                    address: orion
+                    port_value: 1026
+  - "@type": type.googleapis.com/envoy.config.cluster.v3.Cluster
+    name: passthrough
+    type: ORIGINAL_DST
+    lbPolicy: CLUSTER_PROVIDED
+    connectTimeout: 10s
+    original_dst_lb_config:
+      use_http_header: true

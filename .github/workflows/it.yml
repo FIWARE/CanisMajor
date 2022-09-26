@@ -4,7 +4,7 @@ on:
   push
 
 jobs:
-  it:
+  it-plain-cm:
     runs-on: ubuntu-latest
 
     steps:
@@ -34,6 +34,8 @@ jobs:
     - name: Run tests
       id: test
       if: env.BRANCH == 'master'
+      env:
+        NGSI_ADDRESS: "localhost:4000"
       run: |
         cd it/
         mvn clean install -Dcucumber.publish-token=${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
@@ -41,6 +43,8 @@ jobs:
     - name: Run tests
       id: test-dev
       if: env.BRANCH != 'master'
+      env:
+        NGSI_ADDRESS: "localhost:4000"
       run: |
         cd it/
         mvn clean install -Dcucumber.publish-token=${{ secrets.CUCUMBER_PUBLISH_TOKEN_DEV }}
@@ -50,3 +54,121 @@ jobs:
       run: |
         cd it/docker-compose
         docker-compose -f docker-compose-env.yaml -f docker-compose-java.yaml logs
+ 
+  it-forward-proxy-best-effort:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions/setup-java@v1
+      with:
+        java-version: '17'
+        java-package: jdk
+
+    - name: Build CanisMajor
+      id: canis-major-build
+      run: |
+        mvn clean install jib:dockerBuild -DskipTests -Pdocker -Dimage.repository="fiware"
+
+    - name: Build proxy
+      id: forward-proxy
+      run: |
+        docker build -f ./proxy/cm-forward-filter/Dockerfile-envoy ./proxy/cm-forward-filter -t cm-forward-proxy
+
+    - name: Run compose
+      id: compose
+      env:
+        CANISMAJOR_IMAGE: quay.io/fiware/canis-major
+        ENVOY_IMAGE: cm-forward-proxy
+      run: |
+        cd proxy/docker-compose/
+        sudo ./iptables.sh
+        docker-compose up -d
+        
+    - name: Extract Branch Name
+      run: echo "BRANCH=$(echo ${GITHUB_REF##*/})" >> $GITHUB_ENV
+
+    - name: Run tests
+      id: test
+      if: env.BRANCH == 'master'
+      env:
+        NGSI_ADDRESS: "10.5.0.5:1026"
+      run: |
+        cd it/
+        mvn clean install -Dcucumber.publish-token=${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
+
+    - name: Run tests
+      id: test-dev
+      if: env.BRANCH != 'master'
+      env:
+        NGSI_ADDRESS: "10.5.0.5:1026"
+      run: |
+        cd it/
+        mvn clean install -Dcucumber.publish-token=${{ secrets.CUCUMBER_PUBLISH_TOKEN_DEV }}
+
+    - name: Collect logs
+      if: ${{ failure() }}
+      run: |
+        cd proxy/docker-compose/
+        docker-compose logs
+ 
+  it-forward-proxy-strict:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions/setup-java@v1
+      with:
+        java-version: '17'
+        java-package: jdk
+
+    - name: Build CanisMajor
+      id: canis-major-build
+      run: |
+        mvn clean install jib:dockerBuild -DskipTests -Pdocker -Dimage.repository="fiware"
+
+    - name: Build proxy
+      id: forward-proxy
+      run: |
+        docker build -f ./proxy/cm-forward-filter/Dockerfile-envoy ./proxy/cm-forward-filter -t cm-forward-proxy
+
+    - name: Run compose
+      id: compose
+      env:
+        CANISMAJOR_IMAGE: quay.io/fiware/canis-major
+        ENVOY_IMAGE: cm-forward-proxy
+      run: |
+        cd proxy/docker-compose/
+        sudo ./iptables.sh
+        # workaround to enable strict mode, without changing the base
+        sed -i 's/false/true/g' initial-config/listener.yaml
+        docker-compose up -d
+        
+    - name: Extract Branch Name
+      run: echo "BRANCH=$(echo ${GITHUB_REF##*/})" >> $GITHUB_ENV
+
+    - name: Run tests
+      id: test
+      if: env.BRANCH == 'master'
+      env:
+        NGSI_ADDRESS: "10.5.0.5:1026"
+      run: |
+        cd it/
+        mvn clean install -Dcucumber.publish-token=${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
+
+    - name: Run tests
+      id: test-dev
+      if: env.BRANCH != 'master'
+      env:
+        NGSI_ADDRESS: "10.5.0.5:1026"
+      run: |
+        cd it/
+        mvn clean install -Dcucumber.publish-token=${{ secrets.CUCUMBER_PUBLISH_TOKEN_DEV }}
+
+    - name: Collect logs
+      if: ${{ failure() }}
+      run: |
+        cd proxy/docker-compose/
+        docker-compose logs
