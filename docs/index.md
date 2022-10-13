@@ -8,10 +8,6 @@ send the transactions and provide the Wallet-Information. CanisMajor will create
 and include it as data into the transaction for the Blockchain. In order to properly sign the transaction, CanisMajor uses the provided Wallet-Information and delegates the
 signing to the client's Wallet. The signed transaction is then put into the Oketh-compatible blockchain.
 
-The current implementation of CanisMajor does not provide a direct integration into the Client-ContextBroker request flow. The client has to make a second call to CanisMajor
-in order to persist it through CanisMajor. As a temporary proxy-solution, a fork of the [Wilma PEP Proxy](https://github.com/FIWARE-Blockchain/fiware-pep-proxy) can be used. 
-Additional proxy integrations are planned, but not yet realized.
-
 ## Testing 
 
 Run unit-tests via: ```mvn clean test```
