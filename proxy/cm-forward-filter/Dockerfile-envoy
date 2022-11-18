@@ -1,4 +1,4 @@
-FROM tinygo/tinygo as build
+FROM tinygo/tinygo:master as build
 
 COPY ./go.mod /cm-forward-filter/go.mod
 COPY ./go.sum /cm-forward-filter/go.sum
