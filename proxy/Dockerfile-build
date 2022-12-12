@@ -1,0 +1,6 @@
+FROM tinygo/tinygo:0.26.0 as build
+
+# update certificates to trust github
+USER root
+RUN apt-get update
+RUN apt-get install ca-certificates -y

@@ -1,9 +1,6 @@
-FROM tinygo/tinygo:0.26.0 as build
+FROM build as build
 
-# update certificates to trust github
 USER root
-RUN apt-get update
-RUN apt-get install ca-certificates -y
 
 COPY ./proxy/cm-forward-filter/go.mod /cm-forward-filter/go.mod
 COPY ./proxy/cm-forward-filter/go.sum /cm-forward-filter/go.sum
