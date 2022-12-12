@@ -48,6 +48,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Build build-stage
+        run: 
+          docker build -f proxy/Dockerfile-build . -t build
+
       - name: Build Image
         id: build-image
         uses: redhat-actions/buildah-build@v2
@@ -110,7 +114,8 @@ jobs:
 
       - name: Build wasm
         run: |
-          docker run -v $(pwd)/proxy/cm-forward-filter:/cm-forward-filter --workdir /cm-forward-filter tinygo/tinygo:master tinygo build -o cm-forward-filter.wasm -target=wasi ./main.go     
+          docker build -f proxy/Dockerfile-build . -t build
+          docker run -u root -v $(pwd)/proxy/cm-forward-filter:/cm-forward-filter --workdir /cm-forward-filter build tinygo build -o cm-forward-filter.wasm -target=wasi ./main.go     
 
       - uses: actions/upload-artifact@v2
         with:
