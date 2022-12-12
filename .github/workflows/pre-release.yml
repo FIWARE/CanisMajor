@@ -85,10 +85,6 @@ jobs:
           sed -i 's/${cm-forward-filter.version}/${{ needs.generate-version.outputs.version }}/g' ./proxy/ossm-extension/manifest.yaml
           cat ./proxy/ossm-extension/manifest.yaml
 
-      - name: Build build-stage
-        run: 
-          docker build -f proxy/Dockerfile-build . -t build
-
       - name: Build Image
         id: build-image
         uses: redhat-actions/buildah-build@v2
@@ -118,7 +114,6 @@ jobs:
 
       - name: Build wasm
         run: |
-          docker build -f proxy/Dockerfile-build . -t build
           docker run -u root -v $(pwd)/proxy/cm-forward-filter:/cm-forward-filter --workdir /cm-forward-filter build tinygo build -o cm-forward-filter.wasm -target=wasi ./main.go     
 
       - uses: actions/upload-artifact@v2
