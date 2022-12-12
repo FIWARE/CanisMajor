@@ -119,7 +119,7 @@ jobs:
       - name: Build wasm
         run: |
           docker build -f proxy/Dockerfile-build . -t build
-          docker run -u root -v $(pwd)/proxy/cm-forward-filter:/cm-forward-filter --workdir /cm-forward-filter tinygo/tinygo:0.26.0 tinygo build -o cm-forward-filter.wasm -target=wasi ./main.go     
+          docker run -u root -v $(pwd)/proxy/cm-forward-filter:/cm-forward-filter --workdir /cm-forward-filter build tinygo build -o cm-forward-filter.wasm -target=wasi ./main.go     
 
       - uses: actions/upload-artifact@v2
         with:
