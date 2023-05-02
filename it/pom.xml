@@ -19,7 +19,7 @@
         <version.io.cucumber>7.0.0</version.io.cucumber>
 
         <!-- lazy dev -->
-        <version.org.projectlombok>1.18.24</version.org.projectlombok>
+        <version.org.projectlombok>1.18.26</version.org.projectlombok>
 
         <!-- http -->
         <version.com.squareup.okhttp3>4.10.0</version.com.squareup.okhttp3>
