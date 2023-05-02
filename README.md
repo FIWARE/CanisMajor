@@ -1,16 +1,20 @@
-[![FIWARE Blockchain](https://nexus.lab.fiware.org/repository/raw/public/badges/chapters/third-party.svg)](https://www.fiware.org/developers/catalogue/)
-[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/4661/badge)](https://bestpractices.coreinfrastructure.org/projects/4661)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Container Repository on Quay](https://img.shields.io/badge/quay.io-FIWARE-green "Container Repository on Quay")](https://quay.io/repository/fiware/canis-major?tab=tags)
--------
+
 # CanisMajor - FIWARE DLT Adaptor
+
+[![FIWARE Blockchain](https://nexus.lab.fiware.org/repository/raw/public/badges/chapters/core.svg)](https://www.fiware.org/developers/catalogue/)
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/4661/badge)](https://bestpractices.coreinfrastructure.org/projects/4661)
+[![License](https://img.shields.io/github/license/FIWARE/canismajor.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Docker badge](https://img.shields.io/badge/quay.io-fiware%2Fcanis--major-grey?logo=red%20hat&labelColor=EE0000)](https://quay.io/repository/fiware/canis-major)
+<br/>
+![CI](https://github.com/FIWARE/canismajor/workflows/Integration-test/badge.svg)
 
 CanisMajor is a blockchain adaptor that supports persistence and verification of [NGSI-LD](https://docbox.etsi.org/isg/cim/open/Latest%20release%20NGSI-LD%20API%20for%20public%20comment.pdf) Entity-Transactions(e.g. create/delete/update- operations) in blockchains. 
 
 
-This project is a part of [FIWARE](https://github.com/fiware). For more check the FIWARE catalog entry for (..).
+This project is a part of [FIWARE](https://github.com/fiware).  For more information check the FIWARE Catalogue entry for the
+[Core Context Management](https://github.com/Fiware/catalogue/tree/master/core).
 
-| :books: [Documentation](https://fiware.github.io/CanisMajor/) | :mortar_board: [Academy](https://github.com/fiware/tutorials.Step-by-Step) | :whale: [Docker Hub](https://hub.docker.com/r/singhhp10691/canismajor) | :dart: [Roadmap](https://github.com/fiware/CanisMajor/blob/master/roadmap.md) |
+| :books: [Documentation](https://fiware.github.io/CanisMajor/) | :mortar_board: [Academy](https://github.com/fiware/tutorials.Step-by-Step) | <img style="height:1em" src="https://quay.io/static/img/quay_favicon.png"/> [quay.io](https://quay.io/repository/fiware/canis-major)  | :dart: [Roadmap](https://github.com/fiware/CanisMajor/blob/master/roadmap.md) |
 | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------- | --------------------------------------------------------------------------- |
 
 ## Overview
