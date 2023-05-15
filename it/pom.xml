@@ -13,7 +13,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- jackson -->
-        <version.com.fasterxml.jackson.core.jackson-databind>2.14.2</version.com.fasterxml.jackson.core.jackson-databind>
+        <version.com.fasterxml.jackson.core.jackson-databind>2.15.0</version.com.fasterxml.jackson.core.jackson-databind>
 
         <!-- cucumber -->
         <version.io.cucumber>7.0.0</version.io.cucumber>
