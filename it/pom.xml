@@ -22,7 +22,7 @@
         <version.org.projectlombok>1.18.26</version.org.projectlombok>
 
         <!-- http -->
-        <version.com.squareup.okhttp3>4.10.0</version.com.squareup.okhttp3>
+        <version.com.squareup.okhttp3>4.11.0</version.com.squareup.okhttp3>
         <version.javax.annotation.annotation-api>1.3.2</version.javax.annotation.annotation-api>
         <version.org.openapitools.jackson-databind-nullable>0.2.6</version.org.openapitools.jackson-databind-nullable>
 
