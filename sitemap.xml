@@ -2,32 +2,32 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://canismajor.readthedocs.io/index.html</loc>
-         <lastmod>2023-05-22</lastmod>
+         <lastmod>2023-06-19</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://canismajor.readthedocs.io/api.html</loc>
-         <lastmod>2023-05-22</lastmod>
+         <lastmod>2023-06-19</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://canismajor.readthedocs.io/installation.html</loc>
-         <lastmod>2023-05-22</lastmod>
+         <lastmod>2023-06-19</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://canismajor.readthedocs.io/adrs/delegate-signatur.html</loc>
-         <lastmod>2023-05-22</lastmod>
+         <lastmod>2023-06-19</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://canismajor.readthedocs.io/adrs/envoy-as-proxy.html</loc>
-         <lastmod>2023-05-22</lastmod>
+         <lastmod>2023-06-19</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://canismajor.readthedocs.io/adrs/transparent-proxy.html</loc>
-         <lastmod>2023-05-22</lastmod>
+         <lastmod>2023-06-19</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
