@@ -42,3 +42,10 @@ dist
 
 # general configuration file
 src/config/config.json
+
+# generated files
+target/
+it/target
+
+# IDE
+.vscode
