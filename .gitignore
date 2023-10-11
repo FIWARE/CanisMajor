@@ -49,3 +49,9 @@ it/target
 
 # IDE
 .vscode
+
+# Autogenerate Doc
+html/
+
+# Node.js package info for automatic API Doc generation
+package-lock.json

@@ -2,7 +2,7 @@ name: generate API docs
 on:
   push:
     branches:
-      - hardening/doc
+      - master
 jobs:
   deploy:
     runs-on: ubuntu-latest
