@@ -16,7 +16,4 @@ jobs:
           with:
             node-version: 14.x
         - name: Generate API Doc
-          run: |
-            cd api
-            npx @redocly/cli build-docs api.yaml
-            mv redoc-static.html ../docs/apidoc.html
+          run: npx @redocly/cli build-docs ./api/api.yaml
