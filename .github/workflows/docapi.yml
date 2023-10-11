@@ -19,3 +19,9 @@ jobs:
           run: npm install @redocly/cli -g
         - name: Generate API Doc
           run: redocly build-docs ./api/api.yaml
+        - name: Upload API Doc
+          uses: actions/upload-artifact@v2
+          with:
+            name: redoc-static.html
+            path: docs/apidoc.html
+        
