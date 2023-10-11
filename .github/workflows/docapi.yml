@@ -21,3 +21,14 @@ jobs:
           run: redocly build-docs ./api/api.yaml
         - name: Move the file to the final folder
           run: mv redoc-static.html ./docs/apidoc.html  
+        - name: Commit files
+          run: |
+            git config --local user.email "github-actions[bot]@users.noreply.github.com"
+            git config --local user.name "github-actions[bot]"
+            git add ./docs/apidoc.html
+            git commit -a -m "Add changes to API Doc"
+        - name: Push changes
+          uses: ad-m/github-push-action@master
+          with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            branch: ${{ github.ref }}    
