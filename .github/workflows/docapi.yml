@@ -16,6 +16,6 @@ jobs:
           with:
             node-version: 14.x
         - name: Install node package
-          uses: npm install --global @redocly/cli
+          run: npm install --global @redocly/cli
         - name: Generate API Doc
           run: redoc-cli build-docs ./api/api.yaml
