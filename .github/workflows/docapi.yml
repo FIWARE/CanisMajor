@@ -1,0 +1,22 @@
+name: generate API docs
+on:
+  push:
+    branches:
+      - hardening/doc
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v2
+          with:
+            submodules: "recursive"
+            fetch-depth: 0 # Fetch all history for .GitInfo and .Lastmod
+        - name: Use Node.js 14.x
+          uses: actions/setup-node@v1
+          with:
+            node-version: 14.x
+        - name: Generate API Doc
+          run: |
+            cd api
+            npx @redocly/cli build-docs api.yaml
+            mv redoc-static.html ../docs/apidoc.html
