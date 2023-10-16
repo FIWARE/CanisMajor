@@ -11,9 +11,9 @@ theme: readthedocs
 extra_css:
     [
         "https://www.fiware.org/style/fiware_readthedocs.css",
-        "https://www.fiware.org/style/fiware_readthedocs_core.css",
+        "https://www.fiware.org/style/fiware_readthedocs_core.css"
     ]
 nav:
     - Home: index.md
-    - "Installation": installation.md
-    - "APIs": apis.md
+    - Installation: installation.md
+    - API: api.md

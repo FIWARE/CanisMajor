@@ -42,3 +42,16 @@ dist
 
 # general configuration file
 src/config/config.json
+
+# generated files
+target/
+it/target
+
+# IDE
+.vscode
+
+# Autogenerate Doc
+html/
+
+# Node.js package info for automatic API Doc generation
+package-lock.json
