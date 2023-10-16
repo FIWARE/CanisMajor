@@ -8,13 +8,13 @@
 <br/>
 ![CI](https://github.com/FIWARE/canismajor/workflows/Integration-test/badge.svg)
 
-CanisMajor is a blockchain adaptor that supports persistence and verification of [NGSI-LD](https://docbox.etsi.org/isg/cim/open/Latest%20release%20NGSI-LD%20API%20for%20public%20comment.pdf) Entity-Transactions(e.g. create/delete/update- operations) in blockchains. 
+CanisMajor is a blockchain adaptor that supports persistence and verification of [NGSI-LD](https://www.etsi.org/deliver/etsi_gs/CIM/001_099/009/01.07.01_60/gs_cim009v010701p.pdf) Entity-Transactions (e.g., create/delete/update- operations) in blockchains. 
 
 
 This project is a part of [FIWARE](https://github.com/fiware).  For more information check the FIWARE Catalogue entry for the
 [Core Context Management](https://github.com/Fiware/catalogue/tree/master/core).
 
-| :books: [Documentation](https://fiware.github.io/CanisMajor/) | :mortar_board: [Academy](https://github.com/fiware/tutorials.Step-by-Step) | <img style="height:1em" src="https://quay.io/static/img/quay_favicon.png"/> [quay.io](https://quay.io/repository/fiware/canis-major)  | :dart: [Roadmap](https://github.com/fiware/CanisMajor/blob/master/roadmap.md) |
+| :books: [Documentation](https://fiware.github.io/CanisMajor) | :mortar_board: [Academy](https://github.com/fiware/tutorials.Step-by-Step) | <img style="height:1em" src="https://quay.io/static/img/quay_favicon.png"/> [quay.io](https://quay.io/repository/fiware/canis-major)  | :dart: [Roadmap](https://github.com/orgs/FIWARE/projects/2/views/1) |
 | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------- | --------------------------------------------------------------------------- |
 
 ## Overview
@@ -22,8 +22,8 @@ This project is a part of [FIWARE](https://github.com/fiware).  For more informa
 ![Current Architecture](./docs/images/canis-major-overview.svg)
 
 In order to persist transactions inside the blockchain, a client has to send information about its transactions(e.g. create/update/delete entity) to CanisMajor. 
-The request should include information about the Wallet(e.g. Keystore) to be used for signing the transaction. Please check the [API](./api/api.yaml)(tag `NGIS-LD`) on how to 
-send the transactions and provide the Wallet-Information. CanisMajor will create a [Merkle-Tree](https://en.wikipedia.org/wiki/Merkle_tree) from the send informations 
+The request should include information about the Wallet (e.g., Keystore) to be used for signing the transaction. Please check the [API](./api/api.yaml) (tag `NGSI-LD`) on how to 
+send the transactions and provide the Wallet-Information. CanisMajor will create a [Merkle-Tree](https://en.wikipedia.org/wiki/Merkle_tree) from the submitted data 
 and include it as data into the transaction for the Blockchain. In order to properly sign the transaction, CanisMajor uses the provided Wallet-Information and delegates the
 signing to the client's Wallet. The signed transaction is then put into the Oketh-compatible blockchain.
 
@@ -31,7 +31,7 @@ signing to the client's Wallet. The signed transaction is then put into the Oket
 
 Run unit-tests via: ```mvn clean test```
 
-A set of integration tests(using [cucumber](https://cucumber.io/)) is available under [it/](./it). 
+A set of integration tests (using [cucumber](https://cucumber.io/)) is available under [it/](./it). 
 To run them use:
 ```shell
     cd it
@@ -48,6 +48,6 @@ To run them use:
 
 ## License
 
-CanisMajor is licensed under the Apache License, Version 2.0. See [LICENSE](https://github.com/fiware/CanisMajor/blob/master/LICENSE) for the full license text.
+CanisMajor is licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for the full license text.
 
 © 2021 FIWARE Foundation e.V.
