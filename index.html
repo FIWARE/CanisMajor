@@ -8,7 +8,7 @@
     <title>CanisMajor</title>
     <link rel="stylesheet" href="css/theme.css" />
     <link rel="stylesheet" href="css/theme_extra.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
         <link href="https://www.fiware.org/style/fiware_readthedocs.css" rel="stylesheet" />
         <link href="https://www.fiware.org/style/fiware_readthedocs_core.css" rel="stylesheet" />
     
@@ -19,12 +19,11 @@
         var mkdocs_page_url = "/index.html";
       </script>
     
-    <script src="js/jquery-3.6.0.min.js" defer></script>
     <!--[if lt IE 9]>
       <script src="js/html5shiv.min.js"></script>
     <![endif]-->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
-      <script>hljs.initHighlightingOnLoad();</script> 
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
 </head>
 
 <body class="wy-body-for-nav" role="document">
@@ -59,7 +58,7 @@
                 </li>
               </ul>
               <ul>
-                <li class="toctree-l1"><a class="" href="apis.md">APIs</a>
+                <li class="toctree-l1"><a class="reference internal" href="api.html">API</a>
                 </li>
               </ul>
       </div>
@@ -75,8 +74,8 @@
       <div class="wy-nav-content">
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html" class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
-      <li>Home</li>
+    <li><a href="index.html" class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Home</li>
     <li class="wy-breadcrumbs-aside">
           <a href="https://github.com/fiware/CanisMajor/docs/edit/master/docs/index.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
@@ -87,23 +86,33 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="canismajor-fiware-dlt-adaptor">CanisMajor - FIWARE DLT Adaptor</h1>
+<p><a href="https://www.fiware.org/developers/catalogue/"><img alt="FIWARE Blockchain" src="https://nexus.lab.fiware.org/repository/raw/public/badges/chapters/core.svg" /></a></p>
+<p>CanisMajor is a blockchain adaptor that supports persistence and verification of <a href="https://www.etsi.org/deliver/etsi_gs/CIM/001_099/009/01.07.01_60/gs_cim009v010701p.pdf">NGSI-LD</a> Entity-Transactions (e.g., create/delete/update- operations) in blockchains. </p>
 <p><img alt="Current Architecture" src="https://github.com/FIWARE/CanisMajor/raw/master/docs/images/canis-major-overview.svg" /></p>
-<p>In order to persist transactions inside the blockchain, a client has to send information about its transactions(e.g. create/update/delete entity) to CanisMajor. 
-The request should include information about the Wallet(e.g. Keystore) to be used for signing the transaction. Please check the <a href="https://github.com/FIWARE/CanisMajor/tree/master/api/api.yaml">API</a>(tag <code>NGIS-LD</code>) on how to 
-send the transactions and provide the Wallet-Information. CanisMajor will create a <a href="https://en.wikipedia.org/wiki/Merkle_tree">Merkle-Tree</a> from the send informations 
-and include it as data into the transaction for the Blockchain. In order to properly sign the transaction, CanisMajor uses the provided Wallet-Information and delegates the
-signing to the client's Wallet. The signed transaction is then put into the Oketh-compatible blockchain.</p>
+<p>In order to persist transactions inside the blockchain, a client has to send information
+about its transactions (e.g., create/update/delete entity) to CanisMajor. </p>
+<p>The request should include information about the Wallet (e.g., Keystore) to be used for
+signing the transaction. Please check the <a href="https://github.com/FIWARE/CanisMajor/tree/master/api/api.yaml">API</a>
+(tag <code>NGSI-LD</code>) on how to send the transactions and provide the Wallet-Information. CanisMajor will create a
+<a href="https://en.wikipedia.org/wiki/Merkle_tree">Merkle-Tree</a> from the send informations and include it as data into
+the transaction for the Blockchain. In order to properly sign the transaction, CanisMajor uses the provided
+Wallet-Information and delegates the signing to the client's Wallet. The signed transaction is then put into the
+Oketh-compatible blockchain.</p>
 <h2 id="testing">Testing</h2>
-<p>Run unit-tests via: <code>mvn clean test</code></p>
-<p>A set of integration tests(using <a href="https://cucumber.io/">cucumber</a>) is available under <a href="https://github.com/FIWARE/CanisMajor/tree/master/it">it/</a>). 
-To run them use:</p>
-<pre><code class="language-shell">    cd it
-    docker-compose -f docker-compose/docker-compose-env.yaml -f docker-compose/docker-compose-java.yaml up
-    mvn clean test
+<p>Run unit-tests via: </p>
+<pre><code class="language-shell">mvn clean test
+</code></pre>
+<p>A set of integration tests (using <a href="https://cucumber.io/">cucumber</a>) is available under <a href="https://github.com/FIWARE/CanisMajor/tree/master/it">it/</a>. </p>
+<p>To run them use:</p>
+<pre><code class="language-shell">cd it
+docker-compose -f docker-compose/docker-compose-env.yaml -f docker-compose/docker-compose-java.yaml up
+mvn clean test
 </code></pre>
 <h2 id="adrs">ADRs</h2>
 <ul>
-<li><a href="https://github.com/FIWARE/CanisMajor/tree/master/docs/adrs/delegate-signatur.md">Delegate transaction signing to the client</a></li>
+<li><a href="adrs/delegate-signatur.html">Delegate transaction signing to the client</a></li>
+<li><a href="adrs/envoy-as-proxy.html">Use envoy as proxy</a></li>
+<li><a href="adrs/transparent-proxy.html">Use a transparent proxy for forward data to CanisMajor</a></li>
 </ul>
 <h2 id="license">License</h2>
 <p>CanisMajor is licensed under the Apache License, Version 2.0. See <a href="https://github.com/fiware/CanisMajor/blob/master/LICENSE">LICENSE</a> for the full license text.</p>
@@ -144,20 +153,21 @@ To run them use:</p>
     
   </span>
 </div>
-    <script>var base_url = '.';</script>
-    <script src="js/theme_extra.js" defer></script>
-    <script src="js/theme.js" defer></script>
-      <script src="search/main.js" defer></script>
-    <script defer>
-        window.onload = function () {
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
             SphinxRtdTheme.Navigation.enable(true);
-        };
+        });
     </script>
 
 </body>
 </html>
 
 <!--
-MkDocs version : 1.4.3
-Build Date UTC : 2023-06-26 11:08:14.388275+00:00
+MkDocs version : 1.5.3
+Build Date UTC : 2023-10-16 07:28:38.797855+00:00
 -->
