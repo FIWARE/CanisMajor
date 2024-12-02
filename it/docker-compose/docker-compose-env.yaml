@@ -15,9 +15,9 @@ services:
     networks:
       - test-network
 
-  # Fiware environment setup
+  # FIWARE environment setup
   orion-ld:
-    image: ${ORION_IMAGE:-quay.io/fiware/orion-ld:1.0.1}
+    image: ${ORION_IMAGE:-quay.io/fiware/orion-ld:1.7.0}
     hostname: orion
     # sometimes the initial startup fails due to a weird timescale behaviour
     restart: always
