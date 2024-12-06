@@ -5,7 +5,7 @@ Canis Major serves as a blockchain adaptor within the FIWARE ecosystem, providin
 After r unning the integartion tests, create an entity by sending this POST request to Canis Major:
 
 ```bash
-curl --location 'http://46.17.108.147:4000/ngsi-ld/v1/entities/' \
+curl --location 'http://<Canis Major>:4000/ngsi-ld/v1/entities/' \
 --header 'Link: <https://raw.githubusercontent.com/smart-data-models/dataModel.DistributedLedgerTech/master/context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
 --header 'Wallet-Type: vault' \
 --header 'Wallet-Token: vault-plaintext-root-token' \
@@ -34,7 +34,7 @@ curl --location 'http://46.17.108.147:4000/ngsi-ld/v1/entities/' \
 
 To retrieve the available entity types in the context broker run the following command:
 ```bash
-curl -L 'http://46.17.108.147:1026/ngsi-ld/v1/types' \
+curl -L 'http://<Canis Major>:1026/ngsi-ld/v1/types' \
 -H 'Link: <https://raw.githubusercontent.com/smart-data-models/dataModel.DistributedLedgerTech/master/context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
 -H 'NGSILD-Tenant: orion'
 ```
@@ -50,7 +50,7 @@ To verify which entities are created in the context broker use the following com
 To verify that the created entities is correctly saved in the context broker having the type DLTtxReceipt, use the following command:
 
 ```bash
-curl -L 'http://46.17.108.147:1026/ngsi-ld/v1/entities/?type=DLTtxReceipt' \
+curl -L 'http://<Canis Major>:1026/ngsi-ld/v1/entities/?type=DLTtxReceipt' \
 -H 'Link: <https://raw.githubusercontent.com/smart-data-models/dataModel.DistributedLedgerTech/master/context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
 -H 'NGSILD-Tenant: orion'
 ```
@@ -58,7 +58,7 @@ curl -L 'http://46.17.108.147:1026/ngsi-ld/v1/entities/?type=DLTtxReceipt' \
 To ask Canis Major about receipts for a specific building use the following command: 
 
 ```bash
-curl -L 'http://46.17.108.147:4000/entity/urn:ngsi-ld:Building:farm002' \
+curl -L 'http://<Canis Major>:4000/entity/urn:ngsi-ld:Building:farm002' \
 -H 'Accept: application/json'
 ```
 
@@ -85,7 +85,7 @@ Each transaction contains detailed blockchain information including block hashes
 
 To ask the context brker Orion-LD about the receipt of a specific building use the following command:
 ```bash 
-curl -L 'http://46.17.108.147:1026/ngsi-ld/v1/entities/?type=DLTtxReceipt&q=refEntity%3D%3D%22urn%3Angsi-ld%3ABuilding%3Afarm002%22&attrs=TxReceipts' \
+curl -L 'http://<Canis Major>:1026/ngsi-ld/v1/entities/?type=DLTtxReceipt&q=refEntity%3D%3D%22urn%3Angsi-ld%3ABuilding%3Afarm002%22&attrs=TxReceipts' \
 -H 'Link: <https://raw.githubusercontent.com/smart-data-models/dataModel.DistributedLedgerTech/master/context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
 -H 'NGSILD-Tenant: orion'
 ```
