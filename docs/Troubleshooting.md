@@ -107,5 +107,27 @@ at ✽.Only one transaction should be persisted for the entity.
 
 This is produced by the intent to save again the information of the users' credentials in the Vault.
 
-### Command Breakdown
+### Solution: Clean the docker compose
 Stop the docker compose and start again to ensure the Vault's content is clean before executing the integration tests again.
+
+For a docker compose clean follow these steps for a complete Docker cleanup:
+- Stop all running containers
+   ```shell
+   sudo docker stop $(sudo docker ps -aq)
+   ```
+- Remove all containers
+  ```shell
+   sudo docker rm $(sudo docker ps -aq)
+   ```
+- Remove all volumes
+  ```shell
+   sudo docker volume rm $(sudo docker volume ls -q)
+   ```
+- Remove all custom networks
+  ```shell
+   sudo docker network prune 
+   ```
+
+### Notes
+- You can add `-f` flag to skip confirmation prompts.
+- Root privileges (sudo) may be required depending on your Docker setup.
