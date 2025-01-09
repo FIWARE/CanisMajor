@@ -71,6 +71,10 @@ services:
     ports:
       - "8545:8545"
     command: ganache-cli -l 8000000 --gasPrice 0 --account '0x22aabb811efca4e6f4748bd18a46b502fa85549df9fa07da649c0a148d7d5530, 100000000000000000000'
+    healthcheck:
+      test:
+        ganache-cli  --version && echo 0 || echo 1
+      interval: 30s
 
 volumes:
   contract-folder: ~
