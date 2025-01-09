@@ -26,7 +26,7 @@ jobs:
         CANISMAJOR_IMAGE: quay.io/fiware/canis-major
       run: |
         cd it/docker-compose
-        docker-compose -f docker-compose-env.yaml -f docker-compose-java.yaml up -d
+        docker compose -f docker-compose-env.yaml -f docker-compose-java.yaml up -d
         
     - name: Extract Branch Name
       run: echo "BRANCH=$(echo ${GITHUB_REF##*/})" >> $GITHUB_ENV
@@ -53,7 +53,7 @@ jobs:
       if: ${{ failure() }}
       run: |
         cd it/docker-compose
-        docker-compose -f docker-compose-env.yaml -f docker-compose-java.yaml logs
+        docker compose -f docker-compose-env.yaml -f docker-compose-java.yaml logs
 
 ## skipped due to flakiness of the test node
 #  it-forward-proxy-best-effort:
@@ -145,7 +145,7 @@ jobs:
         sudo ./iptables.sh
         # workaround to enable strict mode, without changing the base
         sed -i 's/false/true/g' initial-config/listener.yaml
-        docker-compose up -d
+        docker compose up -d
         
     - name: Extract Branch Name
       run: echo "BRANCH=$(echo ${GITHUB_REF##*/})" >> $GITHUB_ENV
@@ -172,4 +172,4 @@ jobs:
       if: ${{ failure() }}
       run: |
         cd proxy/docker-compose/
-        docker-compose logs
+        docker compose logs
