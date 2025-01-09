@@ -57,7 +57,7 @@ public class StepDefinitions {
 	}
 
 	private static final String CANIS_MAJOR_ADDRESS = "localhost:4000";
-	// depending on the test setup, this can either go directly to canis-major or to a broker(and beeing intercepted)
+	// depending on the test setup, this can either go directly to canis-major or to a broker(and being intercepted)
 	private static final String VAULT_ADDRESS = "localhost:8200";
 
 
@@ -71,10 +71,10 @@ public class StepDefinitions {
 
 	private static final int TX_AWAIT_MAX_S = 15;
 
-	// address to be used for accessing the broker. Practicaly a switch between the proxy-mode and direct canis-major access.
+	// address to be used for accessing the broker. Practically a switch between the proxy-mode and direct canis-major access.
 	private String ngsiAddress = "10.5.0.5:1026";
 
-	// we use testCount for the tests, so that we dont need to empty the blockchain all the time
+	// we use testCount for the tests, so that we do not need to empty the blockchain all the time
 	// we start at a random point, to be able to run multiple times in local testing.
 	private int testCounter = (int) (Math.random() * 10000);
 
@@ -143,7 +143,7 @@ public class StepDefinitions {
 				.build();
 		OkHttpClient okHttpClient = new OkHttpClient();
 		Response registrationResponse = okHttpClient.newCall(registrationRequest).execute();
-		assertEquals(204, registrationResponse.code(), "A plugin should have been registered succesfully.");
+		assertEquals(204, registrationResponse.code(), "A plugin should have been registered successfully.");
 
 		RequestBody enableRequestBody = RequestBody.create(OBJECT_MAPPER.writeValueAsString(new EthereumPluginMount()), MediaType.get("application/json"));
 		Request enableRequest = new Request.Builder()
@@ -337,6 +337,7 @@ public class StepDefinitions {
 		assertTrue(response.code() >= 200 && response.code() < 300, "We expect any kind of successful response.");
 		addTxToExpectations("Mira", "urn:ngsi-ld:requestor:default");
 	}
+
 	@When("Mira queries for unicorns, providing a user id.")
 	public void mira_queries_unicorns_to_mira() throws Exception {
 		HttpUrl httpUrl = HttpUrl.parse(String.format("http://%s/ngsi-ld/v1/entities", CANIS_MAJOR_ADDRESS))
@@ -485,17 +486,17 @@ public class StepDefinitions {
 		});
 	}
 
-	@Then("All transactions for Default are presisted.")
+	@Then("All transactions for Default are persisted.")
 	public void verify_default_tx() throws Exception {
 		verifyTransactionsForAccount(defaultExpectedTxMap, "Default");
 	}
 
-	@Then("All transactions for Mira are presisted.")
+	@Then("All transactions for Mira are persisted.")
 	public void verify_mira_tx() throws Exception {
 		verifyTransactionsForAccount(miraExpectedTxMap, "Mira");
 	}
 
-	@Then("All transactions for Franzi are presisted.")
+	@Then("All transactions for Franzi are persisted.")
 	public void verify_franzi_tx() throws Exception {
 		verifyTransactionsForAccount(franziExpectedTxMap, "Franzi");
 	}
