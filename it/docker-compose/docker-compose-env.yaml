@@ -15,7 +15,7 @@ services:
     networks:
       - test-network
 
-  # Fiware environment setup
+  # FIWARE environment setup
   orion-ld:
     image: ${ORION_IMAGE:-quay.io/fiware/orion-ld:1.7.1}
     hostname: orion
