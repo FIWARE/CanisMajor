@@ -28,7 +28,7 @@ services:
       - ${EXPOSED_PORT:-1026}:${ORION_LD_PORT:-1026} # localhost:1026
     command: -dbhost mongo-db -logLevel DEBUG -forwarding -mongocOnly
     healthcheck:
-      test: curl --fail -s http://orion:${ORION_LD_PORT}/version || exit 1
+      test: curl --fail -s http://orion:${EXPOSED_PORT:-1026}/version || exit 1
       interval: 30s
 
   mongo-db:
@@ -43,7 +43,7 @@ services:
       - mongo-db:/data/db
       - mongo-config:/data/configdb
     healthcheck:
-      test: ["CMD","mongosh", "localhost:27017/test", "--quiet"]
+      test: ["CMD","mongosh", "localhost:${MONGO_DB_PORT:-27017}/test", "--quiet"]
       interval: 30s
 
   # aei and eth
