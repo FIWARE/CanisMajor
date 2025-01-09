@@ -27,17 +27,32 @@ send the transactions and provide the Wallet-Information. CanisMajor will create
 and include it as data into the transaction for the Blockchain. In order to properly sign the transaction, CanisMajor uses the provided Wallet-Information and delegates the
 signing to the client's Wallet. The signed transaction is then put into the Oketh-compatible blockchain.
 
-## Testing 
+## Testing
 
 Run unit-tests via: ```mvn clean test```
 
 A set of integration tests (using [cucumber](https://cucumber.io/)) is available under [it/](./it). 
 To run them use:
+
 ```shell
     cd it
     docker-compose -f docker-compose/docker-compose-env.yaml -f docker-compose/docker-compose-java.yaml up
     mvn clean test
 ```
+
+
+The integration tests use the following values by default:
+
+| Variable | Value |
+| ---| --- |
+| `VAULT_IMAGE`|`quay.io/fiware/vault-ethereum:1.0.1` |
+| `ORION_IMAGE`|`quay.io/fiware/orion-ld:1.7.1` |
+| `ORION_LD_PORT`|`1026` |
+| `EXPOSED_PORT`|`1026` |
+| `MONGO_DB_VERSION`|`mongo:6.0` |
+| `MONGO_DB_PORT`|`27017` |
+
+Additionally `NGSI_ADDRESS=localhost:4000` should be set if running locally.
 
 
 
@@ -50,4 +65,4 @@ To run them use:
 
 CanisMajor is licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for the full license text.
 
-© 2021 FIWARE Foundation e.V.
+© 2021-2025 FIWARE Foundation e.V.
