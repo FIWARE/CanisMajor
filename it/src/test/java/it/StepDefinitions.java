@@ -56,9 +56,9 @@ public class StepDefinitions {
 		OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
 
-	private static final String CANIS_MAJOR_ADDRESS = "localhost:4000";
+	private static final String CANIS_MAJOR_ADDRESS = "127.0.0.1:4000";
 	// depending on the test setup, this can either go directly to canis-major or to a broker(and being intercepted)
-	private static final String VAULT_ADDRESS = "localhost:8200";
+	private static final String VAULT_ADDRESS = "127.0.0.1:8200";
 
 
 	private static final String VAULT_ROOT_TOKEN = "vault-plaintext-root-token";
