@@ -4,7 +4,7 @@ services:
   canis-major:
     restart: always
     image: ${CANISMAJOR_IMAGE:-quay.io/fiware/canis-major}
-    hostname: canis-major
+    hostname: canismajor
     depends_on:
       - ganache-cli
     expose:
@@ -23,6 +23,6 @@ services:
     ports:
       - 4000:4000
     healthcheck:
-      test: curl --fail -s http://localhost:4000/health || exit 1
+      test: curl --fail -s http://canismajor:4000/health || exit 1
       interval: 30s
       retries: 15
