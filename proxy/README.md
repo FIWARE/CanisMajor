@@ -8,7 +8,7 @@ can either be a "best-effort"-forwarding, where the request to the broker is con
 
 The diagram above describes the architecture integration of the Forward Proxy. It needs to be co-located inside the same network as the broker, in order to make use of 
 [ip-tables](https://linux.die.net/man/8/iptables) to intercept requests and forward them to the proxy. The proxy itself is setup as a [Wasm-filter](https://www.envoyproxy.io/docs/envoy/latest/api-v3/extensions/filters/http/wasm/v3/wasm.proto)
-for extending [envoy](https://www.envoyproxy.io). It can either be run as dedicated container(see [cm-forward-proxy](https://quay.io/repository/fiware/cm-forward-proxy)) or integrated into an envoy-based service-mesh(see [cm-forward-proxy](https://quay.io/repository/fiware/cm-forward-filter-extension)).
+for extending [envoy](https://www.envoyproxy.io). It can either be run as dedicated container (see [cm-forward-proxy](https://quay.io/repository/fiware/cm-forward-proxy)) or integrated into an envoy-based service-mesh (see [cm-forward-proxy](https://quay.io/repository/fiware/cm-forward-filter-extension)).
 
 ## Local setup
 
@@ -20,7 +20,7 @@ In order to run the whole service in a local environment, a docker-compose setup
 
 ## Setup
 
-The development-setup runs on a dedicated network with fixed ip-addresse to allow the iptables-manipulations defined in [iptables.sh](./docker-compose/iptables.sh).
+The development-setup runs on a dedicated network with fixed ip-address to allow the iptables-manipulations defined in [iptables.sh](./docker-compose/iptables.sh).
 This script can be used to setup the iptables to redirect everything that is send to 1026 on that networks ip-range to 15001. This will redirect the traffic
 intended for the broker to envoy. It also includes a rule to RETURN everything from the root-userspace, in order to jump out of envoy and
 not potentially harm the whole host. To not build infinite loops, CanisMajor is also run as root in this setup, so that the persistence of Transaction-Receipts will not 
@@ -66,7 +66,7 @@ A request scenario will use the following path:
 
 2. IP-Tables will reroute the request to the proxy
 
-3. The proxy will(in parallel):
+3. The proxy will (in parallel):
    a. forward the request to CanisMajor
    b. passthrough the request to the broker
 > :bulb: In strict-mode, these calls will happen sequentially. The request is put on hold until CanisMajor reports success. 
