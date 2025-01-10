@@ -18,8 +18,8 @@ Feature: Store transactions on entities in CanisMajor
     When Franzi creates the test-store.
     And  Mira creates another entity.
     Then All transactions should be in CanisMajor.
-    And All transactions for Mira are presisted.
-    And All transactions for Franzi are presisted.
+    And All transactions for Mira are persisted.
+    And All transactions for Franzi are persisted.
 
   Scenario: When changes and queries happen, they are all persisted in CanisMajor.
     Given CanisMajor is running and available for requests.
@@ -32,7 +32,7 @@ Feature: Store transactions on entities in CanisMajor
     And Mira queries for unicorns.
     And Mira queries for unicorns, providing a user id.
     Then All transactions should be in CanisMajor.
-    And All transactions for Mira are presisted.
+    And All transactions for Mira are persisted.
 
   Scenario: When multiple changes happen at an entity, they are all persisted in CanisMajor.
     Given CanisMajor is running and available for requests.
@@ -48,7 +48,7 @@ Feature: Store transactions on entities in CanisMajor
     When Anonymous user creates a delivery.
     And Anonymous user updates a delivery.
     Then All transactions should be in CanisMajor.
-    And All transactions for Default are presisted.
+    And All transactions for Default are persisted.
 
   Scenario: When updates with and without account happen, the default or the correct account should be used.
     Given CanisMajor is running and available for requests.
@@ -61,9 +61,9 @@ Feature: Store transactions on entities in CanisMajor
     And Mira updates the test store.
     And Anonymous user updates a delivery.
     Then All transactions should be in CanisMajor.
-    And All transactions for Default are presisted.
-    And All transactions for Franzi are presisted.
-    And All transactions for Mira are presisted.
+    And All transactions for Default are persisted.
+    And All transactions for Franzi are persisted.
+    And All transactions for Mira are persisted.
 
   Scenario: When create, update and upsert are used, all operations are persisted in the blockchain.
     Given CanisMajor is running and available for requests.

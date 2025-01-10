@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - id: bump
-        uses: zwaldowski/match-label-action@v1
+        uses: zwaldowski/match-label-action@v5
         with:
           allowed: major,minor,patch
 
