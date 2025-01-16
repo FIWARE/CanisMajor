@@ -1,4 +1,3 @@
-version: "3.5"
 services:
 
   # Hashicorp vault as a wallet
@@ -15,40 +14,35 @@ services:
     networks:
       - test-network
 
-  # Fiware environment setup
+  # FIWARE environment setup
   orion-ld:
-    image: ${ORION_IMAGE:-quay.io/fiware/orion-ld:1.0.1}
+    image: ${ORION_IMAGE:-quay.io/fiware/orion-ld:1.7.1}
     hostname: orion
-    # sometimes the initial startup fails due to a weird timescale behaviour
-    restart: always
-    environment:
-      - ORIONLD_MONGO_HOST=mongo-db
-      - ORIONLD_LOG_LEVEL=DEBUG
+    container_name: fiware-orion
     depends_on:
       - mongo-db
     networks:
       - test-network
     ports:
-      - "1026:1026"
+      - ${EXPOSED_PORT:-1026}:${ORION_LD_PORT:-1026} # localhost:1026
+    command: -dbhost mongo-db -logLevel DEBUG -forwarding -mongocOnly
     healthcheck:
-      test: curl --fail -s http://orion:1026/version || exit 1
+      test: curl --fail -s http://orion:${EXPOSED_PORT:-1026}/version || exit 1
       interval: 30s
-      retries: 15
 
   mongo-db:
-    image: mongo:4.0
+    image: ${MONGO_DB_VERSION:-mongo:6.0}
     hostname: mongo-db
-    expose:
-      - "27017"
+    container_name: db-mongo
     ports:
-      - "27017:27017" # localhost:27017
+      - "${MONGO_DB_PORT:-27017}:${MONGO_DB_PORT:-27017}" # localhost:27017
     networks:
       - test-network
-    command: --nojournal
+    volumes:
+      - mongo-db:/data/db
+      - mongo-config:/data/configdb
     healthcheck:
-      test: |
-        host=`hostname --ip-address || echo '127.0.0.1'`;
-        mongo --quiet $host/test --eval 'quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)' && echo 0 || echo 1
+      test: ["CMD","mongosh", "localhost:${MONGO_DB_PORT:-27017}/test", "--quiet"]
       interval: 30s
 
   # aei and eth
@@ -71,9 +65,17 @@ services:
     ports:
       - "8545:8545"
     command: ganache-cli -l 8000000 --gasPrice 0 --account '0x22aabb811efca4e6f4748bd18a46b502fa85549df9fa07da649c0a148d7d5530, 100000000000000000000'
+    healthcheck:
+      test:
+        ganache-cli  --version && echo 0 || echo 1
+      interval: 30s
+
+#volumes:
+#  contract-folder: ~
 
 volumes:
-  contract-folder: ~
+  mongo-db: ~
+  mongo-config: ~
 
 networks:
   test-network:
