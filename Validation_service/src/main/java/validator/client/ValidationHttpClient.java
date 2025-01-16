@@ -1,4 +1,3 @@
-// Declares the package name for this class
 package validator.client;
 
 // Import statements:
