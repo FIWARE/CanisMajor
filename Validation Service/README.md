@@ -9,7 +9,7 @@ The validation service for Canis Major performs security checks to verify transa
 The validation service implements a three-step verification protocol.
 
 ### Initial Validation Request
-The client initiates the verification process by submitting a POST request to the Canis Major Validator service. 
+The client initiates the verification process by submitting a POST request to the Canis Major Validation service. 
 
 ### Dual-Source Data Retrieval
 The Canis Major Validator executes two GET requests, based on the `entityId`,  to:
