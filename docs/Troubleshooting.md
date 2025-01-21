@@ -107,10 +107,17 @@ at ✽.Only one transaction should be persisted for the entity.
 
 This is produced by the intent to save again the information of the users' credentials in the Vault.
 
-### Solution: Clean the docker compose
-Stop the docker compose and start again to ensure the Vault's content is clean before executing the integration tests again.
+### Solution 1: Clean the docker compose
+For a docker compose clean, execute the following command:
+   ```shell
+   sudo docker compose -f docker-compose-env.yaml -f docker-compose-java.yaml down -v
+   ```
+This command deletes all containers, networks, and volumes created on the corresponding compose. It is the normal way to remove resources in a compose.
 
-For a docker compose clean follow these steps for a complete Docker cleanup:
+### Solution 2: Remove all docker resources from the machine
+Delete all the containers, volumes, and networks you have created in your machine, **including others not related to the deployment of Canis Major.**
+
+For a complete Docker cleanup of all resources:
 - Stop all running containers
    ```shell
    sudo docker stop $(sudo docker ps -aq)
