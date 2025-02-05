@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <!-- inherit properties and dependencies from the Canis Major project.--> 
+        <groupId>org.fiware</groupId>
+        <artifactId>canis-major</artifactId>
+        <version>1.0.0</version> 
+    </parent>
+
+    <artifactId>validation-service</artifactId>
+    <packaging>jar</packaging>
+
+    <properties>
+        <jdk.version>17</jdk.version>
+        <version.org.fiware.ngsi-ld>1.0.0</version.org.fiware.ngsi-ld> <!-- Use the latest version -->
+    </properties>
+
+    <dependencies>
+        <!-- NGSI-LD Java Mapping Library -->
+        <dependency>
+            <groupId>org.fiware.ngsi-ld</groupId>
+            <artifactId>ngsi-ld-java-mapping</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <!-- Micronaut Dependencies -->
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-inject</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-http-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-runtime</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-validation</artifactId>
+        </dependency>
+
+        <!-- Lombok for reducing boilerplate code -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.32</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>${jdk.version}</source>
+                    <target>${jdk.version}</target>
+                </configuration>
+            </plugin>
+                <plugins>
+        <plugin>
+            <groupId>org.openapitools</groupId>
+            <artifactId>openapi-generator-maven-plugin</artifactId>
+            <version>5.3.0</version>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>generate</goal>
+                    </goals>
+                    <configuration>
+                        <inputSpec>${project.basedir}/src/main/resources/api.yml</inputSpec>
+                        <generatorName>java</generatorName>
+                        <output>${project.build.directory}/generated-sources/openapi</output>
+                        <apiPackage>org.fiware.validation_service.api</apiPackage>
+                        <modelPackage>org.fiware.validation_service.model</modelPackage>
+                        <invokerPackage>org.fiware.validation_service.invoker</invokerPackage>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+        </plugins>
+    </build>
+</project>
