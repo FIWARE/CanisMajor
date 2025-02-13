@@ -2,7 +2,7 @@
 
 The validation service for Canis Major performs security checks to verify transaction integrity between the context broker and Canis Major blockchain transactions.
 
-![Validation service](validation_service.png)
+![Validation service](Validation_process.png)
 
 
 ## Service Setup
