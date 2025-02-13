@@ -1,7 +1,7 @@
 # Prerequisites for Running Canis Major
 
 
-This document outlines the prerequisites to running the Canis Major adapter without issues. The setup has been tested on an Ubuntu 22.04.1 LTS virtual machine running on FIWARE Lab. For more information on [FIWARE lab](https://www.fiware.org/developers/fiware-lab/) check the official documentation.
+This document outlines the prerequisites for running the Canis Major adapter without issues. The setup has been tested on an Ubuntu 22.04.1 LTS virtual machine running on FIWARE Lab. For more information on [FIWARE lab](https://www.fiware.org/developers/fiware-lab/) check the official documentation.
 
 ## Java setup
 
@@ -30,7 +30,7 @@ Docker is required to run Canis Major. The following version have been tested an
 
 For a proper docker installation follow the instructions provided in the official [documentation](https://docs.docker.com/engine/install/ubuntu/).
 
-To verify the installation follow these commands:
+To verify the installation use these commands:
 ```bash
 docker --version
 docker compose version
