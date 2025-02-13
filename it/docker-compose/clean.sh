@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Function to clean delete Docker Compose resources
+# Function to delete Docker Compose resources (containers, volumes, and networks)
 clean_the_docker_compose() {
     echo "Cleaning up Docker Compose resources..."
     sudo docker compose -f docker-compose-env.yaml -f docker-compose-java.yaml down -v
@@ -19,7 +19,7 @@ delete_all() {
 
 # Prompt the user for their choice
 echo "Select an option:"
-echo "1)  Clean the docker compose"
+echo "1) Clean the docker compose"
 echo "2) Remove all docker resources from the machine"
 read -p "Enter your choice (1 or 2): " choice
 
