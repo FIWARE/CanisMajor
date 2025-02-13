@@ -1,7 +1,7 @@
 # Canis Major test
 
 Canis Major serves as a blockchain adaptor within the FIWARE ecosystem, providing secure data persistence across blockchain networks and the Context Broker. The workflow is straightforward:
- - clients submit transactions containing payload data and wallet credentials.
+ - Clients submit transactions containing payload data and wallet credentials.
  - Once validated, the data is stored in an ETSI Broker (e.g., Orion-LD Broker) and simultaneously processed into a Merkle tree structure for blockchain integration.
  - The system then signs the transaction using the provided wallet credentials and submits it to an Oketh-compatible blockchain.
 
@@ -72,7 +72,10 @@ curl -L 'http://localhost:1026/ngsi-ld/v1/types' \
 The command returns the following response, demonstrating the available entity types in the Context Broker:
 ```json
 {
-    "@context":"https://raw.githubusercontent.com/smart-data-models/dataModel.DistributedLedgerTech/master/context.jsonld","id":"urn:ngsi-ld:EntityTypeList:d77ccfa0-b3cd-11ef-ae1b-0242ac120005","type":"EntityTypeList","typeList":["DLTtxReceipt"]
+    "@context": "https://raw.githubusercontent.com/smart-data-models/dataModel.DistributedLedgerTech/master/context.jsonld",
+    "id": "urn:ngsi-ld:EntityTypeList:d77ccfa0-b3cd-11ef-ae1b-0242ac120005",
+    "type": "EntityTypeList",
+    "typeList": ["DLTtxReceipt"]
 }
 ```
 The @context is using a definition on smart data models for a DLTtxReceipt and the NGSILD-Tenant is defined in the start-up of the tests.
