@@ -11,6 +11,9 @@ Canis Major serves as a blockchain adaptor within the FIWARE ecosystem, providin
  ```shell
 cd it
 docker-compose -f docker-compose/docker-compose-env.yaml -f docker-compose/docker-compose-java.yaml up 
+```
+
+```shell
 NGXI_ADDRESS=localhost:4000 mvn clean test
  ```
 
