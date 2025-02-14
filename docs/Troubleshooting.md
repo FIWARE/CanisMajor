@@ -95,21 +95,21 @@ This command deletes all containers, networks, and volumes created on the corres
 > [!NOTE]
 > If you want to remove all the containers, volumes, and networks you have created in your machine, **including others not related to the deployment of Canis Major.** follow these commands for a complete Docker cleanup of all resources:
 > - Stop all running containers
-> -  ```shell
->     sudo docker stop $(sudo docker ps -aq)
->     ```
->    - Remove all containers
->    ```shell
->      sudo docker rm $(sudo docker ps -aq)
->    ```
->    - Remove all volumes
->    ```shell
->    sudo docker volume rm $(sudo docker volume ls -q)
->    ```
->    - Remove all custom networks
->    ```shell
->    sudo docker network prune
->    ```
+> ```shell
+>  sudo docker stop $(sudo docker ps -aq)
+> ```
+>  - Remove all containers
+>  ```shell
+>  sudo docker rm $(sudo docker ps -aq)
+>  ```
+>  - Remove all volumes
+>  ```shell
+>  sudo docker volume rm $(sudo docker volume ls -q)
+>  ```
+>  - Remove all custom networks
+> ```shell
+> sudo docker network prune
+> ```
 
 > [!TIP]
 > - You can add `-f` flag to skip confirmation prompts.
