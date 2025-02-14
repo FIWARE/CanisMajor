@@ -86,30 +86,42 @@ at ✽.Only one transaction should be persisted for the entity.
 
 This is produced by the intent to save again the information of the users' credentials in the Vault.
 
-### Solution: Clean the docker compose
+### Solution 1: Clean the docker compose
+
+> [!NOTE]
+> This is the preferred non-invasive solution
+
 For a docker compose clean, execute the following command:
    ```shell
    sudo docker compose -f docker-compose-env.yaml -f docker-compose-java.yaml down -v
    ```
 This command deletes all containers, networks, and volumes created on the corresponding compose. It is the normal way to remove resources in a compose.
-> [!NOTE]
-> If you want to remove all the containers, volumes, and networks you have created in your machine, **including others not related to the deployment of Canis Major.** follow these commands for a complete Docker cleanup of all resources:
-> - Stop all running containers
-> ```shell
->  sudo docker stop $(sudo docker ps -aq)
-> ```
->  - Remove all containers
->  ```shell
->  sudo docker rm $(sudo docker ps -aq)
->  ```
->  - Remove all volumes
->  ```shell
->  sudo docker volume rm $(sudo docker volume ls -q)
->  ```
->  - Remove all custom networks
-> ```shell
-> sudo docker network prune
-> ```
+
+
+### Solution 2: Remove all running containers and resources
+
+> [!WARNING]
+> The following clean up will remove multiple containers **including others not related to the deployment of Canis Major.**
+
+In the case that you are experiencing a conflict and you want to remove all the containers, volumes, and networks you have created in your machine,
+follow these commands for a complete Docker cleanup of all resources.
+
+- Stop all running containers
+```shell
+sudo docker stop $(sudo docker ps -aq)
+```
+- Remove all containers
+```shell
+sudo docker rm $(sudo docker ps -aq)
+```
+- Remove all volumes
+```shell
+sudo docker volume rm $(sudo docker volume ls -q)
+```
+- Remove all custom networks
+```shell
+sudo docker network prune
+```
 
 > [!TIP]
 > - You can add `-f` flag to skip confirmation prompts.
