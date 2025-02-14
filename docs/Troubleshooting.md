@@ -11,7 +11,7 @@ This guide addresses the most common issue encountered with the Canis Major adap
    Run the following command to obtain the IP address of the Canis Major container:
 
    ```bash
-   docker inspect -f '{{range .NetworkSettings.Networks}}\
+   docker inspect -f '{{range .NetworkSettings.Networks}} \
    {{.IPAddress}}{{end}}'<canis_major_container_name_or_id>
    ```
 
