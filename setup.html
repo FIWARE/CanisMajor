@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://canismajor.readthedocs.io/setup.html" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>Prerequisites for Running Canis Major - CanisMajor</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="https://www.fiware.org/style/fiware_readthedocs.css" rel="stylesheet" />
+        <link href="https://www.fiware.org/style/fiware_readthedocs_core.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Prerequisites for Running Canis Major";
+        var mkdocs_page_input_path = "setup.md";
+        var mkdocs_page_url = "/setup.html";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="index.html" class="icon icon-home"> CanisMajor
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="index.html">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="api.html">API</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CanisMajor</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html" class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Prerequisites for Running Canis Major</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/fiware/CanisMajor/docs/edit/master/docs/setup.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="prerequisites-for-running-canis-major">Prerequisites for Running Canis Major</h1>
+<p>This document outlines the prerequisites for running the Canis Major adapter without issues. The setup has been tested on an Ubuntu 22.04.1 LTS virtual machine running on FIWARE Lab. For more information on <a href="https://www.fiware.org/developers/fiware-lab/">FIWARE lab</a> check the official documentation.</p>
+<h2 id="java-setup">Java setup</h2>
+<p>The Canis Major adaptor is currently functional using Java 21. Here are the specific details of the Java version used:</p>
+<ul>
+<li><strong>Version</strong>: OpenJDK 21.0.5</li>
+<li><strong>Release Date</strong>: October 15, 2024</li>
+<li><strong>Distribution</strong>: OpenJDK (Open Java Development Kit)
+To install OpenJDK 21 on Ubuntu 22.04, the following command could be used:</li>
+</ul>
+<pre><code class="language-bash">sudo apt update
+sudo apt install openjdk-21-jdk
+</code></pre>
+<p>To verify the Java installation:</p>
+<pre><code class="language-bash">java -version
+</code></pre>
+<h2 id="docker-setup">Docker Setup</h2>
+<p>Docker is required to run Canis Major. The following version have been tested and confirmed to work:</p>
+<p><strong>Docker Version</strong>: 27.3.1, build ce12230</p>
+<p>For a proper docker installation follow the instructions provided in the official <a href="https://docs.docker.com/engine/install/ubuntu/">documentation</a>.</p>
+<p>To verify the installation use these commands:</p>
+<pre><code class="language-bash">docker --version
+docker compose version
+</code></pre>
+<p>The output will be similar to this:</p>
+<pre><code class="language-bash">Docker version 27.3.1, build ce12230
+Docker Compose version v2.29.7
+</code></pre>
+<p>Proper setup is crucial for the proper functioning of the Canis Major adapter and for avoiding any issues when testing it.</p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/fiware/CanisMajor/docs" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

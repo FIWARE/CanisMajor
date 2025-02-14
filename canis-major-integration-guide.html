@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://canismajor.readthedocs.io/canis-major-integration-guide.html" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>Canis Major test - CanisMajor</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="https://www.fiware.org/style/fiware_readthedocs.css" rel="stylesheet" />
+        <link href="https://www.fiware.org/style/fiware_readthedocs_core.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Canis Major test";
+        var mkdocs_page_input_path = "canis-major-integration-guide.md";
+        var mkdocs_page_url = "/canis-major-integration-guide.html";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="index.html" class="icon icon-home"> CanisMajor
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="index.html">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="api.html">API</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CanisMajor</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html" class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Canis Major test</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/fiware/CanisMajor/docs/edit/master/docs/canis-major-integration-guide.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="canis-major-test">Canis Major test</h1>
+<p>Canis Major serves as a blockchain adaptor within the FIWARE ecosystem, providing secure data persistence across blockchain networks and the Context Broker. The workflow is straightforward:
+ - Clients submit transactions containing payload data and wallet credentials.
+ - Once validated, the data is stored in an ETSI Broker (e.g., Orion-LD Broker) and simultaneously processed into a Merkle tree structure for blockchain integration.
+ - The system then signs the transaction using the provided wallet credentials and submits it to an Oketh-compatible blockchain.</p>
+<p>## Integration tests
+ Let's explore the practical implementation through a series of test commands. First, it is needed to execute the integration tests, by running the following commands:</p>
+<p>```shell
+cd it
+docker-compose -f docker-compose/docker-compose-env.yaml -f docker-compose/docker-compose-java.yaml up </p>
+<pre><code>
+```shell
+NGXI_ADDRESS=localhost:4000 mvn clean test
+ ```
+
+## Entity creation
+After running the integration tests, create an entity by sending this POST request to Canis Major:
+
+```shell
+curl -iX POST  'http://localhost:4000/ngsi-ld/v1/entities/' \
+    --H 'Link: &lt;https://raw.githubusercontent.com/smart-data-models/\
+     dataModel.DistributedLedgerTech/master/context.jsonld&gt;; rel=&quot;http://www.w3.org/ns/json-ld#context&quot;;\
+     type=&quot;application/ld+json&quot;' \
+    --H 'Wallet-Type: vault' \
+    --H 'Wallet-Token: vault-plaintext-root-token' \
+    --H 'Wallet-Address: http://vault:8200/v1/ethereum/accounts/mira' \
+    --H 'Content-Type: application/json' \
+    --H 'Accept: application/json' \
+    --H 'NGSILD-TENANT: orion' \
+    --data '{
+    &quot;id&quot;: &quot;urn:ngsi-ld:Building:warehouse001&quot;,
+    &quot;type&quot;: &quot;Building&quot;,
+    &quot;category&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: [&quot;warehouse&quot;]
+    },
+    &quot;address&quot;: {
+        &quot;type&quot;: &quot;Property&quot;,
+        &quot;value&quot;: {
+            &quot;streetAddress&quot;: &quot;Alexanderplatz 2&quot;,
+            &quot;addressRegion&quot;: &quot;Berlin&quot;,
+            &quot;addressLocality&quot;: &quot;Mitte&quot;,
+            &quot;postalCode&quot;: &quot;10178&quot;
+        }
+    }
+}'
+</code></pre>
+<h3 id="wallet-http-headers">Wallet HTTP Headers</h3>
+<p>The headers included in the HTTP request are crucial for interacting with the blockchain. Here's a breakdown of each component and its significance:</p>
+<h4 id="wallet-type">Wallet-Type</h4>
+<p>This header specifies the type of wallet service being used, in this case, <code>vault</code>. By specifying the wallet type, the system can ensure that it uses the appropriate methods and protocols for that specific wallet service.</p>
+<h4 id="wallet-token">Wallet-Token</h4>
+<p>This header provides an authentication token for accessing the vault service. This token ensures that only authorized users can access the wallet's functionalities, such as retrieving private keys or signing transactions. Without proper authentication, the system would be vulnerable to unauthorized access.</p>
+<h4 id="wallet-address">Wallet-Address</h4>
+<p>This header points to the specific Ethereum account associated with the wallet. The wallet address is a unique identifier for an Ethereum account. It is used to send and receive transactions on the Ethereum blockchain. By specifying the wallet address, the system knows which account to interact with for operations such as sending tokens, signing transactions, or querying account balances.</p>
+<h3 id="link-header">Link Header</h3>
+<p>The Link header specifies the JSON-LD @context to be used, defining the semantic meaning of the terms used in the entity. The used link header contains three main parts:
+- The URL of the context file
+- The relationship type <code>rel="http://www.w3.org/ns/json-ld#context"</code>
+- The content type <code>type="application/ld+json"</code></p>
+<p>This context helps in standardizing the data model and ensures interoperability and in our case, it's referencing a context file from the Smart Data Models initiative for Building entities. The Link Header used here is an HTTP Link Header using the <code>http://www.w3.org/ns/json-ld#context</code> link relation pointing to the <code>@context</code> file defining the data model for <a href="https://smart-data-models.github.io/dataModel.Building/context.jsonld">Building</a>.</p>
+<h3 id="ngsild-tenant-header">NGSILD-TENANT Header</h3>
+<p>This header is used for multi-tenancy support in NGSI-LD implementations. In our case, "orion" is the tenant identifier. However, different tenants can have their own isolated set of entities, even if they have the same entity IDs enabling multiple organizations to use the same NGSI-LD broker without data interference.</p>
+<h3 id="content-headers">Content Headers</h3>
+<ul>
+<li><code>Content-Type</code>: Declares the request body format as JSON</li>
+<li><code>Accept</code>: Indicates the expected response format as JSON</li>
+</ul>
+<h2 id="retrieve-the-entity-types-in-the-context-broker">Retrieve the entity types in the Context broker</h2>
+<p>To retrieve the available entity types in the context broker run the following command:</p>
+<pre><code class="language-shell">curl -iX GET 'http://localhost:1026/ngsi-ld/v1/types' \
+    -H 'Link: &lt;https://raw.githubusercontent.com/smart-data-models/dataModel.DistributedLedgerTech/master/context.jsonld&gt;; rel=&quot;http://www.w3.org/ns/json-ld#context&quot;; type=&quot;application/ld+json&quot;' \
+    -H 'NGSILD-Tenant: orion'
+</code></pre>
+<p>The command returns the following response, demonstrating the available entity types in the Context Broker:</p>
+<pre><code class="language-json">&quot;@context&quot;: &quot;https://raw.githubusercontent.com/smart-data-models/dataModel.DistributedLedgerTech/master/context.jsonld&quot;,
+&quot;id&quot;: &quot;urn:ngsi-ld:EntityTypeList:d77ccfa0-b3cd-11ef-ae1b-0242ac120005&quot;,
+&quot;type&quot;: &quot;EntityTypeList&quot;,
+&quot;typeList&quot;: [&quot;DLTtxReceipt&quot;]
+</code></pre>
+<p>The <code>@context</code> is using a definition on smart data models for a <code>DLTtxReceipt</code> and the <code>NGSILD-Tenant</code> is defined in the start-up of the tests.</p>
+<h2 id="retrieve-data-from-canis-major">Retrieve data from Canis Major</h2>
+<p>To retrieve detailed receipt information for a specific building entity from the Canis Major, use the following HTTP request:</p>
+<pre><code class="language-shell">curl -iX GET 'http://localhost:4000/ngsi-ld/v1/entities/urn:ngsi-ld:Building:warehouse001' \
+    -H 'Link: &lt;https://raw.githubusercontent.com/smart-data-models/dataModel.Building/master/context.jsonld&gt;; rel=&quot;http://www.w3.org/ns/json-ld#context&quot;; type=&quot;application/ld+json&quot;' \
+    -H 'Accept: application/json' 
+</code></pre>
+<p>The output will be similar to following response:</p>
+<pre><code class="language-json">{
+  &quot;blockHash&quot;: &quot;0x619433204be327dda0d4722482e44310d2f3807e1a23b1fc097ca809f7afb421&quot;,
+  &quot;blockNumber&quot;: 193,
+  &quot;blockNumberRaw&quot;: &quot;0xc1&quot;,
+  &quot;cumulativeGasUsed&quot;: 23866,
+  &quot;cumulativeGasUsedRaw&quot;: &quot;0x5d3a&quot;,
+  &quot;from&quot;: &quot;0xd9fe663797b75d0b3897d55d35e0b4e72307a63f&quot;,
+  &quot;gasUsed&quot;: 23866,
+  &quot;gasUsedRaw&quot;: &quot;0x5d3a&quot;,
+  &quot;logs&quot;: [
+    {
+      &quot;address&quot;: &quot;0x476059cd57800db8eb88f67c2aa38a6fcf8251e0&quot;,
+      &quot;blockHash&quot;: &quot;0x619433204be327dda0d4722482e44310d2f3807e1a23b1fc097ca809f7afb421&quot;,
+      &quot;blockNumber&quot;: 193,
+      &quot;blockNumberRaw&quot;: &quot;0xc1&quot;,
+      &quot;data&quot;: &quot;0x&quot;,
+      &quot;logIndex&quot;: 0,
+      &quot;logIndexRaw&quot;: &quot;0x0&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xa3865c00e01495fc2b86502cae36a4edb139f748682e7d80725a3d6571a482fa&quot;,
+        &quot;0xf85c55023889d6ec0b723c8220471171435040e275059f8e222dfa57a50f0dd5&quot;,
+        &quot;0x33868c71f7186ea974685b553d8eee61eb1e95e0a2c70ed54fcd13db67920f74&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0x83f05282a30f77dcfe52ca029b10ba80aac5dad5cc46f5dc437b79e860e4dd65&quot;,
+      &quot;transactionIndex&quot;: 0,
+      &quot;transactionIndexRaw&quot;: &quot;0x0&quot;,
+      &quot;type&quot;: &quot;mined&quot;
+    }
+  ],
+  &quot;logsBloom&quot;: &quot;0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000020000000000000008000200000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000004000000000000000000020000000000000000000000000000000000000000000000000010000100000000000000000000000000000000000000000000000000008000000000000000000000420000000000000000000000000000000000000000000000000000000000000000000000000&quot;,
+  &quot;status&quot;: &quot;0x1&quot;,
+  &quot;statusOK&quot;: true,
+  &quot;to&quot;: &quot;0x476059cd57800db8eb88f67c2aa38a6fcf8251e0&quot;,
+  &quot;transactionHash&quot;: &quot;0x83f05282a30f77dcfe52ca029b10ba80aac5dad5cc46f5dc437b79e860e4dd65&quot;,
+  &quot;transactionIndexRaw&quot;: &quot;0x0&quot;
+}
+</code></pre>
+<p>The JSON structure shows a blockchain transaction receipt with the following details:</p>
+<h3 id="transaction-information">Transaction Information</h3>
+<ul>
+<li>Block Number: 193 (0xc1)</li>
+<li>Transaction Status: Successful (statusOK: true)</li>
+<li>Transaction Hash: 0x83f05282a30f77dcfe52ca029b10ba80aac5dad5cc46f5dc437b79e860e4dd65</li>
+</ul>
+<h3 id="transaction-participants">Transaction Participants</h3>
+<ul>
+<li>From Address: 0xd9fe663797b75d0b3897d55d35e0b4e72307a63f</li>
+<li>To Address: 0x476059cd57800db8eb88f67c2aa38a6fcf8251e0</li>
+</ul>
+<h2 id="retrieve-data-from-the-context-broker">Retrieve data from the context broker</h2>
+<p>To retrieve specific DLT transaction receipts from the the context broker, we'll use an NGSI-LD query that filters entities by type and property values. The query targets entities of type DLTtxReceipt and filters them based on the refEntity property matching the Building entity "urn:ngsi-ld:Building:warehouse001". The attrs=TxReceipts parameter in the NGSI-LD query acts as a data filter to limit the response to only include the TxReceipts property, excluding all other properties of the entity and reducing response payload size.</p>
+<pre><code class="language-shell">curl -iX GET 'http://localhost:1026/ngsi-ld/v1/entities/?type=DLTtxReceipt&amp;q=refEntity%3D%3D%22urn%3Angsi-ld%3ABuilding%3Awarehouse001%22&amp;attrs=TxReceipts' \
+    -H 'Link: &lt;https://raw.githubusercontent.com/smart-data-models/dataModel.DistributedLedgerTech/master/context.jsonld&gt;; rel=&quot;http://www.w3.org/ns/json-ld#context&quot;; type=&quot;application/ld+json&quot;' \
+    -H 'NGSILD-Tenant: orion'
+</code></pre>
+<p>The output will be similar to the following json response:</p>
+<pre><code class="language-json">{
+    &quot;@context&quot;: &quot;https://raw.githubusercontent.com/smart-data-models/dataModel.DistributedLedgerTech/master/context.jsonld&quot;,
+    &quot;id&quot;: &quot;urn:ngsi-ld:dlttxreceipt:0xa46d2e3b190d36fbb8af5d0a1c212d8036cf007e6ec4d1309904e052d25e5499&quot;,
+    &quot;type&quot;: &quot;DLTtxReceipt&quot;,
+    &quot;TxReceipts&quot;: {
+      &quot;type&quot;: &quot;Property&quot;,
+      &quot;value&quot;: {
+        &quot;blockHash&quot;: &quot;0x2022f801a1c094bd3a893ac6f3087c17bb9c673a6b5663f353eded030e1e7161&quot;,
+        &quot;blockNumber&quot;: 192,
+        &quot;blockNumberRaw&quot;: &quot;0xc0&quot;,
+        &quot;cumulativeGasUsed&quot;: 23866,
+        &quot;cumulativeGasUsedRaw&quot;: &quot;0x5d3a&quot;,
+        &quot;from&quot;: &quot;0x34e5b3f990e55d0651b35c817bafb89d2877cb95&quot;,
+        &quot;gasUsed&quot;: 23866,
+        &quot;gasUsedRaw&quot;: &quot;0x5d3a&quot;,
+        &quot;logs&quot;: [
+          {
+            &quot;address&quot;: &quot;0x476059cd57800db8eb88f67c2aa38a6fcf8251e0&quot;,
+            &quot;blockHash&quot;: &quot;0x2022f801a1c094bd3a893ac6f3087c17bb9c673a6b5663f353eded030e1e7161&quot;,
+            &quot;blockNumber&quot;: 192,
+            &quot;blockNumberRaw&quot;: &quot;0xc0&quot;,
+            &quot;data&quot;: &quot;0x&quot;,
+            &quot;logIndex&quot;: 0,
+            &quot;logIndexRaw&quot;: &quot;0x0&quot;,
+            &quot;removed&quot;: false,
+            &quot;topics&quot;: [
+              &quot;0xa3865c00e01495fc2b86502cae36a4edb139f748682e7d80725a3d6571a482fa&quot;,
+              &quot;0xf85c55023889d6ec0b723c8220471171435040e275059f8e222dfa57a50f0dd5&quot;,
+              &quot;0xefc7a4d4c2393e9b62ac4b93b7d199c71e0bb103fdb00fc1b37d7949ad886ddd&quot;
+            ],
+            &quot;transactionHash&quot;: &quot;0xa46d2e3b190d36fbb8af5d0a1c212d8036cf007e6ec4d1309904e052d25e5499&quot;,
+            &quot;transactionIndex&quot;: 0,
+            &quot;transactionIndexRaw&quot;: &quot;0x0&quot;,
+            &quot;type&quot;: &quot;mined&quot;
+          }
+        ],
+        &quot;logsBloom&quot;: &quot;0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000020000000000000008000200000000000000000000000000000000000000000000000100000000000000100000000000000000000000000000000000000000000000000000000000000020000000000000000000000000008000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000420000000000000000000000000000000000000000200000000000000000000000000000000&quot;,
+        &quot;status&quot;: &quot;0x1&quot;,
+        &quot;statusOK&quot;: true,
+        &quot;to&quot;: &quot;0x476059cd57800db8eb88f67c2aa38a6fcf8251e0&quot;,
+        &quot;transactionHash&quot;: &quot;0xa46d2e3b190d36fbb8af5d0a1c212d8036cf007e6ec4d1309904e052d25e5499&quot;,
+        &quot;transactionIndex&quot;: 0,
+        &quot;transactionIndexRaw&quot;: &quot;0x0&quot;
+        }
+    }
+}               
+</code></pre>
+<p>This JSON response shows a <code>DLTtxReceipt</code> (Distributed Ledger Technology Transaction Receipt  based on the following <a href="https://github.com/smart-data-models/dataModel.DistributedLedgerTec">data model</a>) entity in NGSI-LD format. </p>
+<h3 id="transaction-details">Transaction Details</h3>
+<ul>
+<li>Entity ID: <code>urn:ngsi-ld:dlttxreceipt:0xa46d2e3b190d36fbb8af5d0a1c212d8036cf007e6ec4d1309904e052d25e5499</code></li>
+<li>Block Number: 192 (0xc0)</li>
+<li>Transaction Status: Successful (statusOK: true)</li>
+<li>Block Hash: <code>0x2022f801a1c094bd3a893ac6f3087c17bb9c673a6b5663f353eded030e1e7161</code></li>
+<li>Transaction Hash: <code>0xa46d2e3b190d36fbb8af5d0a1c212d8036cf007e6ec4d1309904e052d25e5499</code></li>
+</ul>
+<h3 id="transaction-participants_1">Transaction Participants</h3>
+<ul>
+<li>From Address: <code>0x34e5b3f990e55d0651b35c817bafb89d2877cb95</code></li>
+<li>To Address: <code>0x476059cd57800db8eb88f67c2aa38a6fcf8251e0</code></li>
+</ul>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/fiware/CanisMajor/docs" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
