@@ -9,24 +9,26 @@ Canis Major serves as a blockchain adaptor within the FIWARE ecosystem, providin
  Let's explore the practical implementation through a series of test commands. First, it is needed to execute the integration tests, by running the following commands:
 
  ```shell
-  cd it  
-    docker-compose -f docker-compose/docker-compose-env.yaml -f docker-compose/docker-compose-java.yaml up  
-    NGSI_ADDRESS=localhost:4000 mvn clean test  
+cd it
+docker-compose -f docker-compose/docker-compose-env.yaml -f docker-compose/docker-compose-java.yaml up 
+NGXI_ADDRESS=localhost:4000 mvn clean test
  ```
 
 ## Entity creation
-After running the integartion tests, create an entity by sending this POST request to Canis Major:
+After running the integration tests, create an entity by sending this POST request to Canis Major:
 
 ```shell
-curl --location 'http://localhost:4000/ngsi-ld/v1/entities/' \
---header 'Link: <https://raw.githubusercontent.com/smart-data-models/dataModel.DistributedLedgerTech/master/context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
---header 'Wallet-Type: vault' \
---header 'Wallet-Token: vault-plaintext-root-token' \
---header 'Wallet-Address: http://vault:8200/v1/ethereum/accounts/mira' \
---header 'Content-Type: application/json' \
---header 'Accept: application/json' \
---header 'NGSILD-TENANT: orion' \
---data '{
+curl -iX POST  'http://localhost:4000/ngsi-ld/v1/entities/' \
+    --H 'Link: <https://raw.githubusercontent.com/smart-data-models/\
+     dataModel.DistributedLedgerTech/master/context.jsonld>; rel="http://www.w3.org/ns/json-ld#context";\
+     type="application/ld+json"' \
+    --H 'Wallet-Type: vault' \
+    --H 'Wallet-Token: vault-plaintext-root-token' \
+    --H 'Wallet-Address: http://vault:8200/v1/ethereum/accounts/mira' \
+    --H 'Content-Type: application/json' \
+    --H 'Accept: application/json' \
+    --H 'NGSILD-TENANT: orion' \
+    --data '{
     "id": "urn:ngsi-ld:Building:warehouse001",
     "type": "Building",
     "category": {
@@ -49,7 +51,7 @@ curl --location 'http://localhost:4000/ngsi-ld/v1/entities/' \
 The headers included in the HTTP request are crucial for interacting with the blockchain. Here's a breakdown of each component and its significance:
 
 #### Wallet-Type
-This header specifies the type of wallet service being used, in this case, "vault". By specifying the wallet type, the system can ensure that it uses the appropriate methods and protocols for that specific wallet service.
+This header specifies the type of wallet service being used, in this case, `vault`. By specifying the wallet type, the system can ensure that it uses the appropriate methods and protocols for that specific wallet service.
 
 #### Wallet-Token
 This header provides an authentication token for accessing the vault service. This token ensures that only authorized users can access the wallet's functionalities, such as retrieving private keys or signing transactions. Without proper authentication, the system would be vulnerable to unauthorized access.
@@ -57,36 +59,45 @@ This header provides an authentication token for accessing the vault service. Th
 #### Wallet-Address
 This header points to the specific Ethereum account associated with the wallet. The wallet address is a unique identifier for an Ethereum account. It is used to send and receive transactions on the Ethereum blockchain. By specifying the wallet address, the system knows which account to interact with for operations such as sending tokens, signing transactions, or querying account balances.
 
+### Link Header
+The Link header specifies the JSON-LD @context to be used, defining the semantic meaning of the terms used in the entity. The used link header contains three main parts:
+- The URL of the context file
+- The relationship type `rel="http://www.w3.org/ns/json-ld#context"`
+- The content type `type="application/ld+json"`
+  
+This context helps in standardizing the data model and ensures interoperability and in our case, it's referencing a context file from the Smart Data Models initiative for Building entities. The Link Header used here is an HTTP Link Header using the `http://www.w3.org/ns/json-ld#context` link relation pointing to the `@context` file defining the data model for [Building](https://smart-data-models.github.io/dataModel.Building/context.jsonld).
+
+### NGSILD-TENANT Header
+This header is used for multi-tenancy support in NGSI-LD implementations. In our case, "orion" is the tenant identifier. However, different tenants can have their own isolated set of entities, even if they have the same entity IDs enabling multiple organizations to use the same NGSI-LD broker without data interference.
+
 ### Content Headers
-- Content-Type: Declares the request body format as JSON
-- Accept: Indicates the expected response format as JSON
+- `Content-Type`: Declares the request body format as JSON
+- `Accept`: Indicates the expected response format as JSON
 
 ## Retrieve the entity types in the Context broker
 To retrieve the available entity types in the context broker run the following command:
 
 ```shell
-curl -L 'http://localhost:1026/ngsi-ld/v1/types' \
--H 'Link: <https://raw.githubusercontent.com/smart-data-models/dataModel.DistributedLedgerTech/master/context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
--H 'NGSILD-Tenant: orion'
+curl -iX GET 'http://localhost:1026/ngsi-ld/v1/types' \
+    -H 'Link: <https://raw.githubusercontent.com/smart-data-models/dataModel.DistributedLedgerTech/master/context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
+    -H 'NGSILD-Tenant: orion'
 ```
 The command returns the following response, demonstrating the available entity types in the Context Broker:
 ```json
-{
-    "@context": "https://raw.githubusercontent.com/smart-data-models/dataModel.DistributedLedgerTech/master/context.jsonld",
-    "id": "urn:ngsi-ld:EntityTypeList:d77ccfa0-b3cd-11ef-ae1b-0242ac120005",
-    "type": "EntityTypeList",
-    "typeList": ["DLTtxReceipt"]
-}
+"@context": "https://raw.githubusercontent.com/smart-data-models/dataModel.DistributedLedgerTech/master/context.jsonld",
+"id": "urn:ngsi-ld:EntityTypeList:d77ccfa0-b3cd-11ef-ae1b-0242ac120005",
+"type": "EntityTypeList",
+"typeList": ["DLTtxReceipt"]
 ```
-The @context is using a definition on smart data models for a DLTtxReceipt and the NGSILD-Tenant is defined in the start-up of the tests.
+The `@context` is using a definition on smart data models for a `DLTtxReceipt` and the `NGSILD-Tenant` is defined in the start-up of the tests.
 
 ## Retrieve data from Canis Major
 To retrieve detailed receipt information for a specific building entity from the Canis Major, use the following HTTP request:
 
 ```shell
-curl -L 'http://localhost:4000/ngsi-ld/v1/entities/urn:ngsi-ld:Building:warehouse001' \
--H 'Link: <https://raw.githubusercontent.com/smart-data-models/dataModel.Building/master/context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
--H 'Accept: application/json' | jq '.'
+curl -iX GET 'http://localhost:4000/ngsi-ld/v1/entities/urn:ngsi-ld:Building:warehouse001' \
+    -H 'Link: <https://raw.githubusercontent.com/smart-data-models/dataModel.Building/master/context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
+    -H 'Accept: application/json' 
 ```
 
 The output will be similar to following response:
@@ -144,12 +155,12 @@ The JSON structure shows a blockchain transaction receipt with the following det
 To retrieve specific DLT transaction receipts from the the context broker, we'll use an NGSI-LD query that filters entities by type and property values. The query targets entities of type DLTtxReceipt and filters them based on the refEntity property matching the Building entity "urn:ngsi-ld:Building:warehouse001". The attrs=TxReceipts parameter in the NGSI-LD query acts as a data filter to limit the response to only include the TxReceipts property, excluding all other properties of the entity and reducing response payload size.
 
 ```shell
-curl -L 'http://localhost:1026/ngsi-ld/v1/entities/?type=DLTtxReceipt&q=refEntity%3D%3D%22urn%3Angsi-ld%3ABuilding%3Awarehouse001%22&attrs=TxReceipts' \
--H 'Link: <https://raw.githubusercontent.com/smart-data-models/dataModel.DistributedLedgerTech/master/context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
--H 'NGSILD-Tenant: orion'
+curl -iX GET 'http://localhost:1026/ngsi-ld/v1/entities/?type=DLTtxReceipt&q=refEntity%3D%3D%22urn%3Angsi-ld%3ABuilding%3Awarehouse001%22&attrs=TxReceipts' \
+    -H 'Link: <https://raw.githubusercontent.com/smart-data-models/dataModel.DistributedLedgerTech/master/context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
+    -H 'NGSILD-Tenant: orion'
 ```
 
-The outpot will be similar to the following json response:
+The output will be similar to the following json response:
 
 ```json
 {
@@ -200,7 +211,7 @@ The outpot will be similar to the following json response:
 }               
 ```
 
-This JSON response shows a DLTtxReceipt (Distributed Ledger Technology Transaction Receipt) entity in NGSI-LD format:
+This JSON response shows a `DLTtxReceipt` (Distributed Ledger Technology Transaction Receipt  based on the following [data model](https://github.com/smart-data-models/dataModel.DistributedLedgerTec)) entity in NGSI-LD format. 
 
 ### Transaction Details
 
