@@ -113,4 +113,4 @@ This command deletes all containers, networks, and volumes created on the corres
 
 > [!TIP]
 > - You can add `-f` flag to skip confirmation prompts.
-> - Root privileges (sudo) may be required depending on your Docker setup.
+> - Root privileges `sudo` may be required depending on your Docker setup.
