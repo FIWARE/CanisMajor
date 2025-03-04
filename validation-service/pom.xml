@@ -3,89 +3,145 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
+    
     <parent>
-        <!-- inherit properties and dependencies from the Canis Major project.--> 
         <groupId>org.fiware</groupId>
         <artifactId>canis-major</artifactId>
-        <version>1.0.0</version> 
+        <version>1.0.0</version>
     </parent>
 
     <artifactId>validation-service</artifactId>
-    <packaging>jar</packaging>
+
+    
 
     <properties>
-        <jdk.version>17</jdk.version>
-        <version.org.fiware.ngsi-ld>1.0.0</version.org.fiware.ngsi-ld> <!-- Use the latest version -->
+        <micronaut.validation.version>3.2.7</micronaut.validation.version>
+        <openapi.version>5.1.0</openapi.version>
+        <version.io.kokuwa.micronaut.codegen>2.2.1</version.io.kokuwa.micronaut.codegen>
     </properties>
+    
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
 
     <dependencies>
         <!-- NGSI-LD Java Mapping Library -->
         <dependency>
-            <groupId>org.fiware.ngsi-ld</groupId>
+            <groupId>com.github.wistefan</groupId>
             <artifactId>ngsi-ld-java-mapping</artifactId>
-            <version>1.0.0</version>
+            <version>main-SNAPSHOT</version>
         </dependency>
 
-        <!-- Micronaut Dependencies -->
+        <!-- Micronaut -->
         <dependency>
             <groupId>io.micronaut</groupId>
-            <artifactId>micronaut-inject</artifactId>
+            <artifactId>micronaut-validation</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-http-server-netty</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>io.micronaut</groupId>
             <artifactId>micronaut-http-client</artifactId>
         </dependency>
-        <dependency>
-            <groupId>io.micronaut</groupId>
-            <artifactId>micronaut-runtime</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.micronaut</groupId>
-            <artifactId>micronaut-validation</artifactId>
-        </dependency>
 
-        <!-- Lombok for reducing boilerplate code -->
+        <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.32</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Testing -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>1.6.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+            <version>0.2.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-                <configuration>
-                    <source>${jdk.version}</source>
-                    <target>${jdk.version}</target>
-                </configuration>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>6.2.1</version>
+                <executions>
+                    <execution>
+                        <id>canis-major-api</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>openapi-ngsi-json</id>
+                        <phase>none</phase>
+                    </execution>
+
+                    <execution>
+                        <id>generate.ngsi-ld-client</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/ngsi-ld-api.yaml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <library>native</library>
+                            <apiPackage>org.fiware.validation_service.client.api</apiPackage>
+                            <modelPackage>org.fiware.validation_service.client.model</modelPackage>
+                            <invokerPackage>org.fiware.validation_service.client.invoker</invokerPackage>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <skipValidateSpec>true</skipValidateSpec>
+                            <configOptions>
+                                <sourceFolder>src/gen/java/main</sourceFolder>
+                                <useRuntimeException>true</useRuntimeException>
+                                <useJakartaEe>true</useJakartaEe>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-validation-api</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/validation-api.yaml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <library>native</library>
+                            <apiPackage>org.fiware.validation_service.api</apiPackage>
+                            <modelPackage>org.fiware.validation_service.model</modelPackage>
+                            <invokerPackage>org.fiware.validation_service.invoker</invokerPackage>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <skipValidateSpec>true</skipValidateSpec>
+                            <configOptions>
+                                <interfaceOnly>true</interfaceOnly>
+                                <sourceFolder>src/gen/java/main</sourceFolder>
+                                <dateLibrary>java8</dateLibrary>
+                                <useJakartaEe>true</useJakartaEe>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
-                <plugins>
-        <plugin>
-            <groupId>org.openapitools</groupId>
-            <artifactId>openapi-generator-maven-plugin</artifactId>
-            <version>5.3.0</version>
-            <executions>
-                <execution>
-                    <goals>
-                        <goal>generate</goal>
-                    </goals>
-                    <configuration>
-                        <inputSpec>${project.basedir}/src/main/resources/api.yml</inputSpec>
-                        <generatorName>java</generatorName>
-                        <output>${project.build.directory}/generated-sources/openapi</output>
-                        <apiPackage>org.fiware.validation_service.api</apiPackage>
-                        <modelPackage>org.fiware.validation_service.model</modelPackage>
-                        <invokerPackage>org.fiware.validation_service.invoker</invokerPackage>
-                    </configuration>
-                </execution>
-            </executions>
-        </plugin>
         </plugins>
     </build>
 </project>

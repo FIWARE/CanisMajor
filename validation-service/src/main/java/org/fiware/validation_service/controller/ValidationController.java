@@ -1,47 +1,35 @@
-package validator.controller;
+package org.fiware.validation_service.controller;
 
-import io.micronaut.http.annotation.*;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
-//import lombok.RequiredArgsConstructor;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Post;
+import jakarta.inject.Inject;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import validator.service.ValidationService;
-import validator.model.ValidationResult;
+import org.fiware.validation_service.model.ValidationResult;
+import org.fiware.validation_service.service.ValidationService;
 
+import java.util.NoSuchElementException;
 
-
-@Slf4j // for handling logging through Lombok
-@Controller("/service/v1/validation") //Marks this class as a Micronaut web controller
+@Slf4j
+@Controller("/validation")
+@RequiredArgsConstructor
 public class ValidationController {
+
     private final ValidationService validationService;
 
-    public ValidationController(ValidationService validationService) {
-        this.validationService = validationService;
-    }
-
-    @Post("/compare")
-    public HttpResponse<ValidationResult> compareResponses(@Body CompareRequest request) {
+    @Post("/transaction/{entityId}")
+    public HttpResponse<ValidationResult> validateTransaction(String entityId) {
         try {
-            // Call the validation service to perform the validation
-            ValidationResult result = validationService.validateEntity(request.getEntityId());
+            ValidationResult result = validationService.validateTransaction(entityId);
             return HttpResponse.ok(result);
-        } catch (ValidationException e) {
-            log.error("Error fetching data from broker: {}", e.getMessage());
-            return HttpResponse.status(HttpStatus.BAD_GATEWAY); // Return HTTP 502 Bad Gateway on error
-        }
-    }
-
-    // Inner class to represent the request body
-    public static class CompareRequest {
-        private String entityId;
-
-        // Getter and Setter
-        public String getEntityId() {
-            return entityId;
-        }
-
-        public void setEntityId(String entityId) {
-            this.entityId = entityId;
+        } catch (NoSuchElementException e) {
+            log.error("Transaction not found: {}", e.getMessage());
+            return HttpResponse.status(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            log.error("Error validating transaction: {}", e.getMessage());
+            return HttpResponse.status(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

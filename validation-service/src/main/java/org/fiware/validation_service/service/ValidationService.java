@@ -1,92 +1,118 @@
-/*
- This implementation of the validation service:
-- Compares all relevant fields between Orion and blockchain responses
-- Provides detailed validation errors for each mismatched field
-- Handles JSON parsing and null checks
-- Uses logging for error tracking
-- Returns structured validation results
- */
+package org.fiware.validation_service.service;
 
-package validator.service;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import validator.model.ValidationResult;
 import jakarta.inject.Singleton;
-import validator.client.ValidationHttpClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.fiware.validation_service.client.ValidationHttpClient;
+import org.fiware.validation_service.client.model.Entity;
+import org.fiware.validation_service.model.Discrepancy;
+import org.fiware.validation_service.model.ValidationResult;
+
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
+@Singleton
 @RequiredArgsConstructor
 public class ValidationService {
-    private static final Logger logger = LoggerFactory.getLogger(ValidationService.class);
+
     private final ValidationHttpClient validationHttpClient;
-    private final ObjectMapper mapper = new ObjectMapper();
 
-    public ValidationResult validateEntity(String entityId) {
+    public ValidationResult validateTransaction(String entityId) {
         try {
-            String orionData = validationHttpClient.fetchOrionData(entityId);
-            String blockchainData = validationHttpClient.fetchBlockchainData(entityId);
-
-            if (orionData == null || orionData.isEmpty()) {
-                logger.error("No data found from Orion for entityId: {}", entityId);
-                return new ValidationResult(false, List.of("No data found from Orion"));
-            }
-
-            if (blockchainData == null || blockchainData.isEmpty()) {
-                logger.error("No data found from Canis Major for entityId: {}", entityId);
-                return new ValidationResult(false, List.of("No data found from Canis Major"));
-            }
-
-            List<String> validationErrors = compareData(orionData, blockchainData);
-            return new ValidationResult(validationErrors.isEmpty(), validationErrors);
-        } catch (Exception e) {
-            logger.error("Error validating entity: {}", entityId, e);
-            return new ValidationResult(false, List.of("Validation error: " + e.getMessage()));
+            // Fetch data from both sources asynchronously
+            CompletableFuture<Entity> orionEntityFuture = validationHttpClient.fetchEntityById(entityId);
+            CompletableFuture<Entity> canisMajorEntityFuture = validationHttpClient.fetchCanisMajorData(entityId);
+            
+            // Wait for both futures to complete
+            CompletableFuture.allOf(orionEntityFuture, canisMajorEntityFuture).join();
+            
+            // Get the results
+            Entity orionEntity = orionEntityFuture.get();
+            Entity canisMajorEntity = canisMajorEntityFuture.get();
+            
+            // Compare the entities and create a validation result
+            List<Discrepancy> discrepancies = compareEntities(orionEntity, canisMajorEntity);
+            
+            // Create and return the validation result
+            ValidationResult result = new ValidationResult();
+            result.setValid(discrepancies.isEmpty());
+            result.setEntityId(entityId);
+            result.setTimestamp(OffsetDateTime.now());
+            result.setDiscrepancies(discrepancies);
+            
+            return result;
+        } catch (InterruptedException | ExecutionException e) {
+            log.error("Error validating transaction: {}", entityId, e);
+            throw new RuntimeException("Failed to validate transaction", e);
         }
     }
-
-    private List<String> compareData(String orionData, String blockchainData) {
-        List<String> errors = new ArrayList<>();
-        try {
-            JsonNode orionNode = mapper.readTree(orionData);
-            JsonNode blockchainNode = mapper.readTree(blockchainData);
-            
-            JsonNode txReceipts = orionNode.get("TxReceipts").get("value");
-            
-            validateField(txReceipts, blockchainNode, "status", "Status", errors);
-            validateField(txReceipts, blockchainNode, "blockNumber", "Block Number", errors);
-            validateField(txReceipts, blockchainNode, "transactionHash", "Transaction Hash", errors);
-            validateField(txReceipts, blockchainNode, "blockHash", "Block Hash", errors);
-            validateField(txReceipts, blockchainNode, "from", "From Address", errors);
-            validateField(txReceipts, blockchainNode, "to", "To Address", errors);
-            
-            return errors;
-        } catch (JsonProcessingException e) {
-            logger.error("Error parsing JSON data", e);
-            errors.add("Error parsing JSON data: " + e.getMessage());
-            return errors;
-        }
-    }
-
-    private void validateField(JsonNode orion, JsonNode blockchain, String fieldName, String displayName, List<String> errors) {
-        JsonNode orionValue = orion.get(fieldName);
-        JsonNode blockchainValue = blockchain.get(fieldName);
+    
+    private List<Discrepancy> compareEntities(Entity orionEntity, Entity canisMajorEntity) {
+        List<Discrepancy> discrepancies = new ArrayList<>();
         
-        if (orionValue == null || blockchainValue == null) {
-            errors.add(displayName + " field missing in one or both responses");
+        // Compare entity type
+        if (!orionEntity.getType().equals(canisMajorEntity.getType())) {
+            Discrepancy discrepancy = new Discrepancy();
+            discrepancy.setField("type");
+            discrepancy.setOrionValue(orionEntity.getType());
+            discrepancy.setCanisMajorValue(canisMajorEntity.getType());
+            discrepancies.add(discrepancy);
+        }
+        
+        // Extract TxReceipts from both entities
+        Map<String, Object> orionProperties = (Map<String, Object>) orionEntity.getAdditionalProperties().get("TxReceipts");
+        Map<String, Object> canisMajorProperties = (Map<String, Object>) canisMajorEntity.getAdditionalProperties().get("TxReceipts");
+        
+        if (orionProperties != null && canisMajorProperties != null) {
+            Map<String, Object> orionValue = (Map<String, Object>) orionProperties.get("value");
+            Map<String, Object> canisMajorValue = (Map<String, Object>) canisMajorProperties.get("value");
+            
+            // Compare key transaction fields
+            compareField(discrepancies, "status", orionValue, canisMajorValue);
+            compareField(discrepancies, "blockNumber", orionValue, canisMajorValue);
+            compareField(discrepancies, "transactionHash", orionValue, canisMajorValue);
+            compareField(discrepancies, "blockHash", orionValue, canisMajorValue);
+            compareField(discrepancies, "from", orionValue, canisMajorValue);
+            compareField(discrepancies, "to", orionValue, canisMajorValue);
+        } else {
+            // If TxReceipts is missing in either entity
+            Discrepancy discrepancy = new Discrepancy();
+            discrepancy.setField("TxReceipts");
+            discrepancy.setOrionValue(orionProperties != null ? "present" : "missing");
+            discrepancy.setCanisMajorValue(canisMajorProperties != null ? "present" : "missing");
+            discrepancies.add(discrepancy);
+        }
+        
+        return discrepancies;
+    }
+    
+    private void compareField(List<Discrepancy> discrepancies, String fieldName, 
+                             Map<String, Object> orionValue, Map<String, Object> canisMajorValue) {
+        Object orionField = orionValue.get(fieldName);
+        Object canisMajorField = canisMajorValue.get(fieldName);
+        
+        // Check if field exists in both
+        if (orionField == null || canisMajorField == null) {
+            Discrepancy discrepancy = new Discrepancy();
+            discrepancy.setField(fieldName);
+            discrepancy.setOrionValue(orionField != null ? orionField.toString() : "missing");
+            discrepancy.setCanisMajorValue(canisMajorField != null ? canisMajorField.toString() : "missing");
+            discrepancies.add(discrepancy);
             return;
         }
         
-        if (!orionValue.equals(blockchainValue)) {
-            errors.add(displayName + " mismatch: Orion=" + orionValue + ", Blockchain=" + blockchainValue);
+        // Check if values are equal
+        if (!orionField.equals(canisMajorField)) {
+            Discrepancy discrepancy = new Discrepancy();
+            discrepancy.setField(fieldName);
+            discrepancy.setOrionValue(orionField.toString());
+            discrepancy.setCanisMajorValue(canisMajorField.toString());
+            discrepancies.add(discrepancy);
         }
     }
 }
- 

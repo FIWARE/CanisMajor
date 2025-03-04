@@ -1,4 +1,6 @@
-ngsi:
+general:
   contextBrokerUrl: "127.0.0.1:1026" # Replace with your context broker URL
   canisMajorUrl: "127.0.0.1:4000" # Replace with your Canis Major URL
   NGSILD_TENANT: "orion" # Replace with your tenant ID
+  contextUrl: "https://raw.githubusercontent.com/smart-data-models/dataModel.DistributedLedgerTech/master/context.jsonld" # NGSI-LD context URL
+
