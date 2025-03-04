@@ -5,6 +5,7 @@
     <groupId>org.fiware</groupId>
     <artifactId>canis-major</artifactId>
     <version>1.0.0</version>
+    <packaging>pom</packaging>
 
     <parent>
         <groupId>io.micronaut</groupId>
@@ -705,4 +706,8 @@
             </build>
         </profile>
     </profiles>
+    <modules>
+        <module>canis-major</module>
+        <module>validation-service</module>
+    </modules>
 </project>
