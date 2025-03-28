@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - id: bump
-        uses: zwaldowski/match-label-action@v1
+        uses: zwaldowski/match-label-action@v5
         with:
           allowed: major,minor,patch
 
@@ -117,7 +117,7 @@ jobs:
           docker build -f proxy/Dockerfile-build . -t build
           docker run -u root -v $(pwd)/proxy/cm-forward-filter:/cm-forward-filter --workdir /cm-forward-filter build tinygo build -o cm-forward-filter.wasm -target=wasi ./main.go     
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: cm-forward-filter
           path: proxy/cm-forward-filter/cm-forward-filter.wasm
