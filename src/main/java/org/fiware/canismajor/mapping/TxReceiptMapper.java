@@ -26,10 +26,10 @@ public interface TxReceiptMapper {
 
 	ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-	// the transaction index will be appended as a id
+	// the transaction index will be appended as an id
 	String ID_TEMPLATE = "urn:ngsi-ld:dlttxreceipt:%s";
 	String ENTITY_TYPE = "DLTtxReceipt";
-	String CONTEXT = "https://raw.githubusercontent.com/smart-data-models/dataModel.DistributedLedgerTech/master/context.jsonld";
+	String CONTEXT = "https://smart-data-models.github.io/dataModel.DistributedLedgerTech/context.jsonld";
 	String TX_RECEIPTS_KEY = "TxReceipts";
 	String REF_ENTITY_KEY = "refEntity";
 	String RETRIEVAL_QUERY_KEY = "retrievalQuery";
