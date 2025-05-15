@@ -82,12 +82,12 @@ To retrieve the available entity types in the context broker run the following c
 
 ```shell
 curl -iX GET 'http://localhost:1026/ngsi-ld/v1/types' \
-    -H 'Link: <https://raw.githubusercontent.com/smart-data-models/dataModel.DistributedLedgerTech/master/context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
+    -H 'Link: <https://smart-data-models.github.io/dataModel.DistributedLedgerTech/context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
     -H 'NGSILD-Tenant: orion'
 ```
 The command returns the following response, demonstrating the available entity types in the Context Broker:
 ```json
-"@context": "https://raw.githubusercontent.com/smart-data-models/dataModel.DistributedLedgerTech/master/context.jsonld",
+"@context": "https://smart-data-models.github.io/dataModel.DistributedLedgerTech/context.jsonld",
 "id": "urn:ngsi-ld:EntityTypeList:d77ccfa0-b3cd-11ef-ae1b-0242ac120005",
 "type": "EntityTypeList",
 "typeList": ["DLTtxReceipt"]
@@ -159,7 +159,7 @@ To retrieve specific DLT transaction receipts from the the context broker, we'll
 
 ```shell
 curl -iX GET 'http://localhost:1026/ngsi-ld/v1/entities/?type=DLTtxReceipt&q=refEntity%3D%3D%22urn%3Angsi-ld%3ABuilding%3Awarehouse001%22&attrs=TxReceipts' \
-    -H 'Link: <https://raw.githubusercontent.com/smart-data-models/dataModel.DistributedLedgerTech/master/context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
+    -H 'Link: <https://smart-data-models.github.io/dataModel.DistributedLedgerTech/context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
     -H 'NGSILD-Tenant: orion'
 ```
 
@@ -167,7 +167,7 @@ The output will be similar to the following json response:
 
 ```json
 {
-    "@context": "https://raw.githubusercontent.com/smart-data-models/dataModel.DistributedLedgerTech/master/context.jsonld",
+    "@context": "https://smart-data-models.github.io/dataModel.DistributedLedgerTech/context.jsonld",
     "id": "urn:ngsi-ld:dlttxreceipt:0xa46d2e3b190d36fbb8af5d0a1c212d8036cf007e6ec4d1309904e052d25e5499",
     "type": "DLTtxReceipt",
     "TxReceipts": {
