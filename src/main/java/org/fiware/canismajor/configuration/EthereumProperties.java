@@ -6,6 +6,7 @@ import lombok.Data;
 import java.math.BigInteger;
 import java.net.URL;
 
+// This class holds configuration for Ethereum blockchain connection
 @ConfigurationProperties("ethereum")
 @Data
 public class EthereumProperties {

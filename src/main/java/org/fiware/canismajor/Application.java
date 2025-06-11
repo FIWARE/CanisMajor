@@ -16,11 +16,10 @@ import org.web3j.tx.gas.StaticGasProvider;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/**
- * Base application as starting point
- */
+
 @RequiredArgsConstructor
 @Factory
+// This class is the main application class
 public class Application {
 
 	public static void main(String[] args) {
@@ -30,11 +29,13 @@ public class Application {
 	private final EthereumProperties ethereumProperties;
 
 	@Bean
+	// This method creates a blocking HTTP client
 	public BlockingHttpClient blockingHttpClient() {
 		return new DefaultHttpClient().toBlocking();
 	}
 
 	@Bean
+	// This method creates an Ethereum client
 	@Requires(property = "ethereum.enabled", value = "true")
 	public Web3j ethereumClient() {
 		return Web3j.build(new HttpService(ethereumProperties.getDltAddress().toString()));
@@ -42,6 +43,7 @@ public class Application {
 
 
 	@Bean
+	// This method creates a contract gas provider
 	@Requires(property = "ethereum.enabled", value = "true")
 	public ContractGasProvider contractGasProvider() {
 		return new StaticGasProvider(ethereumProperties.getGasPrice(), ethereumProperties.getGas());

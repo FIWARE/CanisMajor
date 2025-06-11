@@ -32,6 +32,7 @@ import java.util.concurrent.Executors;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
+// This class is used to create, update, query, retrieve and upsert entities in the NGSI-LD context broker
 public class NGSILDController implements NgsiLdApi {
 
 	private final EthereumService ethereumService;
@@ -42,6 +43,7 @@ public class NGSILDController implements NgsiLdApi {
 	private final GeneralProperties generalProperties;
 
 	@Override
+	// This method creates a new NGSI-LD entity
 	public HttpResponse<TransactionReceiptVO> createNgsiLDEntity(@Nullable String link, @Nullable String walletType, @Nullable String walletToken, @Nullable String walletAddress, EntityVO entityVO) {
 		try {
 			TransactionReceipt transactionReceipt = ethereumService.persistEntityCreation(entityVO, toWalletInformation(walletType, walletToken, walletAddress));
@@ -54,6 +56,7 @@ public class NGSILDController implements NgsiLdApi {
 	}
 
 	@Override
+	// This method updates an existing NGSI-LD entity
 	public HttpResponse<TransactionReceiptVO> postUpdateNgsiLDEntity(URI entityId, @Nullable String link, @Nullable String walletType, @Nullable String walletToken, @Nullable String walletAddress, EntityFragmentVO entityFragmentVO) {
 		try {
 			TransactionReceipt transactionReceipt = ethereumService.persistEntityUpdate(entityId, entityFragmentVO, toWalletInformation(walletType, walletToken, walletAddress));
@@ -66,6 +69,7 @@ public class NGSILDController implements NgsiLdApi {
 	}
 
 	@Override
+	// This method queries NGSI-LD entities
 	public HttpResponse<TransactionReceiptVO> queryEntities(@Nullable String id, @Nullable String idPattern, @Nullable String type, @Nullable String attrs, @Nullable String q, @Nullable String georel, @Nullable String geometry, @Nullable String coordinates, @Nullable String geoproperty, @Nullable String csf, @Nullable Integer limit, @Nullable Integer offset, @Nullable String options, @Nullable String link, @Nullable String walletType, @Nullable String walletToken, @Nullable String walletAddress, @Nullable URI relatedEntity) {
 		QueryInfo queryInfo = new QueryInfo(id, idPattern, type, attrs, q, georel, geometry, coordinates, geoproperty, csf, limit, offset, options, link);
 		// if the request does not provide information about an entity to related to, we are using a generic default.
@@ -82,6 +86,7 @@ public class NGSILDController implements NgsiLdApi {
 	}
 
 	@Override
+	// This method retrieves an NGSI-LD entity by its ID
 	public HttpResponse<TransactionReceiptVO> retrieveEntityById(URI entityId, @Nullable String attrs, @Nullable String type, @Nullable String options, @Nullable String link, @Nullable String walletType, @Nullable String walletToken, @Nullable String walletAddress) {
 		RetrievalQueryInfo retrievalQueryInfo = new RetrievalQueryInfo(entityId, attrs, type, options, link);
 		try {
@@ -95,6 +100,7 @@ public class NGSILDController implements NgsiLdApi {
 	}
 
 	@Override
+	// This method upserts NGSI-LD entities
 	public HttpResponse<TransactionReceiptVO> upsertEntities(@Nullable String walletType, @Nullable String walletToken, @Nullable String walletAddress, List<EntityVO> entityVOs) {
 		try {
 			TransactionReceipt transactionReceipt = ethereumService.persistBatchOperation(entityVOs, toWalletInformation(walletType, walletToken, walletAddress));
@@ -108,6 +114,7 @@ public class NGSILDController implements NgsiLdApi {
 		}
 	}
 
+	// This method converts the wallet information to a WalletInformation object
 	private WalletInformation toWalletInformation(String walletType, String walletToken, String walletAddress) {
 		try {
 			Optional<String> optionalWalletAddress = Optional.ofNullable(walletAddress);

@@ -3,6 +3,7 @@ package org.fiware.canismajor.configuration;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import lombok.Data;
 
+// This class holds configuration for enabling and supplying a default blockchain account 
 @ConfigurationProperties("defaultAccount")
 @Data
 public class DefaultAccountProperties {

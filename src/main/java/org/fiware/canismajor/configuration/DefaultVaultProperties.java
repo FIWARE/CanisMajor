@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.net.URL;
 
+// This class holds configuration for enabling and supplying a default vault account 
 @ConfigurationProperties("defaultVaultAccount")
 @Data
 public class DefaultVaultProperties {

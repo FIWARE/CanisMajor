@@ -10,6 +10,7 @@ import java.io.File;
 
 import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 
+// This class models a Vault plugin’s configuration
 @Suite
 @IncludeEngines("cucumber")
 @SelectClasspathResource("it")

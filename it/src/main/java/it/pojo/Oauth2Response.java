@@ -5,6 +5,7 @@ import lombok.Data;
 import java.util.ArrayList;
 import java.util.List;
 
+// This class models the standard structure of an OAuth2 token response,.
 @Data
 public class Oauth2Response {
 

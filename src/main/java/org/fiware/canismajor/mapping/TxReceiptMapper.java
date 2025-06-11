@@ -21,11 +21,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+// Transform an Ethereum transaction receipt object into an NGSI-LD entity object (EntityVO) 
 @Mapper(componentModel = "jsr330")
 public interface TxReceiptMapper {
 
 	ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
+	// NGSI-LD entity configuration
 	// the transaction index will be appended as a id
 	String ID_TEMPLATE = "urn:ngsi-ld:dlttxreceipt:%s";
 	String ENTITY_TYPE = "DLTtxReceipt";
@@ -34,6 +36,7 @@ public interface TxReceiptMapper {
 	String REF_ENTITY_KEY = "refEntity";
 	String RETRIEVAL_QUERY_KEY = "retrievalQuery";
 
+	// mapping the transaction receipt to an NGSI-LD entity
 	default EntityVO transactionReceiptToEntityVO(TransactionReceipt transactionReceipt, URI entityId, RetrievalQueryInfo queryInfo) {
 		EntityVO entityVO = transactionReceiptToEntityVO(transactionReceipt, entityId);
 
@@ -45,6 +48,7 @@ public interface TxReceiptMapper {
 		return entityVO;
 	}
 
+	
 	default EntityVO transactionReceiptToEntityVO(TransactionReceipt transactionReceipt, URI entityId, QueryInfo queryInfo) {
 		EntityVO entityVO = transactionReceiptToEntityVO(transactionReceipt, entityId);
 

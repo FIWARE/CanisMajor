@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Singleton
 @RequiredArgsConstructor
+// This class is used to retrieve entities with transactions from the NGSI-LD context broker
 public class EntityRepository {
 
 	private static final String REF_QUERY_TEMPLATE = TxReceiptMapper.REF_ENTITY_KEY + "==\"%s\"";
@@ -68,6 +69,7 @@ public class EntityRepository {
 		return entityTransactionVOS;
 	}
 
+	// This method extracts the transaction receipts from the entityVO
 	private Map<String, List<TransactionReceiptVO>> extractReceipts(EntityVO entityVO) {
 		return txReceiptMapper.getEntityIdsFromTX(entityVO).stream().collect(Collectors.toMap(
 				id -> id,
@@ -83,6 +85,7 @@ public class EntityRepository {
 		));
 	}
 
+	// This method retrieves the transaction details for a specific entity
 	public EntityTransactionVO getEntityTransactions(URI entityId) throws NGSIConnectException {
 		Optional<EntityListVO> optionalEntityListVO = executeRequest(
 				() -> apiClient.queryEntities(generalProperties.getNgsiTenant(), null, null, TxReceiptMapper.ENTITY_TYPE, null, String.format(REF_QUERY_TEMPLATE, entityId), null, null, null, null, null, null, null, getLinkHeader()));

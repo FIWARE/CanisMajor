@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+// This class models an account with a mnemonic phrase
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

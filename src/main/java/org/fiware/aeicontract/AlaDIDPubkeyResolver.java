@@ -40,6 +40,7 @@ import org.web3j.tx.gas.ContractGasProvider;
  *
  * <p>Generated with web3j version 1.4.1.
  */
+
 @SuppressWarnings("rawtypes")
 public class AlaDIDPubkeyResolver extends Contract {
     public static final String BINARY = "Bin file was not provided";
@@ -71,6 +72,7 @@ public class AlaDIDPubkeyResolver extends Contract {
     ;
 
     @Deprecated
+   
     protected AlaDIDPubkeyResolver(String contractAddress, Web3j web3j, Credentials credentials, BigInteger gasPrice, BigInteger gasLimit) {
         super(BINARY, contractAddress, web3j, credentials, gasPrice, gasLimit);
     }
