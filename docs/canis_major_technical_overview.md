@@ -236,8 +236,8 @@ To assist with understanding the structure and significance of the transcation r
     - Value: "0x0" (which is 0 in decimal)
 
 ## HashiCorp Vault
-
-As part of Canis Major commitment to security and efficient secrets management, HashiCorp Vault is integrated to provide robust protection for sensitive data. This section explains how Vault functions within Canis Major.
+HashiCorp Vault is integrated into Canis Major to manage and protect sensitive data such as cryptographic keys and wallet credentials.
+This section describes how Vault is configured and used within the Canis Major infrastructure
 
 ### Vault Overview
 
@@ -259,19 +259,32 @@ Key Points:
 - Networking:
     Connects to test-network for communication with other services.
 
-### Vault Backed Signing Service 
+### Vault Signing Service 
 
-The Canis Major source code implements VaultBackedSigningService that interacts with Vault's API to:
+Within Canis Major, secure cryptographic operations are managed by a dedicated service that interacts directly with HashiCorp Vault’s API. 
+This service handles two fundamental tasks required for blockchain transactions:
 
-- Retrieve wallet account addresses.
-- Sign transactions securely using Vault.
+**Retrieving wallet account addresses:**
+The service communicates with Vault to fetch the Ethereum addresses associated with wallet accounts.
+These addresses are essential for preparing and validating blockchain transactions.
+
+**Signing transactions securely:**
+When a transaction is submitted to the Ethereum network, the service sends the transaction data to Vault,
+which uses its securely stored private keys to generate a digital signature.
+This process ensures that private keys remain protected within Vault’s environment.
+
+By handling keys and signing in Vault, this setup keeps private keys secure and out of reach of other parts of the system. 
+The signing service connects Canis Major’s transaction process to Vault’s security, 
+making sure that transaction signing is both safe and easy to track.
 
 
 ## AEI contract
+This section describes the AEI contract, a Solidity smart contract that manages digital assets and their relationships
+on the Ethereum blockchain.
 
-## AEI contract overview
+### AEI contract overview
 
-The AEI Contract is a smart contract written in Solidity that implements the ERC721 standard. This smart contract is designed to be used with Ethereum 
+The [AEI Contract](https://github.com/wistefan/AEIContract) is a smart contract written in Solidity that implements the ERC721 standard. This smart contract is designed to be used with Ethereum 
 compatible clients and particularly designed to be integrated with Canis Major adaptor, enabling the storage and management of digital assets and their 
 relationships on the blockchain.
 
@@ -279,23 +292,22 @@ The AEI Contract allows for the creation, updating, and deletion of digital asse
 These entities can have multiple relationships with other assets.
 The contract is specifically designed to store the NGSI-LD data model.
 
-> [!Note]
-> The AEI Contract supports several key methods for managing assets and their metadata:
-> - createAsset: Creates a new asset with a unique identifier.
-> - getAsset: Retrieves information about a specific asset.
-> - updateAsset: Updates the metadata associated with an asset.
-> - removeAsset: Deletes an asset.
-> - addMetadata: Adds new metadata to an asset.
-> - getMetadatas: Retrieves all metadata associated with an asset.
-> - removeMetadata: Deletes specific metadata from an asset.
-> - addRelation: Establishes a relationship between two assets.
-> - getRelations: Lists all relationships of an asset.
-> - removeRelation: Deletes a relationship between assets
-
 ### Integration with Canis Major
 
+Integration is achieved through a set of REST APIs provided by Canis Major, allowing interaction with the AEI contract without directly handling blockchain-specific logic.
+Additionally, the AEI contract is tailored to store data according to the NGSI-LD model.
 
-
+Through Canis Major, the AEI contract can be used to:
+- createAsset: Creates a new asset with a unique identifier.
+- getAsset: Retrieves information about a specific asset.
+- updateAsset: Updates the metadata associated with an asset.
+- removeAsset: Deletes an asset.
+- addMetadata: Adds new metadata to an asset.
+- getMetadatas: Retrieves all metadata associated with an asset.
+- removeMetadata: Deletes specific metadata from an asset.
+- addRelation: Establishes a relationship between two assets.
+- getRelations: Lists all relationships of an asset.
+- removeRelation: Deletes a relationship between assets
 
 ## Ganache
 
