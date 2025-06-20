@@ -168,7 +168,7 @@ To assist with understanding the structure and significance of the transcation r
 
 6. **from**
     - Type: String (hexadecimal)
-    -Description: The address of the account that initiated the transaction. 
+    - Description: The address of the account that initiated the transaction. 
     - Value: "0x34e5b3f990e55d0651b35c817bafb89d2877cb95"
 
  7. **to**
@@ -253,6 +253,7 @@ Key Points:
     Uses a customized image (vault-ethereum) for Ethereum-related use cases.
 - Environment Variables:
     VAULT_ADDR: Specifies where Vault listens (http://0.0.0.0:8200).
+  
     VAULT_DEV_ROOT_TOKEN_ID: Sets a development root token (vault-plaintext-root-token) for authentication.
 - Security:
     Adds IPC_LOCK capability for enhanced security by preventing memory swapping.
