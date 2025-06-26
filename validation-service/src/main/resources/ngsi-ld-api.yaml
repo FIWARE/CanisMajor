@@ -1,0 +1,234 @@
+openapi: 3.0.0
+info:
+  title: NGSI-LD API
+  version: 1.0.0
+  description: API for interacting with NGSI-LD Context Brokers and Canis Major
+servers:
+  - url: 'http://{serverUrl}'
+    description: NGSI-LD Context Broker
+    variables:
+      serverUrl:
+        default: "127.0.0.1:1026"
+        description: Context Broker URL
+  - url: 'http://{serverUrl}'
+    description: Canis Major DLT Adapter
+    variables:
+      serverUrl:
+        default: "127.0.0.1:4000"
+        description: Canis Major URL
+
+paths:
+  /ngsi-ld/v1/entities:
+    get:
+      summary: Query entities
+      description: Retrieve a set of entities which matches a specific query from an NGSI-LD system
+      operationId: queryEntities
+      tags:
+        - Context Information
+        - Entities
+      parameters:
+        - $ref: '#/components/parameters/type'
+        - $ref: '#/components/parameters/attrs'
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/LinkHeader'
+        - $ref: '#/components/parameters/TenantHeader'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/EntityList'
+        '400':
+          description: Bad request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+  /ngsi-ld/v1/entities/{entityId}:
+    get:
+      summary: Retrieve entity by ID
+      description: Retrieve an entity by its ID
+      operationId: retrieveEntityById
+      tags:
+        - Context Information
+        - Entities
+      parameters:
+        - name: entityId
+          in: path
+          required: true
+          description: Entity ID
+          schema:
+            type: string
+        - $ref: '#/components/parameters/attrs'
+        - $ref: '#/components/parameters/LinkHeader'
+        - $ref: '#/components/parameters/TenantHeader'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Entity'
+        '404':
+          description: Entity not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+components:
+  parameters:
+    type:
+      name: type
+      in: query
+      description: Entity type
+      schema:
+        type: string
+    attrs:
+      name: attrs
+      in: query
+      description: Comma-separated list of attribute names to be retrieved
+      schema:
+        type: string
+    q:
+      name: q
+      in: query
+      description: Query string for filtering entities
+      schema:
+        type: string
+    LinkHeader:
+      name: Link
+      in: header
+      description: NGSI-LD @context
+      schema:
+        type: string
+    TenantHeader:
+      name: NGSILD-Tenant
+      in: header
+      description: NGSI-LD tenant
+      schema:
+        type: string
+        default: "orion"
+
+  schemas:
+    Entity:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Entity identifier
+        type:
+          type: string
+          description: Entity type
+      additionalProperties: true
+
+    EntityList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Entity'
+
+    ProblemDetails:
+      type: object
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        instance:
+          type: string
+
+    DLTtxReceipt:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Entity identifier
+        type:
+          type: string
+          description: Entity type (DLTtxReceipt)
+        TxReceipts:
+          type: object
+          properties:
+            type:
+              type: string
+              enum: [Property]
+            value:
+              type: object
+              properties:
+                blockHash:
+                  type: string
+                blockNumber:
+                  type: integer
+                blockNumberRaw:
+                  type: string
+                cumulativeGasUsed:
+                  type: integer
+                cumulativeGasUsedRaw:
+                  type: string
+                from:
+                  type: string
+                gasUsed:
+                  type: integer
+                gasUsedRaw:
+                  type: string
+                logs:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      blockHash:
+                        type: string
+                      blockNumber:
+                        type: integer
+                      blockNumberRaw:
+                        type: string
+                      data:
+                        type: string
+                      logIndex:
+                        type: integer
+                      logIndexRaw:
+                        type: string
+                      removed:
+                        type: boolean
+                      topics:
+                        type: array
+                        items:
+                          type: string
+                      transactionHash:
+                        type: string
+                      transactionIndex:
+                        type: integer
+                      transactionIndexRaw:
+                        type: string
+                      type:
+                        type: string
+                logsBloom:
+                  type: string
+                status:
+                  type: string
+                statusOK:
+                  type: boolean
+                to:
+                  type: string
+                transactionHash:
+                  type: string
+                transactionIndex:
+                  type: integer
+                transactionIndexRaw:
+                  type: string
+        refEntity:
+          type: object
+          properties:
+            type:
+              type: string
+              enum: [Relationship]
+            object:
+              type: string

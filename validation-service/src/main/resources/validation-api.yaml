@@ -1,0 +1,64 @@
+openapi: 3.0.0
+info:
+  title: Transaction Validation Service
+  version: 1.0.0
+  description: API for validating transaction data consistency between Orion-LD and Canis Major
+  contact:
+    email: asma.taamallah@fiware.org
+paths:
+  /validation/transaction/{entityId}:
+    post:
+      summary: Validate transaction consistency
+      operationId: validateTransaction
+      tags:
+        - Validation
+      parameters:
+        - name: entityId
+          in: path
+          required: true
+          description: The ID of the transaction entity to validate
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Validation result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationResult'
+        '404':
+          description: Transaction not found in one or both systems
+        '500':
+          description: Internal server error
+components:
+  schemas:
+    ValidationResult:
+      type: object
+      properties:
+        valid:
+          type: boolean
+          description: Whether the transaction data is consistent between systems
+        entityId:
+          type: string
+          description: The ID of the validated transaction entity
+        timestamp:
+          type: string
+          format: date-time
+          description: When the validation was performed
+        discrepancies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Discrepancy'
+          description: List of discrepancies found (empty if valid is true)
+    Discrepancy:
+      type: object
+      properties:
+        field:
+          type: string
+          description: The field that has a discrepancy
+        orionValue:
+          type: string
+          description: The value from Orion-LD
+        canisMajorValue:
+          type: string
+          description: The value from Canis Major
