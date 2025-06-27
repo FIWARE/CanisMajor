@@ -2,7 +2,7 @@ package it.pojo;
 
 import lombok.Data;
 
-// only stuff that we are interested in for the tests
+// This class encapsulates essential information about a blockchain transaction.
 @Data
 public class TxDetails {
 

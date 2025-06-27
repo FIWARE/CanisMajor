@@ -8,9 +8,9 @@ import lombok.Data;
 import java.net.URI;
 import java.util.Map;
 
+// This class represents a generic entity with flexible properties
 @Data
 public class Entity {
-
 	@JsonProperty("@context")
 	private Object atContext = null;
 	private URI id;

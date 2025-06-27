@@ -47,29 +47,30 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class StepDefinitions {
-
-	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-	public static final String NGSILD_TENANT = "orion";
+/* This class is a comprehensive Cucumber step definition set for integration testing Canis Major,
+ and vault-based Ethereum signing in.*/
+	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper(); // JSON serialization/deserialization.
+	public static final String NGSILD_TENANT = "orion"; // NGSI-LD tenant header value.
 
 	{
 		OBJECT_MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 		OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
 
+	// Canis Major and Vault service endpoints and the Vault root toke
 	private static final String CANIS_MAJOR_ADDRESS = "127.0.0.1:4000";
 	// depending on the test setup, this can either go directly to canis-major or to a broker(and being intercepted)
 	private static final String VAULT_ADDRESS = "127.0.0.1:8200";
-
-
 	private static final String VAULT_ROOT_TOKEN = "vault-plaintext-root-token";
 
+	// Define test accounts with names, mnemonics, and public keys for use in test scenarios.
 	private static final Map<String, TestAccount> TEST_ACCOUNT_MAP = Map.of(
 			"Default", new TestAccount("default", "label butter chaos blush mind north kit drill position phone decline urge claw mammal risk", "0xd9fe663797b75d0b3897d55d35e0b4e72307a63f"),
 			"Franzi", new TestAccount("franzi", "minimum symptom minute gloom tragic situate silver mechanic salad amused elite beef", "0xa508dD875f10C33C52a8abb20E16fc68E981F186"),
 			"Mira", new TestAccount("mira", "ridge bargain sight table never risk isolate hold jaguar reflect curve globe awake witness reveal", "0x34E5b3f990e55D0651B35c817bAfb89d2877cb95")
 	);
 
-	private static final int TX_AWAIT_MAX_S = 15;
+	private static final int TX_AWAIT_MAX_S = 15; // maximum wait time for transaction confirmatio
 
 	// address to be used for accessing the broker. Practically a switch between the proxy-mode and direct canis-major access.
 	private String ngsiAddress = "10.5.0.5:1026";
@@ -102,7 +103,7 @@ public class StepDefinitions {
 				.atMost(Duration.of(60, ChronoUnit.SECONDS))
 				.until(this::assertSystemIsRunning);
 	}
-
+	// Health check and plugin setup methods
 	private boolean assertSuccess(Request request) {
 		OkHttpClient okHttpClient = new OkHttpClient();
 		try {

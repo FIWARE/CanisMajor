@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 public class CMEntitesResponse {
-
+	// Represent 
 	private long offset;
 	private long limit;
 	private long count;
